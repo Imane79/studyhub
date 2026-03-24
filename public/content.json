@@ -1,0 +1,1321 @@
+{
+  "course": {
+    "name": "Introduction to Multimedia Processing",
+    "code": "CS301",
+    "semester": "Spring 2026",
+    "instructor": "Asst. Prof. Tankut Akgül"
+  },
+  "lectures": [
+    {
+      "id": "lecture-2",
+      "number": 2,
+      "title": "Image Data Representations",
+      "chapter": "Chapter 3",
+      "color": "#E8A838",
+      "icon": "🖼️",
+      "sections": [
+        {
+          "id": "sec-2-1",
+          "number": "3.1.1–3.1.2",
+          "title": "Pixels, Bitmaps & Resolution",
+          "content": [
+            {
+              "type": "text",
+              "body": "A **digital image** is a rectangular grid of pixels. Each pixel stores a color or intensity value. This grid is called a **bitmap** — the 2D array of pixel values that represents the image."
+            },
+            {
+              "type": "definition",
+              "term": "Bitmap",
+              "body": "The two-dimensional array (grid) of pixel values that represents graphics or image data."
+            },
+            {
+              "type": "definition",
+              "term": "Frame Buffer",
+              "body": "Hardware (on the video/graphics card) that stores the bitmap so it can be displayed on screen."
+            },
+            {
+              "type": "definition",
+              "term": "Image Resolution",
+              "body": "The number of pixels in a digital image. More pixels = higher resolution = better quality. Example: $1600 \\times 1200$ is high resolution, $640 \\times 480$ is lower."
+            },
+            {
+              "type": "text",
+              "body": "**1-bit images:** Each pixel is stored as a single bit — 0 (white/background) or 1 (black/foreground). Also called a **binary image** or **1-bit monochrome image**. Think of a black-and-white photocopy — either ink or paper. No gray, no color.\n\n**8-bit grayscale images:** Each pixel is 1 byte (8 bits), giving values 0–255. 0 = black, 255 = white. 256 shades of gray — enough for the human eye to see smooth gradations."
+            },
+            {
+              "type": "math",
+              "label": "Grayscale Storage Formula",
+              "expression": "\\text{Storage} = W \\times H \\times 1 \\text{ byte}"
+            },
+            {
+              "type": "example",
+              "title": "Storage Calculation",
+              "body": "A $640 \\times 480$ grayscale image: $640 \\times 480 \\times 1 = 307{,}200$ bytes = **300 KB**\n\nA $640 \\times 480$ 24-bit color image: $640 \\times 480 \\times 3 = 921{,}600$ bytes = **900 KB** (3× more)"
+            },
+            {
+              "type": "definition",
+              "term": "Bit-Planes",
+              "body": "An 8-bit image can be thought of as **8 separate 1-bit layers** stacked together.\n\n- **Plane 7 (MSB):** Most important brightness info. If pixel value > 127, this bit is 1. Looks like a rough version of the original image.\n- **Plane 0 (LSB):** Finest detail. Looks almost like random noise — represents tiny brightness differences."
+            },
+            {
+              "type": "example",
+              "title": "Bit-Plane Breakdown — Pixel Value 200",
+              "body": "200 in binary = **11001000**\n\n| Plane | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |\n|-------|---|---|---|---|---|---|---|---|\n| Bit   | 1 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |\n\n- Plane 7 = 1 (MSB — carries most visual info)\n- Plane 6 = 1\n- Plane 5 = 0\n- Plane 4 = 0\n- Plane 3 = 1\n- Plane 2, 1, 0 = 0 (LSB — contributes least)"
+            },
+            {
+              "type": "callout",
+              "style": "tip",
+              "body": "Plane 7 alone looks like a rough grayscale version of the whole image. Plane 0 alone looks like random noise. Strip the MSB and the image becomes unrecognizable. Strip the LSB and you barely notice."
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "What is a 1-bit image?",
+              "a": "Each pixel is stored as a single bit (0 or 1). 0 = white (background), 1 = black (foreground). Also called binary image or 1-bit monochrome image. Think of a black-and-white photocopy."
+            },
+            {
+              "q": "What is a bitmap?",
+              "a": "The two-dimensional array (grid) of pixel values that represents the graphics/image data."
+            },
+            {
+              "q": "What is a frame buffer?",
+              "a": "Hardware on the video/graphics card that stores the bitmap so it can be displayed on screen."
+            },
+            {
+              "q": "What is image resolution?",
+              "a": "The number of pixels in a digital image. More pixels = higher resolution = better quality. Example: 1600×1200 is high resolution, 640×480 is lower."
+            },
+            {
+              "q": "How many shades can an 8-bit grayscale image represent?",
+              "a": "256 shades of gray (values 0 to 255). 0 = black, 255 = white. 1 byte per pixel."
+            },
+            {
+              "q": "What are bit-planes?",
+              "a": "An 8-bit image decomposed into 8 separate 1-bit layers. Plane 7 (MSB) has the most visual info — looks like a rough version of the image. Plane 0 (LSB) looks like noise."
+            },
+            {
+              "q": "What does pixel value 200 look like in binary? Which planes are 1?",
+              "a": "200 = 11001000. Planes 7, 6, and 3 are 1. Planes 5, 4, 2, 1, 0 are 0."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "Calculate the pixel data storage (in bytes) of a $640 \\times 480$ 8-bit grayscale image.",
+              "a": "Each pixel = 1 byte. Storage = $640 \\times 480 \\times 1 = \\mathbf{307{,}200}$ bytes = 300 KB.",
+              "hint": "8-bit = 1 byte per pixel"
+            },
+            {
+              "type": "calculation",
+              "q": "A pixel has value 150. Write it in binary (8 bits) and state which bit-planes are 1.",
+              "a": "$150 = 128 + 16 + 4 + 2 = 10010110$\n\nPlanes that are 1: **7, 4, 2, 1** (MSB through position 1).\nPlanes that are 0: **6, 5, 3, 0**.",
+              "hint": "Convert to binary: 150 = 128+16+4+2. Bit 7 is the leftmost (128s place)."
+            },
+            {
+              "type": "calculation",
+              "q": "How much storage does a $1024 \\times 768$ 32-bit image use (pixel data only)?",
+              "a": "$1024 \\times 768 \\times 4 = \\mathbf{3{,}145{,}728}$ bytes (about 3 MB). Each pixel = 4 bytes (R, G, B, A).",
+              "hint": "32 bits = 4 bytes per pixel"
+            }
+          ]
+        },
+        {
+          "id": "sec-2-2",
+          "number": "3.1.2 Dithering",
+          "title": "Dithering",
+          "content": [
+            {
+              "type": "definition",
+              "term": "Dithering",
+              "body": "You have an 8-bit grayscale image (256 gray shades) but your printer can only print **1-bit** (ink or no ink). Dithering trades **intensity resolution** for **spatial resolution** — instead of one pixel per dot, one pixel becomes a small **pattern of dots**.\n\nYour eyes average nearby dots together. Half black, half white in an area → eye perceives it as **medium gray**, even though there's no actual gray dot."
+            },
+            {
+              "type": "definition",
+              "term": "Halftone Printing",
+              "body": "An analog technique used in newspapers. Varying-size filled circles of black ink represent shading — bigger circles = darker areas, smaller = lighter. Look at a newspaper photo with a magnifying glass and you'll see it.\n\n**Dithering is the digital version of halftone printing.**"
+            },
+            {
+              "type": "definition",
+              "term": "Dither Matrix (Threshold Map)",
+              "body": "A small grid of threshold values that controls **at what brightness each dot turns on**. Each position has a different trigger point.\n\nThe 2×2 matrix from the lecture:\n$$\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$$\n- Position (0,0) threshold **0** → turns on first (easiest)\n- Position (1,1) threshold **1** → turns on second\n- Position (0,1) threshold **2** → turns on third\n- Position (1,0) threshold **3** → turns on last (hardest)\n\nThe values are arranged in a **scattered pattern** so dots spread out evenly rather than clustering."
+            },
+            {
+              "type": "example",
+              "title": "How Dots Fill In (2×2 Matrix)",
+              "body": "The order dots turn on as pixel gets darker:\n\n**Step 1** (value > 0): top-left turns on → `■ .` / `. .`\n\n**Step 2** (value > 1): bottom-right turns on (diagonal) → `■ .` / `. ■`\n\n**Step 3** (value > 2): top-right turns on → `■ ■` / `. ■`\n\n**Step 4** (value > 3): all filled → `■ ■` / `■ ■`\n\nSee how dots **spread out evenly** instead of filling left-to-right? That's the whole point of the arrangement."
+            },
+            {
+              "type": "text",
+              "body": "## Approach 1: Simple Dithering (Each pixel → n×n block)\n\n**Step 1:** Rescale pixel value (0–255) to range 0 to n²:\n$$\\text{new\\_value} = \\lfloor \\text{pixel\\_value} \\div (256 / (n^2 + 1)) \\rfloor$$\nFor 2×2: $\\text{new\\_value} = \\lfloor \\text{pixel\\_value} \\div 51.2 \\rfloor$\n\n**Step 2:** The new_value = how many dots to turn ON in the block.\n\n**Step 3:** If new_value > matrix_entry at that position → dot ON.\n\n**Drawback:** Output image becomes **n² times larger** (2×2 matrix = 4× larger, 4×4 matrix = 16× larger)."
+            },
+            {
+              "type": "example",
+              "title": "Simple Dithering — Worked Examples (2×2 Matrix)",
+              "body": "Matrix: $\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$, divisor = 51.2\n\n**Pixel = 180:** rescaled = $\\lfloor 180/51.2 \\rfloor = 3$\n- (0,0): 3>0? YES → ON\n- (0,1): 3>2? YES → ON\n- (1,0): 3>3? NO → OFF\n- (1,1): 3>1? YES → ON\nResult: 3/4 dots → `■ ■` / `. ■` (fairly dark — makes sense for 180/255)\n\n**Pixel = 0:** rescaled=0. 0>nothing → all OFF → `white`\n\n**Pixel = 60:** rescaled=1. Only 1>0 → 1 dot → `■ .` / `. .`\n\n**Pixel = 130:** rescaled=2. 2>0 and 2>1 → 2 dots → `■ .` / `. ■`\n\n**Pixel = 255:** rescaled=4. 4>everything → all 4 ON → `black`"
+            },
+            {
+              "type": "definition",
+              "term": "Ordered Dithering (Same Image Size)",
+              "body": "The smarter version. Each pixel stays as **one pixel** — output image is the same size.\n\n**How:** For pixel at position (row i, col j):\n1. Find matrix position: row = $i \\bmod n$, col = $j \\bmod n$ (matrix **tiles** across the image)\n2. Rescale: $\\lfloor \\text{pixel\\_value} \\div 64 \\rfloor$ (for 2×2, range 0–3)\n3. If rescaled > threshold → **black (1)**, else → **white (0)**"
+            },
+            {
+              "type": "example",
+              "title": "Ordered Dithering — Full 4×4 Image Example",
+              "body": "Matrix: $\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$, divisor = 64\n\nImage pixel values:\n```\n200   50  180   30\n100  220   40  170\n 10  160  240   80\n150   70  120  250\n```\n\nProcessing (pos = (i mod 2, j mod 2), threshold from matrix, rsc = ⌊val/64⌋):\n- (0,0) val=200: pos=(0,0) thr=0, rsc=3. 3>0? → **1**\n- (0,1) val=50: pos=(0,1) thr=2, rsc=0. 0>2? → **0**\n- (0,2) val=180: pos=(0,0) thr=0, rsc=2. 2>0? → **1**\n- (0,3) val=30: pos=(0,1) thr=2, rsc=0. 0>2? → **0**\n- (1,0) val=100: pos=(1,0) thr=3, rsc=1. 1>3? → **0**\n- (1,1) val=220: pos=(1,1) thr=1, rsc=3. 3>1? → **1**\n- (1,2) val=40: pos=(1,0) thr=3, rsc=0. 0>3? → **0**\n- (1,3) val=170: pos=(1,1) thr=1, rsc=2. 2>1? → **1**\n- (2,0) val=10: pos=(0,0) thr=0, rsc=0. 0>0? → **0**\n- (2,1) val=160: pos=(0,1) thr=2, rsc=2. 2>2? → **0**\n- (2,2) val=240: pos=(0,0) thr=0, rsc=3. 3>0? → **1**\n- (2,3) val=80: pos=(0,1) thr=2, rsc=1. 1>2? → **0**\n- (3,0) val=150: pos=(1,0) thr=3, rsc=2. 2>3? → **0**\n- (3,1) val=70: pos=(1,1) thr=1, rsc=1. 1>1? → **0**\n- (3,2) val=120: pos=(1,0) thr=3, rsc=1. 1>3? → **0**\n- (3,3) val=250: pos=(1,1) thr=1, rsc=3. 3>1? → **1**\n\nOutput (same 4×4 size):\n```\n1 0 1 0\n0 1 0 1\n0 0 1 0\n0 0 0 1\n```\nBright pixels (200,220,240,250) → black dots. Dark pixels (10,30,40,50) → white."
+            },
+            {
+              "type": "callout",
+              "style": "info",
+              "body": "**Dithering also works for color!** A 24-bit color image reduced to 5 bits looks blocky with visible color banding. With dithering, the dot patterns simulate the in-between colors — the result looks much smoother."
+            },
+            {
+              "type": "callout",
+              "style": "exam",
+              "body": "**Simple dithering:** replaces each pixel with an n×n block → image gets n² times larger.\n\n**Ordered dithering:** matrix tiles across the image, each pixel stays one pixel → same image size.\n\nThe comparison: strictly greater than (**>**) the threshold, not ≥."
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "What is dithering?",
+              "a": "Trades intensity resolution for spatial resolution. Simulates gray shades on a 1-bit printer using dot patterns. Your eye averages nearby dots — half black/half white looks like medium gray."
+            },
+            {
+              "q": "What is the connection between dithering and halftone printing?",
+              "a": "Halftone printing is the analog version — newspapers use varying-size ink circles. Dithering is the digital equivalent. Both fool the eye into seeing shades using only black and white dots."
+            },
+            {
+              "q": "What is the 2×2 dither matrix? In what order do dots turn on?",
+              "a": "Matrix: [[0,2],[3,1]]. Dot order: (0,0) with threshold 0 turns on first, then (1,1) threshold 1, then (0,1) threshold 2, then (1,0) threshold 3. Spread diagonally so dots distribute evenly."
+            },
+            {
+              "q": "How do you apply simple dithering? What is the size penalty?",
+              "a": "Rescale pixel: ⌊pixel ÷ 51.2⌋ for 2×2 (range 0–4). If rescaled > matrix_entry → dot ON. Each pixel becomes an n×n block, so the output image is n² times larger (2×2 = 4×, 4×4 = 16×)."
+            },
+            {
+              "q": "Walk through: simple dithering, pixel=180, 2×2 matrix [[0,2],[3,1]].",
+              "a": "Rescaled = ⌊180/51.2⌋ = 3. Compare 3 against each entry: (0,0): 3>0 ON; (0,1): 3>2 ON; (1,0): 3>3 NO; (1,1): 3>1 ON. Result: 3/4 dots on."
+            },
+            {
+              "q": "What is ordered dithering? How does it avoid the size penalty?",
+              "a": "Matrix tiles across the whole image. Each pixel at (i,j) uses threshold at (i mod n, j mod n). Rescale ⌊pixel/64⌋ for 2×2. If rescaled > threshold → black. Each output pixel = one input pixel → same image size."
+            },
+            {
+              "q": "In ordered dithering, pixel at (1,0)=100, matrix [[0,2],[3,1]], divisor=64. Output?",
+              "a": "Position: (1 mod 2, 0 mod 2) = (1,0). Threshold = 3. Rescaled = ⌊100/64⌋ = 1. Is 1 > 3? NO → output 0 (white)."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "Simple dithering with 2×2 matrix $\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$ (divisor=51.2). Apply to pixel value 130. How many dots are ON? Which positions?",
+              "a": "Rescaled = $\\lfloor 130/51.2 \\rfloor = 2$.\n\nCompare 2 against each matrix entry:\n- (0,0): 2 > 0? **YES → ON**\n- (0,1): 2 > 2? **NO → OFF**\n- (1,0): 2 > 3? **NO → OFF**\n- (1,1): 2 > 1? **YES → ON**\n\n**2 dots ON** — positions (0,0) and (1,1) (diagonal pattern).",
+              "hint": "Rescale first (÷51.2), then compare with each entry using strict >"
+            },
+            {
+              "type": "calculation",
+              "q": "Ordered dithering with 2×2 matrix $\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$, divisor=64. Pixel at position $(3,2)$ has value 120. Output?",
+              "a": "Matrix position: $(3 \\bmod 2, 2 \\bmod 2) = (1, 0)$. Threshold = **3**.\n\nRescaled = $\\lfloor 120/64 \\rfloor = 1$.\n\nIs $1 > 3$? **NO → output 0 (white)**.",
+              "hint": "(row mod 2, col mod 2) to find matrix position"
+            },
+            {
+              "type": "calculation",
+              "q": "Ordered dithering, same matrix and divisor. Pixel at $(3,3)$ has value 250. Output?",
+              "a": "Matrix position: $(3 \\bmod 2, 3 \\bmod 2) = (1, 1)$. Threshold = **1**.\n\nRescaled = $\\lfloor 250/64 \\rfloor = 3$.\n\nIs $3 > 1$? **YES → output 1 (black)**.",
+              "hint": "250 is very bright — should produce a black dot"
+            },
+            {
+              "type": "conceptual",
+              "q": "Why does ordered dithering avoid the size penalty of simple dithering?",
+              "a": "In simple dithering, each input pixel is **replaced by an entire n×n block**, so the output is n² times larger.\n\nIn ordered dithering, the matrix tiles across the image as a **repeating threshold map**. Each output pixel still corresponds to exactly one input pixel — just with a different threshold based on its position. Image size is unchanged.",
+              "hint": "Think about what happens to each pixel in each method"
+            }
+          ]
+        },
+        {
+          "id": "sec-2-3",
+          "number": "3.1.3–3.1.7",
+          "title": "Color Models & Quantization",
+          "content": [
+            {
+              "type": "text",
+              "body": "**24-bit color:** 8 bits × 3 channels (R, G, B) = $256 \\times 256 \\times 256 = \\mathbf{16{,}777{,}216}$ colors (~16.7 million). Called **true color** — the eye can't distinguish neighboring values.\n\n**32-bit color:** Adds an **alpha channel** (transparency). Alpha=255 = fully opaque. Alpha=0 = fully transparent. Still only 24 bits of color — the alpha is extra metadata.\n\nYou can **view individual channels**: extract just the Red channel → grayscale where bright = lots of red, dark = little red."
+            },
+            {
+              "type": "text",
+              "body": "**Higher bit-depth images (beyond 24-bit):**\n- **48-bit (16 bits/channel):** Used in professional photography and medical imaging. Finer precision.\n- **Multispectral:** More than 3 channels — adds infrared or ultraviolet. Used in security cameras (\"dark flash\" — photograph with invisible light).\n- **Hyperspectral:** Hundreds of wavelength bands (e.g., 224 bands). Used in satellite imaging to identify crops, minerals.\n- **Medical imaging:** Many wavelength channels for diagnosing skin cancer, etc."
+            },
+            {
+              "type": "definition",
+              "term": "8-Bit Color & Color Look-Up Table (LUT)",
+              "body": "An 8-bit image uses only **1 byte per pixel** — but that byte is an **index**, not a color. The actual colors live in a separate table called the **LUT (palette)**.\n\nThe LUT has up to 256 rows, each storing a full RGB color (3 bytes).\n\n**How it works:** Pixel stores 25 → computer goes to row 25 of LUT → row 25 says R=30, G=190, B=60 → paints that pixel in that color.\n\n**Storage savings (640×480):**\n- 24-bit: 640×480×3 = 921,600 bytes\n- 8-bit indexed: 640×480×1 + 256×3 = 307,200 + 768 ≈ **308 KB** → ~3× smaller"
+            },
+            {
+              "type": "text",
+              "body": "**Color cycling (palette animation):** Pixels only store index numbers. Change the color a row holds → all pixels pointing to that row instantly change color. By rotating colors in the LUT over time → simple animation **without touching any pixel data**."
+            },
+            {
+              "type": "definition",
+              "term": "3-3-2 Quantization (Fixed Palette)",
+              "body": "Simplest way to build 256 colors. Divide the 8-bit index into three fields:\n- **3 bits for Red** → 8 levels (0–7)\n- **3 bits for Green** → 8 levels (0–7)\n- **2 bits for Blue** → 4 levels (0–3)\n- Total: $8 \\times 8 \\times 4 = 256$ colors, format **RRRGGGBB**\n\n**Why blue gets fewer bits:** The human eye has fewer blue cones and is less sensitive to blue. Losing precision in blue is less noticeable.\n\n**Key property:** The palette is **fixed** — same 256 colors for every image regardless of content. Fast but not adaptive."
+            },
+            {
+              "type": "example",
+              "title": "3-3-2 Full Worked Example",
+              "body": "**Original pixel: R=200, G=130, B=50**\n\n**Step 1 — Quantize Red (8→3 bits):** Divide by 32 (=256÷8):\n$$R_q = \\lfloor 200/32 \\rfloor = \\lfloor 6.25 \\rfloor = 6$$\n\n**Step 2 — Quantize Green (8→3 bits):** Divide by 32:\n$$G_q = \\lfloor 130/32 \\rfloor = \\lfloor 4.0625 \\rfloor = 4$$\n\n**Step 3 — Quantize Blue (8→2 bits):** Divide by 64 (=256÷4):\n$$B_q = \\lfloor 50/64 \\rfloor = \\lfloor 0.78 \\rfloor = 0$$\n\n**Step 4 — Build RRRGGGBB index:**\n- R=6 → binary 110\n- G=4 → binary 100\n- B=0 → binary 00\n- Index = **11010000** = 208 in decimal\n\n**Step 5 — Reconstruct LUT color** (scale back up + add half-step to center):\n- $R = 6 \\times 32 + 16 = 208$\n- $G = 4 \\times 32 + 16 = 144$\n- $B = 0 \\times 64 + 32 = 32$\n\nOriginal (200,130,50) stored as index 208 → maps to (208,144,32). The difference is **quantization error**."
+            },
+            {
+              "type": "definition",
+              "term": "Median-Cut Algorithm (Adaptive Palette)",
+              "body": "Adapts the palette to the **specific image** instead of using a fixed set.\n\n**Steps:**\n1. Put all pixels in one 3D RGB box\n2. Find which channel (R/G/B) has the **largest range**\n3. Sort pixels by that channel\n4. Split at the **median** → two equal halves\n5. Repeat on each new box — after 8 rounds: **256 boxes**\n6. Average R,G,B of each box → one LUT entry\n7. Each pixel's index = which box it fell into\n\n**Advantage:** Concentrates palette entries where the image actually needs them."
+            },
+            {
+              "type": "example",
+              "title": "Median-Cut Worked Example (8 pixels → 4 colors)",
+              "body": "**8 pixels, target: 4 colors (2 rounds of splitting)**\n\np1:(10,20,50) p2:(15,25,55) p3:(100,200,30) p4:(110,210,35)\np5:(200,50,80) p6:(210,55,85) p7:(50,180,200) p8:(55,190,210)\n\n**Round 1** — All 8 in one box:\n- R range = 200 (largest), G range = 190, B range = 180\n- Sort by R, split at median → \n  - **Box A:** p1,p2,p7,p8 (low R: 10,15,50,55)\n  - **Box B:** p3,p4,p5,p6 (high R: 100,110,200,210)\n\n**Round 2, Box A:** G range=170 (largest) → split:\n- **Box A1:** p1,p2 (low G: 20,25) → LUT[0] = avg = (12, 22, 52)\n- **Box A2:** p7,p8 (high G: 180,190) → LUT[1] = avg = (52, 185, 205)\n\n**Round 2, Box B:** G range=160 (largest) → split:\n- **Box B1:** p5,p6 (low G: 50,55) → LUT[2] = avg = (205, 52, 82)\n- **Box B2:** p3,p4 (high G: 200,210) → LUT[3] = avg = (105, 205, 32)\n\n**Result:** 4 palette entries that perfectly represent the 4 color clusters in the image."
+            },
+            {
+              "type": "callout",
+              "style": "exam",
+              "body": "**3-3-2 vs Median-Cut:**\n- **Quality:** Median-Cut better (adapts to image colors)\n- **Speed:** 3-3-2 faster (no image analysis needed)\n- **File size:** **SAME** — both produce 8-bit indexed images with a 256-entry LUT\n- **3-3-2 weakness:** If image is mostly blue sky, you only get 4 shades of blue — looks bad"
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "How many colors can a 24-bit image represent?",
+              "a": "256 × 256 × 256 = 16,777,216 (~16.7 million). Called true color. 8 bits per channel × 3 channels (R, G, B)."
+            },
+            {
+              "q": "What does the alpha channel store in a 32-bit image?",
+              "a": "Transparency. Alpha=255 = fully opaque, Alpha=0 = fully transparent. The color info is still 24-bit RGB — alpha is a 4th byte of metadata."
+            },
+            {
+              "q": "What is a Color Look-Up Table (LUT)?",
+              "a": "A table with up to 256 rows, each storing a full RGB color. An 8-bit indexed image stores only an index (row number) per pixel. The computer looks up the index to find the actual color."
+            },
+            {
+              "q": "How does an 8-bit indexed image save space?",
+              "a": "1 byte per pixel (index) instead of 3 bytes (RGB). 640×480 as 24-bit = 921,600 bytes. As 8-bit indexed = 307,200 + 768 palette ≈ 308 KB. About 3× smaller."
+            },
+            {
+              "q": "What is color cycling (palette animation)?",
+              "a": "Change what colors the LUT holds without touching any pixel data. Pixels pointing to modified rows instantly show the new color. Simple, fast animation technique."
+            },
+            {
+              "q": "In 3-3-2 quantization, what is the bit layout and why does Blue get fewer bits?",
+              "a": "RRRGGGBB. 3 bits R (8 levels), 3 bits G (8 levels), 2 bits B (4 levels) = 256 colors. Blue gets 2 bits because the eye is least sensitive to blue (fewer blue cones)."
+            },
+            {
+              "q": "Apply 3-3-2 quantization to R=200, G=130, B=50. What is the index?",
+              "a": "Rq=⌊200/32⌋=6 (110), Gq=⌊130/32⌋=4 (100), Bq=⌊50/64⌋=0 (00). Index = 11010000 = 208. LUT color = (6×32+16, 4×32+16, 0×64+32) = (208, 144, 32)."
+            },
+            {
+              "q": "Is the 3-3-2 palette fixed or image-dependent?",
+              "a": "Fixed. Same 256 colors regardless of image content. Fast but not adaptive — if your image is mostly blue sky, you only get 4 shades of blue."
+            },
+            {
+              "q": "Describe the Median-Cut algorithm step by step.",
+              "a": "1. All pixels in one 3D RGB box. 2. Find channel with largest range. 3. Sort by that channel. 4. Split at median. 5. Repeat on each box until 256 boxes. 6. Average R,G,B in each box = LUT entry."
+            },
+            {
+              "q": "Why is Median-Cut better quality than 3-3-2?",
+              "a": "It concentrates palette entries where the image actually needs them. If the image is mostly greens, most palette entries will be shades of green. 3-3-2 wastes entries on colors that don't appear."
+            },
+            {
+              "q": "Do 3-3-2 and Median-Cut produce different file sizes?",
+              "a": "No — same file size. Both produce 8-bit indexed images with a 256-entry LUT. Only visual quality differs."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "A pixel has R=200, G=130, B=50. Apply 3-3-2 quantization. What is the 8-bit index? What color does the LUT entry reconstruct to?",
+              "a": "$R_q = \\lfloor 200/32 \\rfloor = 6$ (binary 110)\n$G_q = \\lfloor 130/32 \\rfloor = 4$ (binary 100)\n$B_q = \\lfloor 50/64 \\rfloor = 0$ (binary 00)\n\nIndex = **11010000** = **208**\n\nLUT reconstruction:\n- $R = 6 \\times 32 + 16 = 208$\n- $G = 4 \\times 32 + 16 = 144$\n- $B = 0 \\times 64 + 32 = 32$\n\nLUT color: **(208, 144, 32)**",
+              "hint": "R and G: divide by 32. B: divide by 64. Pack as RRRGGGBB."
+            },
+            {
+              "type": "calculation",
+              "q": "A pixel has R=160, G=96, B=192. Apply 3-3-2 quantization. What is the 8-bit index (decimal)?",
+              "a": "$R_q = \\lfloor 160/32 \\rfloor = 5$ (binary 101)\n$G_q = \\lfloor 96/32 \\rfloor = 3$ (binary 011)\n$B_q = \\lfloor 192/64 \\rfloor = 3$ (binary 11)\n\nIndex = **10101111** = $128+32+8+4+2+1 = \\mathbf{175}$",
+              "hint": "RRRGGGBB format"
+            },
+            {
+              "type": "conceptual",
+              "q": "You have an image of a blue sky (almost all pixels are various shades of blue). Which palette method gives better results — 3-3-2 or Median-Cut? Why?",
+              "a": "**Median-Cut** gives far better results.\n\nWith 3-3-2, blue only gets 2 bits = **4 levels** total. An image dominated by blue will look badly posterized — only 4 distinct shades for the entire sky.\n\nWith Median-Cut, the algorithm analyzes the image, sees that blue has the largest range of variation, and allocates many palette entries to different shades of blue. The sky will look smooth.",
+              "hint": "How many shades of blue does 3-3-2 give you?"
+            }
+          ]
+        },
+        {
+          "id": "sec-2-4",
+          "number": "3.2",
+          "title": "Image File Formats & BMP Structure",
+          "content": [
+            {
+              "type": "definition",
+              "term": "GIF (Graphics Interchange Format)",
+              "body": "- **First** image format supported by web browsers\n- **Color depth:** 8-bit only (max 256 colors)\n- **Compression:** LZW (lossless)\n- **Best for:** Logos, icons, simple graphics with few colors\n- **Interlacing:** Image loads in **4 passes**, showing a rough version first that progressively sharpens\n- **GIF87a:** The original specification\n- **GIF89a:** Added **animation** (animated GIFs!), delay time control, and a transparency index"
+            },
+            {
+              "type": "definition",
+              "term": "JPEG (Joint Photographic Experts Group)",
+              "body": "- Most important current standard for image compression\n- **Lossy** — throws away information the human eye is least likely to notice\n- **Quality factor Q:** Higher Q = better quality + larger file. Lower Q = smaller file + artifacts\n- **Exam numbers from the lecture (forestfire image):**\n  - Q=10 → **1.5%** of original size\n  - Q=75 → **5.6%** of original size\n  - GIF version → **23%** of original size\n  - JPEG wins by a huge margin!\n- **Best for:** Photographs with smooth gradients\n- **Not good for:** Sharp edges, text, flat-color graphics — these get blurry 'ringing' artifacts"
+            },
+            {
+              "type": "definition",
+              "term": "PNG (Portable Network Graphics)",
+              "body": "- Created to **replace GIF** and extend it\n- **Lossless** — image perfectly preserved\n- **Color depth:** Up to 48 bits (vs GIF's 8 bits)\n- **Full alpha transparency** (vs GIF's single transparency index)\n- **Gamma correction:** Contains display info for correct colors across different monitors\n- **Progressive display:** Shows image gradually in **7 passes** through each 8×8 block"
+            },
+            {
+              "type": "definition",
+              "term": "TIFF (Tagged Image File Format)",
+              "body": "- Developed by Aldus Corporation in the 1980s, supported by Microsoft\n- **Key feature:** The **tag system** — tags are metadata describing how the image is stored\n- Supports 1-bit, grayscale, 8-bit, 24-bit — all in the same format using different tags\n- Originally lossless only; later added optional JPEG tag for lossy\n- Used in professional publishing and scanning"
+            },
+            {
+              "type": "definition",
+              "term": "BMP (Bitmap)",
+              "body": "- Developed by **Microsoft**, used in Windows applications\n- Usually **uncompressed** → high quality, very large files\n- Supports 1-bit, 8-bit, 24-bit, 32-bit color\n- **Critical:** Colors are stored as **B, G, R, A** (Blue first!) — reversed from RGB convention"
+            },
+            {
+              "type": "table",
+              "headers": ["Format", "Color Depth", "Compression", "Best For"],
+              "rows": [
+                ["GIF", "8-bit (256 colors)", "LZW (lossless)", "Animation, simple graphics"],
+                ["JPEG", "24-bit", "Lossy DCT", "Photographs (Q=75 → 5.6% size!)"],
+                ["PNG", "Up to 48-bit", "Lossless", "Web graphics, screenshots, text"],
+                ["TIFF", "1/8/24-bit", "Optional (tag-based)", "Professional/archival"],
+                ["BMP", "1/8/24/32-bit", "None (usually)", "Windows uncompressed (B,G,R,A order!)"]
+              ]
+            },
+            {
+              "type": "text",
+              "body": "**BMP File Structure** — 4 parts in order:\n\n**1. File Header (14 bytes):**\n- Identifier (2 bytes) — the letters \"BM\"\n- File size (4 bytes)\n- Reserved (4 bytes)\n- Bitmap data offset (4 bytes) — where pixel data starts\n\n**2. Info Header (40 bytes):**\n- Header size (4 bytes)\n- Image width (4 bytes), Image height (4 bytes)\n- Planes (2 bytes)\n- **Bits per pixel (2 bytes)** — tells you if 1-bit, 8-bit, 24-bit, etc.\n- Compression type (4 bytes)\n- Bitmap data size (4 bytes)\n- H-Resolution (4 bytes), V-Resolution (4 bytes)\n- Used colors (4 bytes), Important colors (4 bytes)\n\n**3. Color Table / Palette** (only for 8-bit images):\n256 entries × 4 bytes each = **1024 bytes**. Stored as **B, G, R, A** (not RGB!).\nFor 24-bit images, this section is empty.\n\n**4. Bitmap Data**: The actual pixel values, row by row."
+            },
+            {
+              "type": "text",
+              "body": "**BMP File Size Formulas:**\n\n**32-bit BMP (no palette):**\n$$\\text{Size} = 14 + 40 + (W \\times H \\times 4)$$\n\n**24-bit BMP (no palette):**\n$$\\text{Size} = 14 + 40 + (W \\times H \\times 3)$$\n\n**8-bit BMP (with palette):**\n$$\\text{Size} = 14 + 40 + 1024 + (W \\times H \\times 1)$$"
+            },
+            {
+              "type": "example",
+              "title": "BMP File Size — 640×480 Image",
+              "body": "**32-bit:** $14 + 40 + (640 \\times 480 \\times 4) = 54 + 1{,}228{,}800 = \\mathbf{1{,}228{,}854}$ bytes\n\n**8-bit:** $14 + 40 + 1{,}024 + (640 \\times 480 \\times 1) = 1{,}078 + 307{,}200 = \\mathbf{308{,}278}$ bytes\n\n**Ratio:** $1{,}228{,}854 \\div 308{,}278 \\approx \\mathbf{4 \\times}$ reduction\n\nThe theoretical pixel data ratio is exactly 4:1 (4 bytes/pixel → 1 byte/pixel). The 1024-byte palette is negligible for large images."
+            },
+            {
+              "type": "callout",
+              "style": "warning",
+              "body": "**BMP gotchas:**\n1. Colors stored as **B, G, R, A** — NOT R, G, B, A! This trips up many programmers reading BMP files.\n2. **32-bit BMP has NO palette section** — only file header + info header + pixel data.\n3. 24-bit BMP also has **no palette**."
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "What is the difference between lossless and lossy compression?",
+              "a": "Lossless: original perfectly reconstructed (PNG, GIF). Lossy: some info permanently lost, reconstruction is approximate (JPEG)."
+            },
+            {
+              "q": "What are the two GIF versions and what does GIF89a add?",
+              "a": "GIF87a: original. GIF89a: added animation support, delay time control, and a transparency index. GIF uses LZW compression (lossless), 8-bit color only."
+            },
+            {
+              "q": "What is GIF interlacing?",
+              "a": "The image loads in 4 passes — a rough low-res version appears first, then progressively sharpens. Useful for slow connections."
+            },
+            {
+              "q": "What are the JPEG quality factor numbers from the lecture?",
+              "a": "Forestfire image: Q=10 → 1.5% of original size; Q=75 → 5.6%; GIF version → 23%. JPEG (even at Q=75) is 4× smaller than GIF."
+            },
+            {
+              "q": "Why is JPEG bad for text and sharp edges?",
+              "a": "JPEG is lossy and optimized for smooth gradients. Sharp edges and text cause blurry 'ringing' artifacts because high-frequency detail is discarded."
+            },
+            {
+              "q": "How does PNG improve over GIF?",
+              "a": "PNG: up to 48-bit color (vs 8-bit), full alpha transparency (vs single transparency index), gamma correction, 7-pass progressive display. Still lossless."
+            },
+            {
+              "q": "What makes TIFF flexible?",
+              "a": "Its tag system. Tags describe how the image is stored. Same format can store 1-bit, grayscale, 8-bit, or 24-bit with different tags. Originally lossless, later added optional JPEG tag."
+            },
+            {
+              "q": "In what order does BMP store color bytes?",
+              "a": "B, G, R, A (Blue first!) — reversed from the usual RGB convention. This is a common gotcha when reading BMP files."
+            },
+            {
+              "q": "What are the 4 parts of a BMP file and their sizes?",
+              "a": "1. File Header: 14 bytes (ID 'BM', size, offset). 2. Info Header: 40 bytes (width, height, bits/pixel, etc). 3. Palette: 1024 bytes (only for 8-bit). 4. Pixel data."
+            },
+            {
+              "q": "What are the three BMP file size formulas?",
+              "a": "32-bit: 14+40+(W×H×4). 24-bit: 14+40+(W×H×3). 8-bit: 14+40+1024+(W×H×1)."
+            },
+            {
+              "q": "What is the total file size of a 640×480 32-bit BMP vs 8-bit BMP?",
+              "a": "32-bit: 1,228,854 bytes. 8-bit: 308,278 bytes. Ratio ≈ 4:1."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "Calculate the total file size of a $640 \\times 480$ 32-bit BMP image (with headers).",
+              "a": "File header = 14. Info header = 40. **No palette** for 32-bit. Pixel data = $640 \\times 480 \\times 4 = 1{,}228{,}800$.\n\nTotal = $14 + 40 + 1{,}228{,}800 = \\mathbf{1{,}228{,}854}$ bytes.",
+              "hint": "32-bit BMP has NO palette section"
+            },
+            {
+              "type": "calculation",
+              "q": "Calculate the total file size of a $640 \\times 480$ 8-bit BMP image (with headers and palette).",
+              "a": "File header = 14. Info header = 40. Palette = $256 \\times 4 = 1{,}024$. Pixel data = $640 \\times 480 \\times 1 = 307{,}200$.\n\nTotal = $14 + 40 + 1{,}024 + 307{,}200 = \\mathbf{308{,}278}$ bytes.",
+              "hint": "8-bit BMP has a 256-entry palette, each entry 4 bytes (BGRA order)"
+            },
+            {
+              "type": "calculation",
+              "q": "Calculate the file size of a $1024 \\times 768$ 24-bit BMP (with headers, no palette).",
+              "a": "File header = 14. Info header = 40. **No palette** for 24-bit. Pixel data = $1024 \\times 768 \\times 3 = 2{,}359{,}296$.\n\nTotal = $14 + 40 + 2{,}359{,}296 = \\mathbf{2{,}359{,}350}$ bytes.",
+              "hint": "24-bit = 3 bytes per pixel. No palette section."
+            },
+            {
+              "type": "conceptual",
+              "q": "Why is JPEG poor for screenshots and diagrams, while PNG is preferred?",
+              "a": "JPEG's lossy compression is optimized for **smooth gradients** in photographs. For screenshots and diagrams, which contain **sharp edges, text, and uniform color regions**, JPEG introduces visible **blocking artifacts** and blurriness.\n\nPNG uses **lossless compression** — every pixel is preserved exactly. For text and line art, PNG files are also often **smaller** than JPEG at equivalent quality.",
+              "hint": "Think about what visual information JPEG discards"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lecture-3",
+      "number": 3,
+      "title": "Color in Image and Video",
+      "chapter": "Chapter 4",
+      "color": "#5B8AF0",
+      "icon": "📊",
+      "sections": [
+        {
+          "id": "sec-3-1",
+          "number": "4.1.1–4.1.5",
+          "title": "Light, the Eye & Color Perception",
+          "content": [
+            {
+              "type": "text",
+              "body": "Light is an **electromagnetic wave**. What makes one color different from another is its **wavelength (λ)**.\n\nHumans can only see wavelengths from **~400 nm to ~700 nm** — the visible spectrum. Outside that range: below 400 nm = **ultraviolet** (invisible), above 700 nm = **infrared** (invisible)."
+            },
+            {
+              "type": "table",
+              "headers": ["Color", "Wavelength Range"],
+              "rows": [
+                ["Violet", "~400–450 nm"],
+                ["Blue", "~450–495 nm"],
+                ["Green", "~495–570 nm"],
+                ["Yellow", "~570–590 nm"],
+                ["Orange", "~590–620 nm"],
+                ["Red", "~620–700+ nm"]
+              ]
+            },
+            {
+              "type": "definition",
+              "term": "Spectral Power Distribution (SPD)",
+              "body": "$E(\\lambda)$ — a curve showing how much light (power) exists at each wavelength. Measured using a **spectrophotometer**.\n\n- **Laser:** single wavelength → one sharp spike\n- **Sunlight:** all wavelengths present → appears white\n- **Fluorescent lamp:** only specific wavelengths → colors look unnatural"
+            },
+            {
+              "type": "text",
+              "body": "The eye works like a camera — the lens focuses light onto the **retina**, which has two types of cells:\n\n**Rods (~120 million):** Work in **low light** (night). Grayscale only — no color. \"All cats are gray at night.\"\n\n**Cones (~6 million):** Work in **bright light** (day). Three types:\n- **R cones** — peak sensitivity ~560 nm (red/long)\n- **G cones** — peak sensitivity ~530 nm (green/medium)\n- **B cones** — peak sensitivity ~420 nm (blue/short)\n\nThis is why we use RGB — it matches the three cone types."
+            },
+            {
+              "type": "table",
+              "headers": ["", "Rods", "Cones"],
+              "rows": [
+                ["Count", "~120 million", "~6 million"],
+                ["Works in", "Low light (night)", "Bright light (day)"],
+                ["Color?", "No (grayscale only)", "Yes (3 types: R, G, B)"],
+                ["Detail", "Low", "High"]
+              ]
+            },
+            {
+              "type": "definition",
+              "term": "Luminous-Efficiency Function V(λ)",
+              "body": "The overall sensitivity of the eye — the sum of all three cone response curves. Peaks at **~555 nm (yellow-green)**.\n\nThe eye is most sensitive to yellow-green. A green laser appears much brighter than a red or blue one of the same power. This is why green gets the highest weight (0.587) in the YUV luminance formula."
+            },
+            {
+              "type": "text",
+              "body": "**The response equation:** When light $E(\\lambda)$ enters your eye, each cone produces:\n$$R = \\int E(\\lambda) \\cdot q_R(\\lambda)\\, d\\lambda, \\quad G = \\int E(\\lambda) \\cdot q_G(\\lambda)\\, d\\lambda, \\quad B = \\int E(\\lambda) \\cdot q_B(\\lambda)\\, d\\lambda$$\nAt each wavelength: multiply light power by cone sensitivity, then sum across all wavelengths.\n\nYou won't compute integrals on the exam — just understand the concept: **light × eye sensitivity = perceived color.**"
+            },
+            {
+              "type": "definition",
+              "term": "Image Formation: C(λ) = E(λ) × S(λ)",
+              "body": "Three components form what you see:\n1. **Illuminant E(λ):** the light source (sun, lamp)\n2. **Surface reflectance S(λ):** how much each surface reflects at each wavelength (0=absorbs all, 1=reflects all)\n3. **Color signal C(λ) = E(λ) × S(λ):** the light that actually reaches your eye\n\nThen the eye processes C(λ) through its cones → three numbers R, G, B."
+            },
+            {
+              "type": "example",
+              "title": "Image Formation — Three Key Examples",
+              "body": "**Example 1 — Red apple under sunlight:**\n- E(λ): equal power at all wavelengths (white light)\n- S(λ): apple reflects 600–700 nm (red), absorbs 400–550 nm (blue/green)\n- C(λ): strong in red range, weak in blue/green\n- Result: R cones fire strongly, G and B weakly → **you see red** ✓\n\n**Example 2 — Same red apple under a blue lamp:**\n- E(λ): only has power around 400–480 nm (blue)\n- S(λ): apple absorbs blue wavelengths\n- C(λ) = E(λ)×S(λ): almost zero everywhere!\n- Result: almost no light reaches your eye → **apple looks nearly black** ✗\n\n**Example 3 — White paper under any light:**\n- S(λ) ≈ 1 everywhere (reflects all wavelengths)\n- C(λ) = E(λ)×1 ≈ E(λ)\n- Result: paper takes on the color of the light source — red light → red paper"
+            },
+            {
+              "type": "callout",
+              "style": "exam",
+              "body": "The same object can look completely different under different lighting — because E(λ) changes. The surface S(λ) doesn't change; only the illuminant does. This is why photographers care so much about lighting."
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "What is light? What makes one color different from another?",
+              "a": "Light is a **wave**. What makes color different is the **wavelength (λ)** — each color corresponds to a different wavelength range."
+            },
+            {
+              "q": "Can you see all light? What range can you see?",
+              "a": "❌ No. You can only see **~400–700 nm** — the visible spectrum. Below 400 nm = ultraviolet (invisible). Above 700 nm = infrared (invisible)."
+            },
+            {
+              "q": "Do colors have exact wavelength numbers? What's the pattern?",
+              "a": "❌ No — colors have **ranges**. As wavelength increases the color goes: **blue → green → red**. Blue = shorter wavelengths, green = middle, red = longer wavelengths."
+            },
+            {
+              "q": "What is E(λ)? Who measures it?",
+              "a": "E(λ) is a **graph of light energy vs wavelength** — it shows how much light exists at each wavelength. It is measured by a **spectrophotometer** (a device)."
+            },
+            {
+              "q": "Why do different light sources look different? Give 3 examples.",
+              "a": "Because their **E(λ) is different**.\n- Laser → one wavelength → one spike\n- Sun → all wavelengths → looks white\n- Fluorescent → missing wavelengths → colors look weird/unnatural"
+            },
+            {
+              "q": "What's inside the eye? What do rods do?",
+              "a": "The eye has **rods** and **cones**. Rods work in the **dark**, detect only brightness (no color) — because cones don't work in low light."
+            },
+            {
+              "q": "What do cones do? Why do we use RGB specifically?",
+              "a": "Cones work in **bright light** and detect **color**. We use RGB because we have **3 types of cones**: R cone (likes long wavelengths), G cone (medium), B cone (short). RGB matches our biology."
+            },
+            {
+              "q": "What does 'peak sensitivity' of a cone mean?",
+              "a": "The wavelength where that cone is **most sensitive** — it responds most strongly to light at that wavelength. R ≈ 560 nm, G ≈ 530 nm, B ≈ 420 nm."
+            },
+            {
+              "q": "What do the cones actually produce? What happens next?",
+              "a": "Cones produce **3 signals → R, G, B**. Then the brain combines them → **you see color**. The eye doesn't consciously calculate — but physically, it's doing exactly that."
+            },
+            {
+              "q": "What is V(λ)? What does it tell us practically?",
+              "a": "V(λ) = overall sensitivity of the eye across wavelengths. It peaks at **~555 nm (yellow-green)**. Meaning: green looks the **brightest** — same wattage ≠ same perceived brightness."
+            },
+            {
+              "q": "Do you need to calculate the cone response integrals on the exam?",
+              "a": "❌ NO. Just understand the concept: **Light E(λ) × cone sensitivity → R, G, B signals**. The formula describes what physically happens, nothing more."
+            },
+            {
+              "q": "Does color come only from the object?",
+              "a": "❌ NO. Color comes from **three things**:\n1. **E(λ)** — the light source\n2. **S(λ)** — the object's reflectance\n3. **C(λ) = E(λ) × S(λ)** — the light that actually reaches your eye"
+            },
+            {
+              "q": "Why does the same object look different under different lighting?",
+              "a": "The **object doesn't change** — S(λ) stays the same. But the **light E(λ) changes**. So C(λ) = E×S changes → your eye sees a different color.\n\nColor = interaction between **light + object + eye**."
+            }
+          ],
+          "problems": [
+            {
+              "type": "conceptual",
+              "q": "Why does the human visual system use three cone types (R, G, B)? Why not just one?",
+              "a": "One cone type can only measure **intensity** — it cannot distinguish colors. A red light at low intensity and a green light at high intensity might produce the same response in a single cone.\n\nWith **three cone types** responding to different wavelength ranges, the brain computes color by comparing their relative outputs. This is **trichromacy** — the basis of all color display technology.",
+              "hint": "What info does one detector give vs three detectors?"
+            },
+            {
+              "type": "conceptual",
+              "q": "Why does a white piece of paper look white under sunlight but reddish under a red lamp? Use the image formation equation.",
+              "a": "White paper has $S(\\lambda) \\approx 1$ at all wavelengths — it reflects everything.\n\nUnder sunlight: $C(\\lambda) = E_{sun}(\\lambda) \\times 1 \\approx E_{sun}(\\lambda)$ — even across all wavelengths → looks white.\n\nUnder red lamp: $C(\\lambda) = E_{red}(\\lambda) \\times 1 \\approx E_{red}(\\lambda)$ — only has power at long wavelengths → looks red.\n\nThe paper takes on whatever color the illuminant is.",
+              "hint": "S(λ) = 1 everywhere for white paper"
+            },
+            {
+              "type": "conceptual",
+              "q": "Why do we say the eye is most sensitive to yellow-green? What are two practical consequences?",
+              "a": "$V(\\lambda)$ peaks at **555 nm** (yellow-green). Consequences:\n\n1. A yellow-green LED appears brighter than red or blue of the same wattage\n2. In YUV: green gets weight **0.587** (highest). Pure green has Y≈150 while pure blue has Y≈29 — green looks much brighter.",
+              "hint": "Look at the YUV formula weights"
+            }
+          ]
+        },
+        {
+          "id": "sec-3-2",
+          "number": "4.1.7–4.1.12",
+          "title": "CIE Color Science & Chromaticity",
+          "content": [
+            {
+              "type": "text",
+              "body": "**The Colorimeter Experiment:** You show a person a target color on one side of a screen. On the other side: three adjustable lights — Red, Green, Blue (the **color primaries**). The person adjusts brightness of each until the mix **matches** the target.\n\nBy repeating this for every wavelength across 400–700 nm, you get three curves: $\\bar{r}(\\lambda)$, $\\bar{g}(\\lambda)$, $\\bar{b}(\\lambda)$ — the **CIE RGB color-matching functions**."
+            },
+            {
+              "type": "definition",
+              "term": "Negative Color-Matching Values",
+              "body": "For some wavelengths (especially blue-green, ~500 nm), you **cannot** match the target color by mixing positive R, G, B amounts. The only way to get a match is to add some primary light to the **target side**.\n\nMathematically, this records as a **negative value** in the matching function.\n\n**Conceptual example — matching a vivid cyan at 500 nm:**\n- You mix Blue + Green primaries. Close, but not vivid enough.\n- More Blue = too bluish. More Green = too greenish.\n- **Solution:** add a little Red light to the TARGET side. Now both sides match.\n- In the math: $\\bar{r}(500\\text{ nm})$ is **negative**.\n\n**Practical meaning:** No RGB display can show every possible color. Some very saturated colors are physically impossible to produce by mixing R, G, B light."
+            },
+            {
+              "type": "definition",
+              "term": "CIE XYZ System",
+              "body": "Created to eliminate negative values. Uses **fictitious primaries** (not real lights) that produce $\\bar{x}(\\lambda)$, $\\bar{y}(\\lambda)$, $\\bar{z}(\\lambda)$ with only **positive values** everywhere.\n\n**Key fact:** $\\bar{y}(\\lambda)$ was deliberately set equal to $V(\\lambda)$ — so the **Y tristimulus value directly = luminance (brightness)**.\n\nFor light with SPD $E(\\lambda)$:\n$$X = \\int E(\\lambda)\\,\\bar{x}(\\lambda)\\,d\\lambda, \\quad Y = \\int E(\\lambda)\\,\\bar{y}(\\lambda)\\,d\\lambda, \\quad Z = \\int E(\\lambda)\\,\\bar{z}(\\lambda)\\,d\\lambda$$"
+            },
+            {
+              "type": "definition",
+              "term": "Chromaticity Coordinates",
+              "body": "X, Y, Z is 3D (includes brightness). To get just color (no brightness), divide by the total:\n$$x = \\frac{X}{X+Y+Z}, \\quad y = \\frac{Y}{X+Y+Z}, \\quad z = \\frac{Z}{X+Y+Z}$$\nSince $x+y+z=1$ always, $z$ is redundant: $z = 1-x-y$. Only **x and y** are needed to plot any color."
+            },
+            {
+              "type": "example",
+              "title": "Chromaticity Calculations — Three Worked Examples",
+              "body": "**Example 1 — Basic:** X=30, Y=40, Z=10. Total=80.\n$$x = 30/80 = 0.375, \\quad y = 40/80 = 0.500, \\quad z = 10/80 = 0.125$$\nCheck: $0.375 + 0.500 + 0.125 = 1.0$ ✓\n\n**Example 2 — White point:** X=Y=Z=100. Total=300.\n$$x = 100/300 = 1/3 \\approx 0.333, \\quad y = 1/3 \\approx 0.333$$\n**White point is always at (1/3, 1/3).** For equi-energy white, X=Y=Z, so all three coordinates = 1/3.\n\n**Example 3 — Reddish color:** X=60, Y=30, Z=10. Total=100.\n$$x = 0.60, \\quad y = 0.30, \\quad z = 1 - 0.6 - 0.3 = 0.1$$\nx=0.6 is high → lots of X, correlates with red. Far from white point (0.333, 0.333) → fairly saturated reddish color."
+            },
+            {
+              "type": "text",
+              "body": "**Reading the Chromaticity Diagram:**\n- **Horseshoe boundary (spectrum locus):** pure spectral colors — most saturated possible\n- **White point (~1/3, 1/3):** center. Colors near it are grayish/desaturated.\n- **Saturation:** how close to the boundary (vivid) vs white point (washed out)\n- **Mixing two colors:** result lies on the **straight line** between them\n\n**Mixing example:** Color A at (0.2, 0.3) + Color B at (0.5, 0.4), equal amounts:\n$$x = (0.2+0.5)/2 = 0.35, \\quad y = (0.3+0.4)/2 = 0.35$$\nResult (0.35, 0.35) is close to the white point → fairly desaturated.\n\n**Dominant wavelength:** Draw a line from the white point through your color point and extend it to the horseshoe. Where it hits = the pure spectral color your color most resembles."
+            },
+            {
+              "type": "text",
+              "body": "**Gamut:** On the chromaticity diagram, a display's three primaries form a **triangle**. Everything inside = colors the display CAN show. Everything outside = **out of gamut** — you'd need a **negative** amount of one primary, which is impossible.\n\n**Example — monitor primaries:**\n- R: (0.64, 0.33), G: (0.30, 0.60), B: (0.15, 0.06)\n- Color at (0.35, 0.40) → inside triangle → **can display** ✓\n- Color at (0.10, 0.75) → outside triangle → **out of gamut** ✗\n\n**Handling out-of-gamut:** Find the closest in-gamut color by drawing a line from the out-of-gamut color to the white point — use the intersection with the triangle boundary."
+            },
+            {
+              "type": "text",
+              "body": "**XYZ → RGB Transform (SMPTE standard):**\n$$\\begin{pmatrix}X\\\\Y\\\\Z\\end{pmatrix} = \\begin{pmatrix}0.3935 & 0.3653 & 0.1916\\\\0.2124 & 0.7011 & 0.0866\\\\0.0187 & 0.1119 & 0.9582\\end{pmatrix}\\begin{pmatrix}R\\\\G\\\\B\\end{pmatrix}$$\nTo go XYZ→RGB, invert this matrix. **You won't memorize these numbers.** Just know: if any resulting RGB value is **negative** → that color is **out of gamut**.\n\n**Example:** After XYZ→RGB conversion you get R=0.8, G=−0.1, B=0.3. G is negative → **out of gamut** → must approximate with closest displayable color."
+            },
+            {
+              "type": "callout",
+              "style": "exam",
+              "body": "**Grassman's Law:** Color matching is **linear**. If color1 matches mix1 and color2 matches mix2, then (color1+color2) matches (mix1+mix2). This linearity is what makes matrix transforms valid for color conversion.\n\n**Additive color:** self-luminous sources (screens, projectors). R+G=Yellow. R+G+B=White."
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "Describe the colorimeter experiment.",
+              "a": "A person adjusts the brightness of three primary lights (R, G, B) to match a target color. Repeated for every wavelength → produces color-matching functions r̄(λ), ḡ(λ), b̄(λ)."
+            },
+            {
+              "q": "Why do the color-matching functions go negative?",
+              "a": "Some saturated colors (especially blue-green at ~500 nm) can't be matched by positive R+G+B. The only match requires adding light to the TARGET side — recorded as negative in the function."
+            },
+            {
+              "q": "Give the conceptual example of negative color matching (cyan at 500 nm).",
+              "a": "Mixing B+G primaries gets close but not vivid enough. Adding more B = too blue, more G = too green. Solution: add a little Red to the TARGET. This records as r̄(500 nm) < 0."
+            },
+            {
+              "q": "Why did CIE create XYZ? What is special about Y?",
+              "a": "To eliminate negatives. XYZ uses fictitious primaries → all positive values. ȳ(λ) was set equal to V(λ), so Y = luminance (brightness) directly."
+            },
+            {
+              "q": "What are chromaticity coordinates? Why only x and y?",
+              "a": "x=X/(X+Y+Z), y=Y/(X+Y+Z), z=Z/(X+Y+Z). They remove brightness, leaving color only. Since x+y+z=1, z=1-x-y is redundant. Only x and y needed."
+            },
+            {
+              "q": "Where is the white point? What is the X=Y=Z=100 example?",
+              "a": "White point at (1/3, 1/3). If X=Y=Z=100: total=300, x=y=z=1/3=0.333. Equi-energy white light always gives x=y=1/3."
+            },
+            {
+              "q": "Given X=60, Y=30, Z=10, compute x and y. What type of color?",
+              "a": "Total=100. x=0.60, y=0.30, z=0.10. x=0.6 is high (red direction). Far from white point (0.333,0.333) → saturated reddish color."
+            },
+            {
+              "q": "How do you mix two colors on the chromaticity diagram?",
+              "a": "The result lies on the straight line connecting them. Equal mix = midpoint. Unequal = closer to whichever was used more. Example: A(0.2,0.3)+B(0.5,0.4) equal mix → (0.35,0.35)."
+            },
+            {
+              "q": "What is a gamut? How do you identify out-of-gamut colors?",
+              "a": "The triangle formed by a display's 3 primaries on the chromaticity diagram. Colors inside = displayable. Colors outside = out of gamut. After XYZ→RGB, any negative RGB value = out of gamut."
+            },
+            {
+              "q": "What is Grassman's Law and why does it matter?",
+              "a": "Color matching is linear: (color1+color2) matches (mix1+mix2). This linearity is what makes matrix math valid for color space conversions."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "Given X=30, Y=40, Z=10, compute chromaticity coordinates x, y, z.",
+              "a": "Total = $30+40+10 = 80$.\n$x = 30/80 = \\mathbf{0.375}$, $y = 40/80 = \\mathbf{0.500}$, $z = 10/80 = \\mathbf{0.125}$.\nCheck: $0.375+0.500+0.125 = 1.0$ ✓",
+              "hint": "x = X/(X+Y+Z), then z = 1-x-y"
+            },
+            {
+              "type": "calculation",
+              "q": "Given X=45, Y=45, Z=45. Compute x and y. What kind of light is this?",
+              "a": "Total = 135. $x = 45/135 = \\mathbf{1/3 \\approx 0.333}$, $y = 1/3 \\approx 0.333$.\n\nX=Y=Z → **equi-energy white point** at (1/3, 1/3).",
+              "hint": "When X=Y=Z, all chromaticity coords are equal"
+            },
+            {
+              "type": "calculation",
+              "q": "Given X=60, Y=30, Z=10. Compute x, y. Is this a saturated or desaturated color? Red or blue direction?",
+              "a": "Total = 100. $x = 0.60$, $y = 0.30$, $z = 0.10$.\n\nFar from white point (0.333, 0.333) → **saturated**. High x → **reddish direction**.",
+              "hint": "Compare to white point (0.333, 0.333)"
+            },
+            {
+              "type": "calculation",
+              "q": "Color A is at (0.2, 0.3) and Color B is at (0.5, 0.4) on the chromaticity diagram. You mix them in equal amounts. What is the resulting chromaticity point?",
+              "a": "Equal mix = midpoint:\n$x = (0.2+0.5)/2 = \\mathbf{0.35}$, $y = (0.3+0.4)/2 = \\mathbf{0.35}$.\n\nResult at (0.35, 0.35) — close to white point (0.333, 0.333) → fairly desaturated.",
+              "hint": "Equal mix = midpoint of the line connecting the two colors"
+            }
+          ]
+        },
+        {
+          "id": "sec-3-3",
+          "number": "4.1.15 & 4.3",
+          "title": "Color Spaces: RGB, CMY, HSL, YUV, YCbCr",
+          "content": [
+            {
+              "type": "text",
+              "body": "**Additive color (RGB):** Mixing light. Used in screens/projectors. Start from black — adding light adds color.\n- R+G = Yellow\n- R+B = Magenta\n- G+B = Cyan\n- R+G+B = White\n\n**Subtractive color (CMY):** Mixing ink/pigments. Used in printing. Start from white paper — adding ink removes color.\n- C+M = Blue, C+Y = Green, M+Y = Red\n- C+M+Y = Black (in theory — in practice printers add real Black ink = CMYK)"
+            },
+            {
+              "type": "definition",
+              "term": "CMY Color Model",
+              "body": "Cyan, Magenta, Yellow. The inverse of RGB:\n$$C = 1-R, \\quad M = 1-G, \\quad Y_c = 1-B \\quad (R,G,B \\in [0,1])$$\nCyan ink **absorbs red**, Magenta ink **absorbs green**, Yellow ink **absorbs blue**."
+            },
+            {
+              "type": "example",
+              "title": "CMY Worked Examples",
+              "body": "**Pure Red** (R=1, G=0, B=0): C=0, M=1, Y=1\nMagenta ink + Yellow ink = removes green and blue → only red shows. ✓\n\n**Teal** (R=0, G=0.5, B=1): C=1, M=0.5, Y=0\nFull cyan, half magenta, no yellow.\n\n**White** (R=1, G=1, B=1): C=0, M=0, Y=0\nNo ink at all → white paper shows through. ✓\n\n**Black** (R=0, G=0, B=0): C=1, M=1, Y=1\nMaximum all three inks → black. (Real printers add K=black ink for better quality = CMYK) ✓"
+            },
+            {
+              "type": "definition",
+              "term": "HSL / HSV / HSI",
+              "body": "More **intuitive** for humans than RGB:\n\n**H = Hue** (color type, angle 0°–360° on color wheel):\n- 0° = Red\n- 60° = Yellow\n- 120° = Green\n- 180° = Cyan\n- 240° = Blue\n- 300° = Magenta\n- 360° = Red again\n\n**S = Saturation:** Vividness. High = vivid color. Low = grayish. Zero = pure gray.\n\n**L/V/I = Lightness/Value/Intensity:** Brightness. Different names = slightly different formulas, same concept."
+            },
+            {
+              "type": "definition",
+              "term": "YUV Color Space",
+              "body": "Separates brightness from color. Why? **Backwards compatibility** (B&W TVs show Y only) and **compression** (eye is less sensitive to color than brightness).\n\n$$Y = 0.299R + 0.587G + 0.114B$$\n$$U = B - Y \\quad (\\text{blue difference})$$\n$$V = R - Y \\quad (\\text{red difference})$$\n\n- Green gets weight **0.587** (highest) — eye most sensitive to green\n- Blue gets weight **0.114** (lowest) — eye least sensitive to blue\n- Weights sum to 1.0 → for gray (R=G=B=k), Y=k exactly\n- For gray pixels: U=V=**0** (no color offset)"
+            },
+            {
+              "type": "example",
+              "title": "YUV — Four Worked Examples",
+              "body": "**Example 1 — Reddish color** R=200, G=100, B=50:\nY = 0.299×200 + 0.587×100 + 0.114×50 = 59.8 + 58.7 + 5.7 = **124.2**\nU = 50 − 124.2 = **−74.2** (less blue than average)\nV = 200 − 124.2 = **75.8** (more red than average) ✓\n\n**Example 2 — Gray** R=G=B=150:\nY = 150 × (0.299+0.587+0.114) = 150 × 1.0 = **150**\nU = 0, V = 0 (no color) ✓\n\n**Example 3 — Pure blue** R=0, G=0, B=255:\nY = 0.114×255 = **29.07** ← **very dark!** Blue looks dim to the eye\nU = 255 − 29.07 = **225.93** (lots of blue)\nV = 0 − 29.07 = **−29.07** (no red)\n\n**Example 4 — Pure green** R=0, G=255, B=0:\nY = 0.587×255 = **149.685** ← much brighter than blue!\nU = 0 − 149.685 = **−149.685**\nV = 0 − 149.685 = **−149.685**"
+            },
+            {
+              "type": "definition",
+              "term": "YCbCr (Rec. 601)",
+              "body": "Scaled version of YUV used in **JPEG** and **MPEG**. R,G,B in [0,1]:\n$$Y = 65.481R + 128.553G + 24.966B + 16$$\n$$C_b = -37.797R - 74.203G + 112.000B + 128$$\n$$C_r = 112.000R - 93.786G - 18.214B + 128$$\n\n**Ranges:**\n- Y: **16 (black) to 235 (white)** — NOT 0 and 255!\n- Cb, Cr: centered at **128** (=no color offset). Above 128 = more, below = less.\n- For gray (R=G=B): Cb=128, Cr=128 exactly."
+            },
+            {
+              "type": "example",
+              "title": "YCbCr — Four Worked Examples",
+              "body": "**Example 1 — Reddish-orange** (R=0.8, G=0.4, B=0.2):\nY = 65.481×0.8 + 128.553×0.4 + 24.966×0.2 + 16 = 52.4+51.4+5.0+16 = **124.8**\nCb = −37.797×0.8 − 74.203×0.4 + 112×0.2 + 128 = −30.2−29.7+22.4+128 = **90.5** (<128: less blue)\nCr = 112×0.8 − 93.786×0.4 − 18.214×0.2 + 128 = 89.6−37.5−3.6+128 = **176.4** (>128: more red) ✓\n\n**Example 2 — Pure white** (R=G=B=1):\nY = 65.481+128.553+24.966+16 = **235** ✓\nCb = −37.797−74.203+112+128 = **128** (neutral)\nCr = 112−93.786−18.214+128 = **128** (neutral) ✓\n\n**Example 3 — Pure black** (R=G=B=0):\nY = 0+0+0+16 = **16** ✓\nCb = 0+0+0+128 = **128**, Cr = 0+0+0+128 = **128** ✓\n\n**Example 4 — Pure red** (R=1, G=0, B=0):\nY = 65.481+0+0+16 = **81.5** (medium-dark)\nCb = −37.797+0+0+128 = **90.2** (<128: less blue)\nCr = 112+0+0+128 = **240.0** (maximum red!) ✓"
+            },
+            {
+              "type": "callout",
+              "style": "exam",
+              "body": "**Why JPEG converts to YCbCr first:** The eye is much more sensitive to brightness (Y) than color (Cb, Cr). JPEG can reduce Cb and Cr resolution by **half in each direction** (chroma subsampling) without people noticing. This is a major reason for JPEG's high compression ratios.\n\n**Color model summary:**\n- RGB: displays/cameras (additive)\n- CMY: printing (subtractive, C=1-R, M=1-G, Y=1-B)\n- HSL/HSV: intuitive editing (hue 0-360°, saturation, lightness)\n- XYZ: CIE standard, Y=luminance\n- YUV: analog TV\n- YCbCr: JPEG/MPEG (Y: 16-235, Cb/Cr: centered at 128)"
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "What is additive vs subtractive color?",
+              "a": "Additive (RGB): mixing light on screens. R+G=Yellow, R+G+B=White. Subtractive (CMY): mixing ink on paper. C+M+Y=Black. Start from white, add ink to remove color."
+            },
+            {
+              "q": "What is the CMY formula and what does each ink absorb?",
+              "a": "C=1-R, M=1-G, Y=1-B (R,G,B in [0,1]). Cyan absorbs red. Magenta absorbs green. Yellow absorbs blue."
+            },
+            {
+              "q": "Convert pure red (R=1,G=0,B=0) to CMY. Explain why.",
+              "a": "C=0, M=1, Y=1. Magenta ink removes green, Yellow ink removes blue → only red remains. No Cyan needed (cyan would remove red!)."
+            },
+            {
+              "q": "What are the hue angles for each color in HSL?",
+              "a": "0°=Red, 60°=Yellow, 120°=Green, 180°=Cyan, 240°=Blue, 300°=Magenta, 360°=Red again."
+            },
+            {
+              "q": "What do H, S, L mean?",
+              "a": "H=Hue (color type, 0-360°). S=Saturation (vividness, 0=gray to 1=vivid). L=Lightness (0=black to 1=white)."
+            },
+            {
+              "q": "Why does YUV separate Y from UV? Two reasons.",
+              "a": "1. Backwards compatibility: B&W TVs only show Y channel. 2. Compression: eye is less sensitive to color (UV) than brightness (Y), so UV can be compressed more."
+            },
+            {
+              "q": "What are the YUV formulas and what do the weights mean?",
+              "a": "Y=0.299R+0.587G+0.114B. U=B-Y. V=R-Y. Green gets 0.587 (eye most sensitive). Blue gets 0.114 (eye least sensitive). Weights sum to 1.0 → gray gives Y=gray value."
+            },
+            {
+              "q": "Convert pure blue (R=0, G=0, B=255) to YUV. Why is Y so low?",
+              "a": "Y=0.114×255=29.07. U=225.93. V=−29.07. Y is very low because the eye is least sensitive to blue (weight 0.114). Pure blue looks very dark to the human eye."
+            },
+            {
+              "q": "In YCbCr (Rec. 601), what are the Y, Cb, Cr values for pure white? Pure black?",
+              "a": "White (R=G=B=1): Y=235, Cb=128, Cr=128. Black (R=G=B=0): Y=16, Cb=128, Cr=128. Black is Y=16 (NOT 0), white is Y=235 (NOT 255)."
+            },
+            {
+              "q": "What is chroma subsampling and why does it work?",
+              "a": "Reducing Cb and Cr resolution by half in each direction (keeping full Y resolution). Works because the eye is far less sensitive to color detail than brightness detail. Major reason JPEG achieves high compression."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "Convert R=200, G=100, B=50 to YUV. Interpret the sign of U and V.",
+              "a": "$Y = 0.299 \\times 200 + 0.587 \\times 100 + 0.114 \\times 50 = 59.8 + 58.7 + 5.7 = \\mathbf{124.2}$\n\n$U = 50 - 124.2 = \\mathbf{-74.2}$ (negative = less blue than neutral gray)\n\n$V = 200 - 124.2 = \\mathbf{75.8}$ (positive = more red than neutral gray)\n\nMakes sense: our pixel is reddish (R=200 >> B=50).",
+              "hint": "Y = 0.299R + 0.587G + 0.114B, then U=B-Y, V=R-Y"
+            },
+            {
+              "type": "calculation",
+              "q": "Convert R=0, G=0, B=255 (pure blue) to YUV. Why is Y surprisingly low?",
+              "a": "$Y = 0.299 \\times 0 + 0.587 \\times 0 + 0.114 \\times 255 = \\mathbf{29.07}$\n\n$U = 255 - 29.07 = \\mathbf{225.93}$\n\n$V = 0 - 29.07 = \\mathbf{-29.07}$\n\nY=29.07 is very low because **the eye is least sensitive to blue** (weight only 0.114). Pure blue appears nearly dark to the human visual system.",
+              "hint": "Blue weight in Y formula is 0.114 — the smallest"
+            },
+            {
+              "type": "calculation",
+              "q": "Convert R=0, G=255, B=0 (pure green) to YUV. Compare Y to pure blue.",
+              "a": "$Y = 0.587 \\times 255 = \\mathbf{149.685}$\n\n$U = 0 - 149.685 = \\mathbf{-149.685}$\n\n$V = 0 - 149.685 = \\mathbf{-149.685}$\n\nY=149.685 vs Y=29.07 for blue. **Green appears ~5× brighter than blue** to the eye — this is why green dominates the Y formula.",
+              "hint": "Green weight is 0.587, the largest"
+            },
+            {
+              "type": "calculation",
+              "q": "Convert R=1.0, G=0.0, B=0.0 (pure red) to CMY. Explain which inks are used and why.",
+              "a": "$C = 1-1 = \\mathbf{0}$, $M = 1-0 = \\mathbf{1}$, $Y_c = 1-0 = \\mathbf{1}$\n\nMagenta ink + Yellow ink, no Cyan.\n- Magenta absorbs green → removes green\n- Yellow absorbs blue → removes blue\n- What's left = red ✓\n\nCyan would absorb red — exactly what we DON'T want.",
+              "hint": "C=1-R, M=1-G, Y=1-B. Think about what each ink absorbs."
+            },
+            {
+              "type": "calculation",
+              "q": "Convert R=1, G=0, B=0 (pure red) to YCbCr (Rec. 601). What do the Cb and Cr values tell you?",
+              "a": "$Y = 65.481 \\times 1 + 0 + 0 + 16 = \\mathbf{81.5}$\n\n$C_b = -37.797 \\times 1 + 0 + 0 + 128 = \\mathbf{90.2}$ (<128: less blue than neutral)\n\n$C_r = 112 \\times 1 + 0 + 0 + 128 = \\mathbf{240}$ (maximum red!)\n\nY=81.5 is medium-dark (red isn't very bright to the eye). Cr=240 is near maximum (pure red).",
+              "hint": "Cb/Cr are centered at 128. Above 128 = more of that color."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lecture-5",
+      "number": 5,
+      "title": "Lossless Compression Algorithms",
+      "chapter": "Chapter 7",
+      "color": "#7BCB8E",
+      "icon": "🗜️",
+      "sections": [
+        {
+          "id": "sec-5-1",
+          "number": "7.1–7.2",
+          "title": "Compression Fundamentals & Entropy",
+          "content": [
+            {
+              "type": "definition",
+              "term": "Compression",
+              "body": "The process of reducing the total number of bits needed to represent information. You have original data → run through an **encoder** → smaller representation → later a **decoder** reconstructs it."
+            },
+            {
+              "type": "text",
+              "body": "**Lossless compression:** The decoder can perfectly reconstruct the original data — every single bit is identical.\n\n**Lossy compression:** Some information is permanently lost. The decoded data is only an approximation. Lecture 5 focuses entirely on **lossless** techniques."
+            },
+            {
+              "type": "math",
+              "label": "Compression Ratio",
+              "expression": "CR = \\frac{B_0}{B_1}"
+            },
+            {
+              "type": "text",
+              "body": "Where $B_0$ = bits **before** compression, $B_1$ = bits **after** compression.\n\n- Ratio of 2.0 → compressed file is half the original size\n- Ratio of 1.0 → no compression happened at all\n- Ratio < 1.0 → the \"compressed\" file is actually **bigger** (bad!)"
+            },
+            {
+              "type": "definition",
+              "term": "Self-Information",
+              "body": "If a symbol $s_i$ has probability $p_i$, the amount of information it carries is $I(s_i) = \\log_2(1/p_i)$.\n\n**Intuition:** A **rare** symbol is surprising — it carries **more** information. A **common** symbol is expected — it carries **less** information."
+            },
+            {
+              "type": "example",
+              "title": "Self-Information Values",
+              "body": "- $p = 0.5$ → $I = \\log_2(1/0.5) = \\log_2(2) = \\mathbf{1}$ bit\n- $p = 0.25$ → $I = \\log_2(1/0.25) = \\log_2(4) = \\mathbf{2}$ bits\n- $p = 0.125$ → $I = \\log_2(8) = \\mathbf{3}$ bits\n\nEvery time the probability **halves**, the information goes up by **1 bit**."
+            },
+            {
+              "type": "definition",
+              "term": "Entropy (H)",
+              "body": "The **average** information per symbol across the entire source:\n$$H(S) = \\sum_i p_i \\log_2(1/p_i) = -\\sum_i p_i \\log_2(p_i)$$\nEntropy is the **theoretical minimum** average bits per symbol. No lossless compression can ever do better."
+            },
+            {
+              "type": "example",
+              "title": "Entropy: Two Key Cases",
+              "body": "**Case 1 — Uniform (worst for compression):**\nAn image where all 256 gray levels are equally likely ($p = 1/256$):\n$$H = \\log_2(256) = \\mathbf{8 \\text{ bits/symbol}}$$\nYou need a full 8 bits per pixel — **cannot compress at all**. When everything is equally likely, there is no pattern to exploit.\n\n**Case 2 — Skewed (good for compression):**\nAn image with only two values where most pixels are one value → entropy ≈ **0.92 bits/symbol**. Far less than 8 bits — lots of compression potential."
+            },
+            {
+              "type": "callout",
+              "style": "exam",
+              "body": "**Key inequality:** $H \\leq \\bar{l} < H + 1$. Entropy is the lower bound. Huffman gets close but can never beat it. A memoryless source has each symbol independent of previous symbols."
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "What is compression?",
+              "a": "The process of reducing the total number of bits needed to represent information. Original data → encoder → smaller representation → decoder → reconstructed data."
+            },
+            {
+              "q": "What is the difference between lossless and lossy compression?",
+              "a": "Lossless: the decoder perfectly reconstructs the original — every bit is identical. Lossy: some information is permanently lost — decoded data is only an approximation."
+            },
+            {
+              "q": "What is the formula for compression ratio?",
+              "a": "CR = B₀ / B₁, where B₀ = bits before compression, B₁ = bits after. Ratio > 1 = smaller file. Ratio < 1 = file got bigger (bad!)."
+            },
+            {
+              "q": "What is self-information?",
+              "a": "I(sᵢ) = log₂(1/pᵢ). Rare symbols carry more information. Common symbols carry less. Every time probability halves, information increases by 1 bit."
+            },
+            {
+              "q": "What is entropy?",
+              "a": "H = -Σ pᵢ × log₂(pᵢ). The average information per symbol. It is the theoretical minimum average bits/symbol. No lossless code can ever beat entropy."
+            },
+            {
+              "q": "What is the entropy of a source with 256 equally likely symbols?",
+              "a": "H = log₂(256) = 8 bits. Maximum entropy — cannot be compressed at all. When everything is equally likely, there is no pattern to exploit."
+            },
+            {
+              "q": "Why can a skewed distribution be compressed better than a uniform one?",
+              "a": "Skewed means some symbols are much more likely than others. The entropy is low (e.g., 0.92 bits vs 8 bits for uniform). Lower entropy = less average information = shorter codes possible."
+            },
+            {
+              "q": "What is the key inequality for lossless coding?",
+              "a": "H ≤ l̄ < H + 1. The average code length l̄ is always at least entropy H, but Huffman guarantees it stays within 1 bit of H."
+            },
+            {
+              "q": "What is a memoryless source?",
+              "a": "An information source where each symbol is independent — the current symbol doesn't depend on previous symbols. Huffman and Arithmetic Coding assume memoryless sources."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "Compute the self-information of symbols with probabilities: (a) 0.5, (b) 0.25, (c) 0.125.",
+              "a": "(a) $I = \\log_2(1/0.5) = \\log_2(2) = \\mathbf{1}$ bit\n\n(b) $I = \\log_2(1/0.25) = \\log_2(4) = \\mathbf{2}$ bits\n\n(c) $I = \\log_2(1/0.125) = \\log_2(8) = \\mathbf{3}$ bits",
+              "hint": "I = log₂(1/p). Every time p halves, I increases by 1 bit."
+            },
+            {
+              "type": "calculation",
+              "q": "Compute the entropy of a source with symbols A ($p=0.5$), B ($p=0.25$), C ($p=0.25$).",
+              "a": "$$H = -(0.5 \\times \\log_2 0.5) - (0.25 \\times \\log_2 0.25) - (0.25 \\times \\log_2 0.25)$$\n$$= -(0.5 \\times -1) - (0.25 \\times -2) - (0.25 \\times -2)$$\n$$= 0.5 + 0.5 + 0.5 = \\mathbf{1.5 \\text{ bits/symbol}}$$",
+              "hint": "log₂(0.5) = -1, log₂(0.25) = -2"
+            },
+            {
+              "type": "calculation",
+              "q": "Compute the entropy of 'banana'. Characters: a (3/6), n (2/6), b (1/6).",
+              "a": "$$H = -(0.5 \\times \\log_2 0.5) - (0.333 \\times \\log_2 0.333) - (0.167 \\times \\log_2 0.167)$$\n$$= 0.5 + 0.528 + 0.431 = \\mathbf{1.459 \\text{ bits/symbol}}$$",
+              "hint": "p(a)=3/6=0.5, p(n)=2/6≈0.333, p(b)=1/6≈0.167. Use log₂(0.333)≈-1.585, log₂(0.167)≈-2.585"
+            }
+          ]
+        },
+        {
+          "id": "sec-5-2",
+          "number": "7.3–7.4",
+          "title": "Run-Length & Huffman Coding",
+          "content": [
+            {
+              "type": "definition",
+              "term": "Run-Length Coding (RLC)",
+              "body": "Exploits **memory** (patterns) in the source — unlike Huffman and Arithmetic which assume memoryless sources.\n\nIf symbols form continuous groups (runs), store the symbol and **how many times it repeats** instead of every individual symbol.\n\n**Example:** `0000001111110000000000111` → `(0,6)(1,7)(0,10)(1,3)`\n\n**Best case:** Long runs of the same value (mostly-white scanned documents). **Worst case:** Alternating 010101 — RLC makes it bigger."
+            },
+            {
+              "type": "text",
+              "body": "**Huffman Coding** gives **short codes to common symbols** and **long codes to rare symbols**.\n\n**Algorithm:**\n1. Count frequencies. Sort from least to most frequent.\n2. Repeatedly pick the **two smallest**, combine into one node (sum frequencies). Repeat until one root remains.\n3. Read codes: trace root-to-leaf paths. **Left = 0, Right = 1**.\n4. Encode: replace each symbol with its code.\n5. Decode: walk the tree bit by bit — when you hit a leaf, output that symbol and restart from root."
+            },
+            {
+              "type": "example",
+              "title": "Huffman — 'banana' Full Walkthrough",
+              "body": "**Frequencies:** b=1, n=2, a=3\n\n**Build tree:**\n1. Pick two smallest: b(1) + n(2) → merge → node(3)\n2. List now: node(3), a(3)\n3. Merge node(3) + a(3) → root(6)\n\n**Tree:**\n```\n      (6)\n     /   \\\n   (3)    a\n  /   \\\n b     n\n```\n\n**Codes (left=0, right=1):**\n- **a** → right = **1** (1 bit) ← most common gets shortest!\n- **b** → left, left = **00** (2 bits)\n- **n** → left, right = **01** (2 bits)\n\n**Encode 'banana':** b(00) a(1) n(01) a(1) n(01) a(1) = **001011011** → **9 bits**\n\nOriginal: 6 × 8 = 48 bits → $CR = 48/9 = \\mathbf{5.33}$\n\n**Average code length:** $\\bar{l} = 0.5 \\times 1 + 0.333 \\times 2 + 0.167 \\times 2 = \\mathbf{1.5 \\text{ bits/symbol}}$\n\n**Entropy:** $H = 1.459$ bits. Check: $1.459 \\leq 1.5 < 2.459$ ✓\n\n**Decode '001011011':** Start at root: 0→left, 0→left→**b**; 1→right→**a**; 0→left, 1→right→**n**; 1→**a**; 0→left, 1→right→**n**; 1→**a** = **banana** ✓"
+            },
+            {
+              "type": "example",
+              "title": "Huffman — 'ABRACADABRA' Full Walkthrough",
+              "body": "**Frequencies:** C=1, D=1, B=2, R=2, A=5\n\n**Build tree:**\n1. Merge C(1)+D(1) → CD(2). List: B(2), R(2), CD(2), A(5)\n2. Merge B(2)+R(2) → BR(4). List: CD(2), BR(4), A(5)\n3. Merge CD(2)+BR(4) → CDBR(6). List: A(5), CDBR(6)\n4. Merge A(5)+CDBR(6) → root(11)\n\n**Codes:**\n- **A** → left = **0** (1 bit) — appears 5/11 times, nearly half!\n- **C** → right, left, left = **100** (3 bits)\n- **D** → right, left, right = **101** (3 bits)\n- **B** → right, right, left = **110** (3 bits)\n- **R** → right, right, right = **111** (3 bits)\n\n**Encode 'ABRACADABRA':** 0·110·111·0·100·0·101·0·110·111·0 = **01101110100010101101110** → **23 bits**\n\nOriginal: 11 × 8 = 88 bits → $CR = 88/23 = \\mathbf{3.83}$\n\n**Average code length:** $\\bar{l} = \\frac{5}{11}×1 + \\frac{2}{11}×3 + \\frac{2}{11}×3 + \\frac{1}{11}×3 + \\frac{1}{11}×3 = \\mathbf{2.09 \\text{ bits/symbol}}$"
+            },
+            {
+              "type": "definition",
+              "term": "Extended Huffman Coding",
+              "body": "The problem: all codewords have **integer** bit lengths. Wasteful when a symbol has high probability (ideal might be 0.3 bits, minimum is 1 bit).\n\nThe solution: group **k** symbols together and assign one codeword to the group. Average bits/symbol: $H \\leq \\bar{l} < H + 1/k$. The $1/k$ term shrinks as k grows — better compression. But alphabet size explodes to $n^k$."
+            },
+            {
+              "type": "callout",
+              "style": "exam",
+              "body": "**4 Huffman properties to know:**\n1. **Unique Prefix:** No code is a prefix of another — decoding is never ambiguous.\n2. **Optimality:** Minimum redundancy. Two least-frequent symbols always have the same code length.\n3. **Guarantee:** $H \\leq \\bar{l} < H + 1$. Always within 1 bit of entropy.\n4. **Tie-breaking:** When two nodes have equal frequency, picking order affects the tree shape but **NOT** the average code length."
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "What is Run-Length Coding and when does it fail?",
+              "a": "Stores symbol + how many times it repeats instead of every individual value. Best for long runs (e.g., scanned documents). Worst case: alternating data like 010101 — RLC makes it bigger."
+            },
+            {
+              "q": "Describe the Huffman coding algorithm step by step.",
+              "a": "1. Count frequencies, sort least to most. 2. Pick two smallest, merge (sum frequencies), add back to list. 3. Repeat until one root. 4. Trace root-to-leaf: left=0, right=1. 5. Encode by replacing symbols with codes. 6. Decode by walking tree bit by bit, output leaf symbols."
+            },
+            {
+              "q": "In Huffman coding of 'banana', what codes are assigned?",
+              "a": "a=1 (1 bit), b=00 (2 bits), n=01 (2 bits). 'a' is most frequent so it gets the shortest code. Encoding 'banana' = 001011011 = 9 bits (vs 48 bits in 8-bit ASCII). CR = 5.33."
+            },
+            {
+              "q": "In Huffman coding of 'ABRACADABRA', what code is assigned to A?",
+              "a": "A=0 (just 1 bit). A appears 5 out of 11 times — nearly half — so it gets the shortest possible code. All other symbols (B,R,C,D) get 3-bit codes."
+            },
+            {
+              "q": "What is the Unique Prefix Property of Huffman codes?",
+              "a": "No Huffman code is a prefix of any other. This means decoding is always unambiguous — you always know exactly when one codeword ends and the next begins."
+            },
+            {
+              "q": "What is the Huffman optimality guarantee?",
+              "a": "H ≤ l̄ < H + 1. Huffman is always within 1 bit of entropy. The two least-frequent symbols always have the same code length in any Huffman tree."
+            },
+            {
+              "q": "What is Extended Huffman Coding?",
+              "a": "Group k symbols together and code them as one unit. Reduces the overhead from H+1 to H+1/k. But the alphabet size explodes to n^k, making it impractical for large k."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "Build the full Huffman tree for 'banana' (a=3, n=2, b=1). List codes, compute $\\bar{l}$, entropy $H$, and verify $H \\leq \\bar{l} < H+1$.",
+              "a": "**Tree:** Merge b(1)+n(2)→(3), then (3)+a(3)→root(6).\n\n**Codes:** a=1 (1 bit), b=00 (2 bits), n=01 (2 bits)\n\n**$\\bar{l}$** = $0.5×1 + 0.333×2 + 0.167×2 = \\mathbf{1.5}$ bits/symbol\n\n**H** = $-(0.5 \\log_2 0.5) - (0.333 \\log_2 0.333) - (0.167 \\log_2 0.167) = 0.5 + 0.528 + 0.431 = \\mathbf{1.459}$\n\n**Check:** $1.459 \\leq 1.5 < 2.459$ ✓",
+              "hint": "Merge two smallest first. Left=0, Right=1 from root to leaf."
+            },
+            {
+              "type": "calculation",
+              "q": "Build Huffman codes for 'ABRACADABRA' (A=5, B=2, R=2, C=1, D=1). What is the encoded bit string and compression ratio vs 8-bit ASCII?",
+              "a": "**Tree merges:** C(1)+D(1)→CD(2); B(2)+R(2)→BR(4); CD(2)+BR(4)→CDBR(6); A(5)+CDBR(6)→root(11)\n\n**Codes:** A=0, C=100, D=101, B=110, R=111\n\n**Encoded:** 0·110·111·0·100·0·101·0·110·111·0 = **01101110100010101101110** (23 bits)\n\n**CR** = (11×8)/23 = 88/23 = **3.83**",
+              "hint": "A is most frequent — it should get the shortest code (1 bit)."
+            },
+            {
+              "type": "calculation",
+              "q": "Decode the bit string '001011011' using the 'banana' Huffman tree (a=1, b=00, n=01).",
+              "a": "Start at root each time:\n- **0**→left, **0**→left → leaf **b**. Restart.\n- **1**→right → leaf **a**. Restart.\n- **0**→left, **1**→right → leaf **n**. Restart.\n- **1**→right → leaf **a**. Restart.\n- **0**→left, **1**→right → leaf **n**. Restart.\n- **1**→right → leaf **a**.\n\nResult: **banana** ✓",
+              "hint": "Walk the tree bit by bit. When you hit a leaf, output that symbol and restart from root."
+            }
+          ]
+        },
+        {
+          "id": "sec-5-3",
+          "number": "7.5–7.6",
+          "title": "LZW & Arithmetic Coding",
+          "content": [
+            {
+              "type": "definition",
+              "term": "LZW Compression",
+              "body": "A **dictionary-based** method. Huffman looks at individual characters — LZW finds **repeated patterns** (strings) and gives them a single code.\n\nBoth encoder and decoder build the **same dictionary** from scratch — it never needs to be transmitted.\n\n**Initial dictionary:** just the individual characters (A=1, B=2, ...).\n**Rule:** extend the current string as long as it's in the dictionary. When current+next is NOT found: output code for current, add the new longer string, restart from next character."
+            },
+            {
+              "type": "example",
+              "title": "LZW Encoding 'ABABBA'",
+              "body": "**Initial dictionary:** 1=A, 2=B\n\n**s=A.** Read c=B. 'AB' not in dict → output **1**(A), add 3:AB, s=B\n\n**s=B.** Read c=A. 'BA' not in dict → output **2**(B), add 4:BA, s=A\n\n**s=A.** Read c=B. 'AB' in dict! (code 3) → s=AB. Keep going.\n\n**s=AB.** Read c=B. 'ABB' not in dict → output **3**(AB), add 5:ABB, s=B\n\n**s=B.** Read c=A. 'BA' in dict! (code 4) → s=BA. Keep going.\n\n**End of input.** Output **4**(BA).\n\n**Output codes: 1, 2, 3, 4** — turned 6 characters into 4 codes. $CR = 6/4 = 1.5$"
+            },
+            {
+              "type": "example",
+              "title": "LZW Decoding — codes 1, 2, 3, 4",
+              "body": "**Starting dictionary:** 1=A, 2=B\n\n**Rule:** output the string for each code, then add previous_output + first_char_of_current_output to dictionary.\n\n**Code 1** → 'A'. Output **A**. (First code — nothing to add yet.) prev='A'\n\n**Code 2** → 'B'. Output **B**. Add prev+first(B) = 'A'+'B' = 'AB' → code **3**. prev='B'\n\n**Code 3** → 'AB'. Output **AB**. Add prev+first(AB) = 'B'+'A' = 'BA' → code **4**. prev='AB'\n\n**Code 4** → 'BA'. Output **BA**. Add prev+first(BA) = 'AB'+'B' = 'ABB' → code **5**. prev='BA'\n\n**Total output:** A + B + AB + BA = **ABABBA** ✓"
+            },
+            {
+              "type": "text",
+              "body": "**Special LZW decoding case:** Sometimes the decoder gets a code that hasn't been added to its dictionary yet. This happens when the encoder adds a string and immediately uses it.\n\n**Solution:** `entry = previous_string + first_character_of_previous_string`"
+            },
+            {
+              "type": "definition",
+              "term": "Arithmetic Coding",
+              "body": "Encodes the **entire message** as a single decimal number between 0 and 1. Instead of coding each symbol separately (Huffman), one number represents the whole sequence.\n\nEach symbol gets a **range** (slice of [0,1)). Larger ranges for more probable symbols. Encoding = zooming into the interval for each symbol.\n\n**Encoding formula (each step):**\n$$\\text{new\\_low} = \\text{old\\_low} + \\text{range} \\times \\text{Range\\_low}(s)$$\n$$\\text{new\\_high} = \\text{old\\_low} + \\text{range} \\times \\text{Range\\_high}(s)$$\n\n**Decoding formula (each step):**\n1. Find symbol where $\\text{Range\\_low} \\leq \\text{value} < \\text{Range\\_high}$\n2. Output that symbol\n3. $\\text{value} = (\\text{value} - \\text{Range\\_low}) / (\\text{Range\\_high} - \\text{Range\\_low})$"
+            },
+            {
+              "type": "example",
+              "title": "Arithmetic Coding — Encode 'BAC'",
+              "body": "**Ranges:** A=[0, 0.5), B=[0.5, 0.8), C=[0.8, 1.0)\n\n**Start:** low=0, high=1, range=1\n\n**Symbol B** (0.5 to 0.8):\n- new_low = 0 + 1×0.5 = **0.5**\n- new_high = 0 + 1×0.8 = **0.8**, range=0.3\n\n**Symbol A** (0 to 0.5):\n- new_low = 0.5 + 0.3×0 = **0.5**\n- new_high = 0.5 + 0.3×0.5 = **0.65**, range=0.15\n\n**Symbol C** (0.8 to 1.0):\n- new_low = 0.5 + 0.15×0.8 = **0.62**\n- new_high = 0.5 + 0.15×1.0 = **0.65**, range=0.03\n\n**Final interval: [0.62, 0.65)**. Code: pick any number inside → **0.63**\n\n**Decode 0.63:** 0.63 ∈ [0.5,0.8) → **B**. New value=(0.63−0.5)/0.3=0.4333. 0.4333 ∈ [0,0.5) → **A**. New value=0.4333/0.5=0.8666. 0.8666 ∈ [0.8,1.0) → **C**. Result: **BAC** ✓"
+            },
+            {
+              "type": "example",
+              "title": "Arithmetic Coding — Lecture Example: Encode 'CAEE$'",
+              "body": "**Probability table:**\n\n| Symbol | Prob | Range |\n|--------|------|-------|\n| A | 0.2 | [0, 0.2) |\n| B | 0.1 | [0.2, 0.3) |\n| C | 0.2 | [0.3, 0.5) |\n| D | 0.05 | [0.5, 0.55) |\n| E | 0.3 | [0.55, 0.85) |\n| F | 0.05 | [0.85, 0.9) |\n| $ | 0.1 | [0.9, 1.0) |\n\n**Start:** low=0, high=1, range=1\n\n**C** (0.3→0.5): low=0.3, high=0.5, range=0.2\n\n**A** (0→0.2): low=0.3+0.2×0=0.3, high=0.3+0.2×0.2=0.34, range=0.04\n\n**E** (0.55→0.85): low=0.3+0.04×0.55=0.322, high=0.3+0.04×0.85=0.334, range=0.012\n\n**E** (0.55→0.85): low=0.322+0.012×0.55=0.3286, high=0.322+0.012×0.85=0.3322, range=0.0036\n\n**$** (0.9→1.0): low=0.3286+0.0036×0.9=**0.33184**, high=0.3286+0.0036×1.0=**0.33220**\n\n**Final interval: [0.33184, 0.33220)**. Code: **0.33203125** (binary: 01010101 = 8 bits for 5 symbols)"
+            },
+            {
+              "type": "callout",
+              "style": "exam",
+              "body": "**Why Arithmetic beats Huffman:** With Huffman, every symbol uses a whole number of bits. Arithmetic coding encodes the whole message as one number — no integer rounding, so it gets closer to the entropy lower bound.\n\n**Adaptive Arithmetic Coding:** Both sides start with no knowledge, update probability counts after each symbol. No need to send the probability table — both sides stay in sync automatically."
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "What is LZW compression?",
+              "a": "A dictionary-based method that finds repeated patterns. Outputs fixed-length codes for variable-length strings. Both encoder and decoder build the same dictionary from individual characters up — no need to transmit it. Used in GIF."
+            },
+            {
+              "q": "In LZW, what does the initial dictionary contain?",
+              "a": "Only the individual characters of the alphabet (e.g., A=1, B=2). Longer patterns are discovered and added during encoding/decoding."
+            },
+            {
+              "q": "Walk through LZW encoding of 'ABABBA' (dict starts: 1=A, 2=B).",
+              "a": "s=A, c=B: AB not found → output 1, add 3:AB, s=B. s=B, c=A: BA not found → output 2, add 4:BA, s=A. s=A, c=B: AB found → s=AB. s=AB, c=B: ABB not found → output 3, add 5:ABB, s=B. s=B, c=A: BA found → s=BA. EOF → output 4. Output: 1, 2, 3, 4."
+            },
+            {
+              "q": "Walk through LZW decoding of codes 1, 2, 3, 4 (dict: 1=A, 2=B).",
+              "a": "Code 1→A, output A. Code 2→B, output B, add AB=3. Code 3→AB, output AB, add BA=4. Code 4→BA, output BA, add ABB=5. Total output: ABABBA ✓"
+            },
+            {
+              "q": "What is the special case in LZW decoding?",
+              "a": "When the decoder gets a code not yet in its dictionary. Solution: entry = previous_string + first_character_of_previous_string."
+            },
+            {
+              "q": "How does Arithmetic Coding work?",
+              "a": "Encodes the entire message as a single number in [0,1). Each symbol gets a range proportional to its probability. You zoom into the current interval for each symbol. Final number uniquely identifies the message."
+            },
+            {
+              "q": "What are the Arithmetic Coding encode/decode formulas?",
+              "a": "Encode: new_low = old_low + range × Range_low(s); new_high = old_low + range × Range_high(s). Decode: find symbol containing value, then value = (value − Range_low) / (Range_high − Range_low)."
+            },
+            {
+              "q": "In the lecture example, what is the final interval for encoding 'CAEE$'?",
+              "a": "[0.33184, 0.33220). The code 0.33203125 (binary 01010101) represents all 5 symbols in just 8 bits."
+            },
+            {
+              "q": "Why does Arithmetic Coding outperform Huffman?",
+              "a": "Huffman must assign whole-number bit lengths to each symbol — wasteful when ideal length is fractional (e.g., 0.3 bits). Arithmetic coding encodes the full message as one number, naturally reflecting exact probabilities with no rounding."
+            },
+            {
+              "q": "What is Adaptive Arithmetic Coding?",
+              "a": "Both encoder and decoder start with no knowledge of probabilities. They update counts after each symbol, staying in sync. No need to transmit the probability table separately."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "LZW encoding: starting dictionary 1=A, 2=B. Encode 'ABABBA'. Show all steps and give output codes.",
+              "a": "**s=A**, c=B: AB not in dict → output **1**, add 3:AB, s=B\n**s=B**, c=A: BA not in dict → output **2**, add 4:BA, s=A\n**s=A**, c=B: AB in dict! → s=AB\n**s=AB**, c=B: ABB not in dict → output **3**, add 5:ABB, s=B\n**s=B**, c=A: BA in dict! → s=BA\n**EOF** → output **4**\n\n**Output: 1, 2, 3, 4.** $CR = 6/4 = 1.5$",
+              "hint": "The key step is when 'AB' is already in the dictionary — you extend instead of outputting."
+            },
+            {
+              "type": "calculation",
+              "q": "LZW decoding: starting dictionary 1=A, 2=B. Decode codes 1, 2, 3, 4. Show all steps.",
+              "a": "**Code 1** → A. Output **A**. prev=A.\n**Code 2** → B. Output **B**. Add A+B=AB → code **3**. prev=B.\n**Code 3** → AB. Output **AB**. Add B+A=BA → code **4**. prev=AB.\n**Code 4** → BA. Output **BA**. Add AB+B=ABB → code **5**. prev=BA.\n\n**Output: ABABBA ✓**",
+              "hint": "Add: previous_output + first_char_of_current_output to dictionary at each step."
+            },
+            {
+              "type": "calculation",
+              "q": "Arithmetic Coding: A=[0,0.5), B=[0.5,0.8), C=[0.8,1.0). Encode 'BAC'. Show each step.",
+              "a": "**Start:** low=0, high=1, range=1\n\n**B** (0.5→0.8): low=0+1×0.5=0.5, high=0+1×0.8=0.8, range=0.3\n\n**A** (0→0.5): low=0.5+0.3×0=0.5, high=0.5+0.3×0.5=0.65, range=0.15\n\n**C** (0.8→1.0): low=0.5+0.15×0.8=0.62, high=0.5+0.15×1.0=0.65, range=0.03\n\n**Final: [0.62, 0.65)**. Code = **0.63**",
+              "hint": "new_low = old_low + old_range × Range_low(symbol)"
+            },
+            {
+              "type": "calculation",
+              "q": "Arithmetic Coding lecture example: using the table (A=0.2, B=0.1, C=0.2, D=0.05, E=0.3, F=0.05, $=0.1), encode 'CAEE$'. What is the final interval?",
+              "a": "**Start:** low=0, high=1, range=1\n\n**C** [0.3,0.5): low=0.3, high=0.5, range=0.2\n\n**A** [0,0.2): low=0.3+0.2×0=0.3, high=0.3+0.2×0.2=0.34, range=0.04\n\n**E** [0.55,0.85): low=0.3+0.04×0.55=0.322, high=0.3+0.04×0.85=0.334, range=0.012\n\n**E** [0.55,0.85): low=0.322+0.012×0.55=0.3286, high=0.322+0.012×0.85=0.3322, range=0.0036\n\n**$** [0.9,1.0): low=0.3286+0.0036×0.9=**0.33184**, high=0.3286+0.0036×1.0=**0.33220**\n\n**Final interval: [0.33184, 0.33220)**",
+              "hint": "Build the probability ranges first (cumulative). Apply formula at each step."
+            }
+          ]
+        },
+        {
+          "id": "sec-5-4",
+          "number": "7.7",
+          "title": "Differential & Lossless JPEG Coding",
+          "content": [
+            {
+              "type": "text",
+              "body": "Images have a special property: **neighboring pixels are usually very similar.** Instead of storing actual pixel values, store **how much each pixel differs from its neighbor**. These differences are much smaller numbers clustered around zero → narrower histogram → lower entropy → better compression."
+            },
+            {
+              "type": "definition",
+              "term": "Horizontal Difference (Eq. 7.9)",
+              "body": "$$d(x, y) = I(x, y) - I(x-1, y)$$\nEach pixel minus its **left** neighbor.\n\n**Example:** Row 150, 153, 148, 155, 152 → differences: —, **3, −5, 7, −3**. Small numbers are far easier to compress than the originals."
+            },
+            {
+              "type": "definition",
+              "term": "2D Laplacian Difference (Eq. 7.10)",
+              "body": "Uses all **four** neighbors (above, below, left, right):\n$$d(x, y) = 4 \\cdot I(x,y) - I(x, y-1) - I(x, y+1) - I(x+1, y) - I(x-1, y)$$\nIn smooth image regions this is nearly **zero** everywhere — extremely compressible."
+            },
+            {
+              "type": "example",
+              "title": "Laplacian Difference Worked Example",
+              "body": "```\n        above = 98\nleft = 101   X = 100   right = 99\n        below = 102\n```\n$$d = 4 \\times 100 - 98 - 102 - 99 - 101 = 400 - 400 = \\mathbf{0}$$\n\nZero! Because X is almost exactly the average of its neighbors. In smooth image areas this is near zero almost everywhere."
+            },
+            {
+              "type": "text",
+              "body": "**Lossless JPEG** applies this idea with a predictor. For each pixel X, it **predicts** its value from already-decoded neighbors, then encodes only the **prediction error**.\n\nNeighbor layout:\n```\nC  B\nA  X\n```\n- **A** = pixel to the left\n- **B** = pixel above\n- **C** = pixel above-left\n\nAll three are already decoded (processing goes left-to-right, top-to-bottom). The prediction error (actual − predicted) is compressed with Huffman coding."
+            },
+            {
+              "type": "table",
+              "headers": ["Predictor", "Formula", "Description"],
+              "rows": [
+                ["P1", "$A$", "Left neighbor"],
+                ["P2", "$B$", "Above neighbor"],
+                ["P3", "$C$", "Above-left neighbor"],
+                ["P4", "$A + B - C$", "Planar prediction"],
+                ["P5", "$A + (B-C)/2$", "Weighted horizontal"],
+                ["P6", "$B + (A-C)/2$", "Weighted vertical"],
+                ["P7", "$(A+B)/2$", "Average of left and above"]
+              ]
+            },
+            {
+              "type": "example",
+              "title": "Lossless JPEG — Why P4 (A+B-C) Works",
+              "body": "**Setup:** C=100, B=102, A=103, actual X=104\n\n**P4 prediction:** $A + B - C = 103 + 102 - 100 = 105$\n\n**Error:** $104 - 105 = \\mathbf{-1}$ ← tiny! We encode −1 instead of 104.\n\n**Decoder:** Knows A, B, C. Computes prediction=105. Receives error=−1. Reconstructs: $105 + (-1) = \\mathbf{104}$ ✓\n\n**Why it works geometrically:** Imagine pixels forming a smooth gradient:\n```\nC=50   B=60\nA=70   X=?\n```\nRightward increase = B−C = 10. Downward increase = A−C = 20. X = C + 10 + 20 = 80.\nP4: A+B−C = 70+60−50 = **80**. Exactly right! P4 assumes the image is locally a **smooth plane**."
+            },
+            {
+              "type": "table",
+              "headers": ["Method", "Compression Ratio (Lena image)", "Notes"],
+              "rows": [
+                ["Lossless JPEG", "1.45", "Best — prediction exploits spatial redundancy first"],
+                ["Optimal Lossless JPEG", "1.49", "Best predictor chosen per image"],
+                ["Huffman alone", "1.02", "Barely any compression on raw pixels"],
+                ["LZW (compress)", "0.86", "Actually got BIGGER — LZW struggles with images!"]
+              ]
+            },
+            {
+              "type": "callout",
+              "style": "exam",
+              "body": "Know all 7 predictors. The key insight: plain Huffman on raw pixels barely compresses (H is high). Prediction first reduces entropy dramatically — then Huffman compresses the small errors efficiently.\n\n**Full pipeline — Encoding:** Original image → Pick predictor → Compute errors → Compress errors with Huffman → Output\n\n**Full pipeline — Decoding:** Decompress errors → For each pixel: actual = predicted + error → Reconstructed image (perfectly lossless)"
+            }
+          ],
+          "flashcards": [
+            {
+              "q": "Why does differential coding help compress images?",
+              "a": "Neighboring pixels are usually similar, so their differences are small (near zero). Small values clustered around zero → narrow histogram → lower entropy → better compression."
+            },
+            {
+              "q": "What is the horizontal difference formula (Eq. 7.9)?",
+              "a": "d(x,y) = I(x,y) - I(x-1,y). Each pixel minus its left neighbor. Example: row 150,153,148,155,152 → differences 3,−5,7,−3."
+            },
+            {
+              "q": "What is the 2D Laplacian difference formula (Eq. 7.10)?",
+              "a": "d(x,y) = 4×I(x,y) − I(x,y−1) − I(x,y+1) − I(x+1,y) − I(x−1,y). Uses all 4 neighbors. In smooth image areas this is nearly zero everywhere."
+            },
+            {
+              "q": "In the Laplacian example with neighbors 98 (above), 102 (below), 101 (left), 99 (right), X=100, what is d?",
+              "a": "d = 4×100 − 98 − 102 − 99 − 101 = 400 − 400 = 0. Zero because X is almost exactly the average of its neighbors."
+            },
+            {
+              "q": "What is Lossless JPEG?",
+              "a": "Predicts each pixel from up to 3 neighbors (A=left, B=above, C=above-left), compresses the prediction errors with Huffman. 7 predictor options. Perfectly lossless."
+            },
+            {
+              "q": "What are the 7 Lossless JPEG predictors?",
+              "a": "P1=A, P2=B, P3=C, P4=A+B-C, P5=A+(B-C)/2, P6=B+(A-C)/2, P7=(A+B)/2. Where A=left, B=above, C=above-left."
+            },
+            {
+              "q": "Why is P4 (A+B-C) such a good predictor?",
+              "a": "It assumes the image is locally a smooth plane. P4 = C + (A−C) + (B−C) = horizontal change + vertical change. For smooth gradients it predicts exactly. For the geometry example: C=50, B=60, A=70 → P4=80=correct answer."
+            },
+            {
+              "q": "What compression ratios do different methods achieve on the Lena image?",
+              "a": "Lossless JPEG: 1.45. Optimal Lossless JPEG: 1.49. Huffman alone: 1.02 (barely). LZW: 0.86 — actually gets BIGGER! Prediction is essential for image compression."
+            },
+            {
+              "q": "What is the full Lossless JPEG encoding/decoding pipeline?",
+              "a": "Encode: image → pick predictor → compute errors → Huffman compress → output. Decode: decompress errors → for each pixel: actual = predicted + error → reconstructed image."
+            }
+          ],
+          "problems": [
+            {
+              "type": "calculation",
+              "q": "For Lossless JPEG predictor P4 ($A+B-C$), if A=103, B=102, C=100, and actual pixel=104, what is the prediction and error?",
+              "a": "Predicted = $A+B-C = 103+102-100 = \\mathbf{105}$\n\nError = actual − predicted = $104 - 105 = \\mathbf{-1}$\n\nDecoder: computes 105, receives error −1, reconstructs $105+(-1)=104$ ✓",
+              "hint": "P4 = A + B - C. Error = actual - predicted."
+            },
+            {
+              "type": "calculation",
+              "q": "For Lossless JPEG predictor P7 ($\\frac{A+B}{2}$), if A=120, B=130, and actual pixel=128, what is the prediction error?",
+              "a": "Predicted = $(120+130)/2 = \\mathbf{125}$\n\nError = $128 - 125 = \\mathbf{3}$",
+              "hint": "P7 = (A+B)/2 = average of left and above."
+            },
+            {
+              "type": "calculation",
+              "q": "Compute the 2D Laplacian difference for pixel X=100 with neighbors: above=98, below=102, left=101, right=99.",
+              "a": "$$d = 4 \\times 100 - 98 - 102 - 99 - 101 = 400 - 400 = \\mathbf{0}$$\n\nZero — X is the average of its neighbors. This is typical for smooth image regions.",
+              "hint": "d = 4×X − (above + below + left + right)"
+            },
+            {
+              "type": "conceptual",
+              "q": "The table shows: Lossless JPEG CR=1.45, Huffman alone CR=1.02, LZW CR=0.86. Why does LZW actually make images bigger?",
+              "a": "LZW works by finding **repeated string patterns**. In natural images, pixel values form smooth gradients — the specific byte patterns don't repeat very often. LZW adds dictionary overhead without finding many matching patterns, resulting in a larger output than the original.\n\nLossless JPEG succeeds because it first exploits **spatial correlation** (prediction), reducing pixel values to small errors near zero. Then Huffman compresses these efficiently. The two-step approach is key.",
+              "hint": "Think about what LZW is good at (repeated text patterns) vs what images actually contain."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

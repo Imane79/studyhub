@@ -1,0 +1,114 @@
+{
+  "id": "sec-4-1",
+  "number": "5.1",
+  "title": "Analog Video & Scanning",
+  "content": [
+    {
+      "type": "text",
+      "body": "**Video** can exist in two forms:\n\n- **Analog video:** a continuous, time-varying electrical signal that represents changing image information\n- **Digital video:** a sequence of discrete digital images called **frames**, each a grid of pixel values\n\nDigital video is just a series of still images played fast enough that the eye perceives motion."
+    },
+    {
+      "type": "definition",
+      "term": "Progressive Scanning",
+      "body": "The entire frame is drawn **row by row, top to bottom, in a single pass**. Lines are written in order: 1, 2, 3, 4…\n\n- 1 pass = 1 complete frame\n- Used in **computer monitors** (typically 72 Hz or higher)\n- At high refresh rates, flicker is imperceptible"
+    },
+    {
+      "type": "definition",
+      "term": "Interlaced Scanning",
+      "body": "Each frame is split into **two fields** displayed alternately:\n\n- **Field 1 (odd field):** draws lines 1, 3, 5, 7…\n- **Field 2 (even field):** draws lines 2, 4, 6, 8…\n- Two fields together = one complete frame\n\n**Why?** Early CRT hardware couldn't send a full frame fast enough to avoid flicker. Sending 60 fields/sec (alternating odd and even) tricks the eye into perceiving smooth motion even though full resolution only updates at 30 fps.\n\n**Example:** NTSC TV at 30 fps interlaced → 60 fields/sec, each field having half the vertical resolution."
+    },
+    {
+      "type": "definition",
+      "term": "Horizontal Retrace",
+      "body": "After drawing a line, the electron beam **jumps back** from the right end of the line to the left start of the next line. During this jump the beam is **blanked (turned off)** so no visible line is drawn."
+    },
+    {
+      "type": "definition",
+      "term": "Vertical Retrace",
+      "body": "After drawing the last line of a field, the beam **jumps from the bottom of the screen back to the top** to start the next field. The beam is also blanked during this jump."
+    },
+    {
+      "type": "table",
+      "headers": ["Property", "Progressive", "Interlaced"],
+      "rows": [
+        ["Line order", "All lines in one pass (1, 2, 3…)", "Odd lines first, then even lines"],
+        ["Fields per frame", "1 field = 1 frame", "2 fields = 1 frame"],
+        ["Flicker", "Less flicker at high Hz", "Designed to reduce flicker at low Hz"],
+        ["Used in", "Computer monitors", "Traditional TV (NTSC, PAL)"],
+        ["Fast motion", "Better — complete frame each refresh", "Can show 'combing' artifacts"],
+        ["Artifact", "None typical", "Combing: horizontal comb-like tearing on fast movement"]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "Exam tip: interlaced was invented because sending a **full frame** fast enough to avoid flicker was technically difficult. By sending **60 fields/sec** (instead of 30 fps), the eye perceives less flicker — even though each field only has **half** the vertical resolution."
+    },
+    {
+      "type": "definition",
+      "term": "Raster Graphics",
+      "body": "An image stored as a **grid of pixels** (dot matrix). Described by:\n- Width × Height in pixels\n- Bits per pixel (color depth)\n\n**Resolution dependent** — scaling up causes blurring and pixelation because the computer must estimate new pixels from existing ones."
+    },
+    {
+      "type": "definition",
+      "term": "Vector Graphics",
+      "body": "An image stored as **mathematical descriptions** of shapes — lines, curves, polygons, defined by equations and coordinates.\n\n**Resolution independent** — zooming in always produces a perfect, sharp image because the shapes are redrawn from math at any scale."
+    },
+    {
+      "type": "example",
+      "title": "Raster vs Vector — The Circle Comparison",
+      "body": "**Raster circle:** stored as a grid of pixels approximating the curve. Zoom in → blocky, jagged (pixelated) edges.\n\n**Vector circle:** stored as a mathematical equation (center point + radius). Zoom in → still a perfect, smooth circle. The renderer recalculates where every edge pixel should be at the new scale."
+    },
+    {
+      "type": "definition",
+      "term": "Sampling (Video Context)",
+      "body": "A **sample** is a single measured value at a specific position in space (or time).\n\nIn a color image, each pixel contains **multiple samples — one per channel**:\n- A **24-bit pixel** has **3 samples**: Red (8 bits), Green (8 bits), Blue (8 bits)\n- Each 8-bit sample can take values 0–255\n\nSampling maps a continuous signal (light intensity) to a discrete set of numbers."
+    }
+  ],
+  "flashcards": [
+    {
+      "q": "Why was interlaced scanning invented? What problem did it solve?",
+      "a": "Early hardware couldn't transmit or display a **full frame fast enough** to avoid visible flicker. By sending **60 fields/sec** (alternating odd and even lines) instead of 30 complete frames, the eye perceives smoother motion — even though full vertical resolution only updates 30 times per second."
+    },
+    {
+      "q": "What does it mean for interlaced video to show 'combing' artifacts?",
+      "a": "Combing happens with **fast-moving objects**. Because odd and even fields are captured at slightly different moments in time, moving edges appear as **horizontal comb-like stripes** when both fields are viewed together as a still frame."
+    },
+    {
+      "q": "Progressive vs interlaced: what's the one-sentence difference?",
+      "a": "Progressive writes **all lines in one pass** (1 field = 1 frame); interlaced writes **odd lines then even lines** in separate passes (2 fields = 1 frame)."
+    },
+    {
+      "q": "Why does vector graphics scale without quality loss, while raster doesn't?",
+      "a": "Vector images are **stored as math** (equations for shapes). At any size, the renderer calculates pixels from scratch — always perfect. Raster images are **stored as fixed pixel grids** — zoom in and the computer has to guess, producing blur or jagged edges."
+    },
+    {
+      "q": "What does 'blanked' mean during retrace, and why does it matter?",
+      "a": "The electron beam is **turned off** during retrace (both horizontal and vertical) so it doesn't draw unwanted lines across the screen. Without blanking, you'd see a bright diagonal streak every time the beam repositioned."
+    },
+    {
+      "q": "A pixel is described as '24-bit'. How many samples does it contain, and why?",
+      "a": "It contains **3 samples**: Red (8 bits), Green (8 bits), Blue (8 bits) = 24 bits total. A sample is a single measured value per channel, and a color image has one channel per color component."
+    }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "A TV displays 30 frames per second using interlaced scanning. How many fields per second does it display, and what fraction of lines does each field contain?",
+      "a": "**60 fields/sec** — each frame is split into 2 fields (odd + even), so 30 × 2 = 60.\n\nEach field contains **half the vertical lines** — so each field has half the vertical resolution. The eye integrates both fields into a single perceived frame.",
+      "hint": "Interlaced: 2 fields = 1 frame"
+    },
+    {
+      "type": "conceptual",
+      "q": "A designer uses raster graphics to create a company logo, then needs to print it on a billboard. What problem will they face, and what format should they have used?",
+      "a": "Raster images are **resolution-dependent**. Scaling up the logo to billboard size will produce **blurring and pixelation** because the software must invent new pixels.\n\nThey should have used **vector graphics** — the logo would be stored as mathematical shapes and could be scaled to any size without quality loss.",
+      "hint": "Think: what is stored differently between raster and vector?"
+    },
+    {
+      "type": "conceptual",
+      "q": "In video, what is the difference between a 'sample' and a 'pixel'? Can a pixel contain multiple samples?",
+      "a": "A **sample** is a single measured value at one position for one channel. A **pixel** is the complete color unit at one position, which may contain multiple samples.\n\nYes — a 24-bit RGB pixel contains **3 samples**: R (8 bits), G (8 bits), B (8 bits). Each is an independent measurement of one color channel.",
+      "hint": "Think channels: RGB means 3 channels per pixel"
+    }
+  ]
+}

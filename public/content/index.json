@@ -1,0 +1,8 @@
+{
+  "lectures": [
+    { "id": "lecture-2", "sections": ["sec-2-1", "sec-2-2", "sec-2-3", "sec-2-4"] },
+    { "id": "lecture-3", "sections": ["sec-3-1", "sec-3-2", "sec-3-3"] },
+    { "id": "lecture-4", "sections": ["sec-4-1", "sec-4-2", "sec-4-3", "sec-4-4"] },
+    { "id": "lecture-5", "sections": ["sec-5-1", "sec-5-2", "sec-5-3", "sec-5-4"] }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "id": "sec-2-4",
+  "number": "3.2",
+  "title": "Image File Formats & BMP Structure",
+  "content": [
+    {
+      "type": "definition",
+      "term": "GIF (Graphics Interchange Format)",
+      "body": "- **First** image format supported by web browsers\n- **Color depth:** 8-bit only (max 256 colors)\n- **Compression:** LZW (lossless)\n- **Best for:** Logos, icons, simple graphics with few colors\n- **Interlacing:** Image loads in **4 passes**, showing a rough version first that progressively sharpens\n- **GIF87a:** The original specification\n- **GIF89a:** Added **animation** (animated GIFs!), delay time control, and a transparency index"
+    },
+    {
+      "type": "definition",
+      "term": "JPEG (Joint Photographic Experts Group)",
+      "body": "- Most important current standard for image compression\n- **Lossy** — throws away information the human eye is least likely to notice\n- **Quality factor Q:** Higher Q = better quality + larger file. Lower Q = smaller file + artifacts\n- **Exam numbers from the lecture (forestfire image):**\n  - Q=10 → **1.5%** of original size\n  - Q=75 → **5.6%** of original size\n  - GIF version → **23%** of original size\n  - JPEG wins by a huge margin!\n- **Best for:** Photographs with smooth gradients\n- **Not good for:** Sharp edges, text, flat-color graphics — these get blurry 'ringing' artifacts"
+    },
+    {
+      "type": "definition",
+      "term": "PNG (Portable Network Graphics)",
+      "body": "- Created to **replace GIF** and extend it\n- **Lossless** — image perfectly preserved\n- **Color depth:** Up to 48 bits (vs GIF's 8 bits)\n- **Full alpha transparency** (vs GIF's single transparency index)\n- **Gamma correction:** Contains display info for correct colors across different monitors\n- **Progressive display:** Shows image gradually in **7 passes** through each 8×8 block"
+    },
+    {
+      "type": "definition",
+      "term": "TIFF (Tagged Image File Format)",
+      "body": "- Developed by Aldus Corporation in the 1980s, supported by Microsoft\n- **Key feature:** The **tag system** — tags are metadata describing how the image is stored\n- Supports 1-bit, grayscale, 8-bit, 24-bit — all in the same format using different tags\n- Originally lossless only; later added optional JPEG tag for lossy\n- Used in professional publishing and scanning"
+    },
+    {
+      "type": "definition",
+      "term": "BMP (Bitmap)",
+      "body": "- Developed by **Microsoft**, used in Windows applications\n- Usually **uncompressed** → high quality, very large files\n- Supports 1-bit, 8-bit, 24-bit, 32-bit color\n- **Critical:** Colors are stored as **B, G, R, A** (Blue first!) — reversed from RGB convention"
+    },
+    {
+      "type": "table",
+      "headers": [
+        "Format",
+        "Color Depth",
+        "Compression",
+        "Best For"
+      ],
+      "rows": [
+        [
+          "GIF",
+          "8-bit (256 colors)",
+          "LZW (lossless)",
+          "Animation, simple graphics"
+        ],
+        [
+          "JPEG",
+          "24-bit",
+          "Lossy DCT",
+          "Photographs (Q=75 → 5.6% size!)"
+        ],
+        [
+          "PNG",
+          "Up to 48-bit",
+          "Lossless",
+          "Web graphics, screenshots, text"
+        ],
+        [
+          "TIFF",
+          "1/8/24-bit",
+          "Optional (tag-based)",
+          "Professional/archival"
+        ],
+        [
+          "BMP",
+          "1/8/24/32-bit",
+          "None (usually)",
+          "Windows uncompressed (B,G,R,A order!)"
+        ]
+      ]
+    },
+    {
+      "type": "text",
+      "body": "**BMP File Structure** — 4 parts in order:\n\n**1. File Header (14 bytes):**\n- Identifier (2 bytes) — the letters \"BM\"\n- File size (4 bytes)\n- Reserved (4 bytes)\n- Bitmap data offset (4 bytes) — where pixel data starts\n\n**2. Info Header (40 bytes):**\n- Header size (4 bytes)\n- Image width (4 bytes), Image height (4 bytes)\n- Planes (2 bytes)\n- **Bits per pixel (2 bytes)** — tells you if 1-bit, 8-bit, 24-bit, etc.\n- Compression type (4 bytes)\n- Bitmap data size (4 bytes)\n- H-Resolution (4 bytes), V-Resolution (4 bytes)\n- Used colors (4 bytes), Important colors (4 bytes)\n\n**3. Color Table / Palette** (only for 8-bit images):\n256 entries × 4 bytes each = **1024 bytes**. Stored as **B, G, R, A** (not RGB!).\nFor 24-bit images, this section is empty.\n\n**4. Bitmap Data**: The actual pixel values, row by row."
+    },
+    {
+      "type": "text",
+      "body": "**BMP File Size Formulas:**\n\n**32-bit BMP (no palette):**\n$$\\text{Size} = 14 + 40 + (W \\times H \\times 4)$$\n\n**24-bit BMP (no palette):**\n$$\\text{Size} = 14 + 40 + (W \\times H \\times 3)$$\n\n**8-bit BMP (with palette):**\n$$\\text{Size} = 14 + 40 + 1024 + (W \\times H \\times 1)$$"
+    },
+    {
+      "type": "example",
+      "title": "BMP File Size — 640×480 Image",
+      "body": "**32-bit:** $14 + 40 + (640 \\times 480 \\times 4) = 54 + 1{,}228{,}800 = \\mathbf{1{,}228{,}854}$ bytes\n\n**8-bit:** $14 + 40 + 1{,}024 + (640 \\times 480 \\times 1) = 1{,}078 + 307{,}200 = \\mathbf{308{,}278}$ bytes\n\n**Ratio:** $1{,}228{,}854 \\div 308{,}278 \\approx \\mathbf{4 \\times}$ reduction\n\nThe theoretical pixel data ratio is exactly 4:1 (4 bytes/pixel → 1 byte/pixel). The 1024-byte palette is negligible for large images."
+    },
+    {
+      "type": "callout",
+      "style": "warning",
+      "body": "**BMP gotchas:**\n1. Colors stored as **B, G, R, A** — NOT R, G, B, A! This trips up many programmers reading BMP files.\n2. **32-bit BMP has NO palette section** — only file header + info header + pixel data.\n3. 24-bit BMP also has **no palette**."
+    }
+  ],
+  "flashcards": [
+    {
+      "q": "What is the difference between lossless and lossy compression?",
+      "a": "Lossless: original perfectly reconstructed (PNG, GIF). Lossy: some info permanently lost, reconstruction is approximate (JPEG)."
+    },
+    {
+      "q": "What are the two GIF versions and what does GIF89a add?",
+      "a": "GIF87a: original. GIF89a: added animation support, delay time control, and a transparency index. GIF uses LZW compression (lossless), 8-bit color only."
+    },
+    {
+      "q": "What is GIF interlacing?",
+      "a": "The image loads in 4 passes — a rough low-res version appears first, then progressively sharpens. Useful for slow connections."
+    },
+    {
+      "q": "What are the JPEG quality factor numbers from the lecture?",
+      "a": "Forestfire image: Q=10 → 1.5% of original size; Q=75 → 5.6%; GIF version → 23%. JPEG (even at Q=75) is 4× smaller than GIF."
+    },
+    {
+      "q": "Why is JPEG bad for text and sharp edges?",
+      "a": "JPEG is lossy and optimized for smooth gradients. Sharp edges and text cause blurry 'ringing' artifacts because high-frequency detail is discarded."
+    },
+    {
+      "q": "How does PNG improve over GIF?",
+      "a": "PNG: up to 48-bit color (vs 8-bit), full alpha transparency (vs single transparency index), gamma correction, 7-pass progressive display. Still lossless."
+    },
+    {
+      "q": "What makes TIFF flexible?",
+      "a": "Its tag system. Tags describe how the image is stored. Same format can store 1-bit, grayscale, 8-bit, or 24-bit with different tags. Originally lossless, later added optional JPEG tag."
+    },
+    {
+      "q": "In what order does BMP store color bytes?",
+      "a": "B, G, R, A (Blue first!) — reversed from the usual RGB convention. This is a common gotcha when reading BMP files."
+    },
+    {
+      "q": "What are the 4 parts of a BMP file and their sizes?",
+      "a": "1. File Header: 14 bytes (ID 'BM', size, offset). 2. Info Header: 40 bytes (width, height, bits/pixel, etc). 3. Palette: 1024 bytes (only for 8-bit). 4. Pixel data."
+    },
+    {
+      "q": "What are the three BMP file size formulas?",
+      "a": "32-bit: 14+40+(W×H×4). 24-bit: 14+40+(W×H×3). 8-bit: 14+40+1024+(W×H×1)."
+    },
+    {
+      "q": "What is the total file size of a 640×480 32-bit BMP vs 8-bit BMP?",
+      "a": "32-bit: 1,228,854 bytes. 8-bit: 308,278 bytes. Ratio ≈ 4:1."
+    }
+  ],
+  "problems": [
+    {
+      "type": "calculation",
+      "q": "Calculate the total file size of a $640 \\times 480$ 32-bit BMP image (with headers).",
+      "a": "File header = 14. Info header = 40. **No palette** for 32-bit. Pixel data = $640 \\times 480 \\times 4 = 1{,}228{,}800$.\n\nTotal = $14 + 40 + 1{,}228{,}800 = \\mathbf{1{,}228{,}854}$ bytes.",
+      "hint": "32-bit BMP has NO palette section"
+    },
+    {
+      "type": "calculation",
+      "q": "Calculate the total file size of a $640 \\times 480$ 8-bit BMP image (with headers and palette).",
+      "a": "File header = 14. Info header = 40. Palette = $256 \\times 4 = 1{,}024$. Pixel data = $640 \\times 480 \\times 1 = 307{,}200$.\n\nTotal = $14 + 40 + 1{,}024 + 307{,}200 = \\mathbf{308{,}278}$ bytes.",
+      "hint": "8-bit BMP has a 256-entry palette, each entry 4 bytes (BGRA order)"
+    },
+    {
+      "type": "calculation",
+      "q": "Calculate the file size of a $1024 \\times 768$ 24-bit BMP (with headers, no palette).",
+      "a": "File header = 14. Info header = 40. **No palette** for 24-bit. Pixel data = $1024 \\times 768 \\times 3 = 2{,}359{,}296$.\n\nTotal = $14 + 40 + 2{,}359{,}296 = \\mathbf{2{,}359{,}350}$ bytes.",
+      "hint": "24-bit = 3 bytes per pixel. No palette section."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why is JPEG poor for screenshots and diagrams, while PNG is preferred?",
+      "a": "JPEG's lossy compression is optimized for **smooth gradients** in photographs. For screenshots and diagrams, which contain **sharp edges, text, and uniform color regions**, JPEG introduces visible **blocking artifacts** and blurriness.\n\nPNG uses **lossless compression** — every pixel is preserved exactly. For text and line art, PNG files are also often **smaller** than JPEG at equivalent quality.",
+      "hint": "Think about what visual information JPEG discards"
+    }
+  ]
+}

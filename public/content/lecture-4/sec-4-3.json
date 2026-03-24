@@ -1,0 +1,141 @@
+{
+  "id": "sec-4-3",
+  "number": "6.1.4–6.1.5",
+  "title": "SNR & Signal Quality",
+  "content": [
+    {
+      "type": "definition",
+      "term": "SNR — Signal-to-Noise Ratio",
+      "body": "SNR measures **how much louder the desired signal is compared to background noise**. Higher SNR = cleaner signal.\n\nExpressed in **decibels (dB)**. There are two versions depending on whether you are comparing voltages or powers:\n\n$$\\text{SNR}_{voltage} = 20 \\times \\log_{10}\\!\\left(\\frac{V_{signal}}{V_{noise}}\\right)$$\n\n$$\\text{SNR}_{power} = 10 \\times \\log_{10}\\!\\left(\\frac{P_{signal}}{P_{noise}}\\right)$$\n\n**Rule:** voltage uses **20**, power uses **10**. The factor of 2 difference exists because power is proportional to voltage squared: $P \\propto V^2$, so $\\log(V^2) = 2\\log(V)$."
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "Always check: is the ratio a **voltage** ratio or a **power** ratio? Use **20** for voltage, **10** for power. A signal that is 10× louder in voltage is 100× louder in power — both give 20 dB."
+    },
+    {
+      "type": "example",
+      "title": "SNR Example 1 — Voltage Ratio 10×",
+      "body": "**$V_{signal} = 10 \\times V_{noise}$**\n\n$$\\text{SNR} = 20 \\times \\log_{10}(10) = 20 \\times 1 = \\mathbf{20 \\text{ dB}}$$"
+    },
+    {
+      "type": "example",
+      "title": "SNR Example 2 — Power Ratio 100×",
+      "body": "**$P_{signal} = 100 \\times P_{noise}$**\n\n$$\\text{SNR} = 10 \\times \\log_{10}(100) = 10 \\times 2 = \\mathbf{20 \\text{ dB}}$$\n\nNote: 10× voltage and 100× power give the **same 20 dB** — because $10^2 = 100$. They describe the same physical situation."
+    },
+    {
+      "type": "example",
+      "title": "SNR Example 3 — Voltage Ratio 100×",
+      "body": "**Voltage ratio = 100**\n\n$$\\text{SNR} = 20 \\times \\log_{10}(100) = 20 \\times 2 = \\mathbf{40 \\text{ dB}}$$"
+    },
+    {
+      "type": "example",
+      "title": "SNR Example 4 — Reverse Calculation",
+      "body": "**SNR = 60 dB. What is the voltage ratio?**\n\n$$60 = 20 \\times \\log_{10}(x)$$\n$$\\log_{10}(x) = 3$$\n$$x = 10^3 = \\mathbf{1000}$$\n\nThe signal is **1000× louder** in voltage than the noise."
+    },
+    {
+      "type": "table",
+      "headers": ["Sound Level (dB)", "Example"],
+      "rows": [
+        ["0 dB", "Threshold of hearing"],
+        ["10 dB", "Rustle of leaves"],
+        ["20 dB", "Very quiet room"],
+        ["40 dB", "Average room"],
+        ["60 dB", "Normal conversation"],
+        ["70 dB", "Busy street"],
+        ["80 dB", "Loud radio"],
+        ["90 dB", "Train"],
+        ["100 dB", "Riveter"],
+        ["120 dB", "Threshold of discomfort"],
+        ["140 dB", "Threshold of pain"],
+        ["160 dB", "Damage to ear drum"]
+      ]
+    },
+    {
+      "type": "text",
+      "body": "**Quantization Noise (Section 6.1.5)**\n\nWhen a sample is quantized (rounded to the nearest digital level), the difference between the actual analog value and the rounded value is called **quantization error**.\n\nThis error is not real noise — it is simply **rounding error** — but it behaves statistically like noise, so it is treated as noise.\n\n**Maximum quantization error** = $\\Delta V / 2$ (half of one step size), where $\\Delta V$ is the interval between adjacent quantization levels."
+    },
+    {
+      "type": "definition",
+      "term": "SQNR — Signal-to-Quantization-Noise Ratio",
+      "body": "Measures how much louder the signal is compared to the quantization error introduced by the digitization process.\n\n$$\\boxed{\\text{SQNR} \\approx 6.02 \\times N \\text{ dB}}$$\n\nwhere $N$ = number of bits per sample.\n\n**Derivation:**\n$$\\text{SQNR} = 20 \\times \\log_{10}\\left(\\frac{2^{N-1}}{0.5}\\right) = 20 \\times \\log_{10}(2^N) = 20 \\times N \\times \\log_{10}(2) \\approx 20 \\times N \\times 0.301 = 6.02 \\times N$$\n\n**Key insight:** every additional bit of quantization depth adds approximately **6 dB** of signal quality."
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "Memorize: **SQNR = 6.02 × N dB**. Each extra bit ≈ 6 dB improvement. This is one of the most-tested formulas in this section."
+    },
+    {
+      "type": "example",
+      "title": "SQNR Example 1 — 8-bit (Telephone)",
+      "body": "$$\\text{SQNR} = 6.02 \\times 8 = \\mathbf{48.16 \\text{ dB}}$$\n\nThis is typical **telephone quality** — acceptable for voice but noticeable noise in music."
+    },
+    {
+      "type": "example",
+      "title": "SQNR Example 2 — 16-bit (CD)",
+      "body": "$$\\text{SQNR} = 6.02 \\times 16 = \\mathbf{96.32 \\text{ dB}}$$\n\n**CD quality** — far exceeds the dynamic range of most listening environments."
+    },
+    {
+      "type": "example",
+      "title": "SQNR Example 3 — Required Bits for 72 dB",
+      "body": "**How many bits are needed for SQNR ≥ 72 dB?**\n\n$$N = \\frac{72}{6.02} = 11.96$$\n\nSince $N$ must be a whole number, round **up** → need at least $N = \\mathbf{12}$ bits."
+    },
+    {
+      "type": "example",
+      "title": "SQNR Example 4 — 24-bit (Professional)",
+      "body": "$$\\text{SQNR} = 6.02 \\times 24 = \\mathbf{144.48 \\text{ dB}}$$\n\n**Professional/studio quality** — far exceeds human hearing's dynamic range (~120 dB)."
+    }
+  ],
+  "flashcards": [
+    {
+      "q": "SNR formula: when do you use 20 vs 10, and why?",
+      "a": "Use **20** for voltage ratios, **10** for power ratios. The reason: power is proportional to voltage squared ($P \\propto V^2$), so $\\log(V^2) = 2\\log(V)$ — this factor of 2 doubles the coefficient from 10 to 20."
+    },
+    {
+      "q": "If the signal voltage is 10× the noise voltage, what is the SNR in dB?",
+      "a": "$SNR = 20 \\times \\log_{10}(10) = 20 \\times 1 = \\mathbf{20 \\text{ dB}}$"
+    },
+    {
+      "q": "What is quantization noise? Is it real noise?",
+      "a": "Quantization noise is the **rounding error** introduced when a sample is rounded to the nearest digital level. It is **not real noise** — it is pure arithmetic error. However, it behaves statistically like noise, so it is analyzed as noise. Max error = $\\Delta V / 2$."
+    },
+    {
+      "q": "What does SQNR = 6.02 × N mean practically?",
+      "a": "Every **extra bit of quantization depth** adds approximately **6 dB** of signal quality. So going from 8-bit to 16-bit (8 extra bits) gains 8 × 6 = 48 dB — a massive quality improvement."
+    },
+    {
+      "q": "An SNR reading is 60 dB. What is the voltage ratio of signal to noise?",
+      "a": "$60 = 20 \\times \\log_{10}(x) \\Rightarrow \\log_{10}(x) = 3 \\Rightarrow x = 10^3 = \\mathbf{1000}$\n\nThe signal is 1000 times louder in voltage than the noise."
+    },
+    {
+      "q": "Why does 10× voltage and 100× power give the same dB value?",
+      "a": "Because power scales as voltage squared: $10^2 = 100$. So $20 \\times \\log(10) = 20$ dB, and $10 \\times \\log(100) = 20$ dB. They are the same physical situation expressed differently — **same signal, same ratio, same dB**."
+    }
+  ],
+  "problems": [
+    {
+      "type": "calculation",
+      "q": "The signal power is 1000× the noise power. Calculate the SNR in dB.",
+      "a": "Power ratio → use 10:\n$$\\text{SNR} = 10 \\times \\log_{10}(1000) = 10 \\times 3 = \\mathbf{30 \\text{ dB}}$$",
+      "hint": "Power ratio → multiply by 10"
+    },
+    {
+      "type": "calculation",
+      "q": "An audio system uses 12-bit quantization. Calculate its SQNR.",
+      "a": "$$\\text{SQNR} = 6.02 \\times 12 = \\mathbf{72.24 \\text{ dB}}$$",
+      "hint": "Apply SQNR = 6.02 × N directly"
+    },
+    {
+      "type": "calculation",
+      "q": "A professional recording system requires an SQNR of at least 120 dB. What is the minimum number of bits required?",
+      "a": "$$N = \\frac{120}{6.02} = 19.93$$\n\nRound up → need at least $N = \\mathbf{20}$ bits per sample.",
+      "hint": "Rearrange SQNR = 6.02 × N → N = SQNR / 6.02, then round up"
+    },
+    {
+      "type": "calculation",
+      "q": "An SNR is measured as 80 dB. What is the voltage ratio of signal to noise?",
+      "a": "$$80 = 20 \\times \\log_{10}(x)$$\n$$\\log_{10}(x) = 4$$\n$$x = 10^4 = \\mathbf{10{,}000}$$\n\nThe signal voltage is **10,000× greater** than the noise voltage.",
+      "hint": "Solve for x: divide both sides by 20, then raise 10 to that power"
+    }
+  ]
+}

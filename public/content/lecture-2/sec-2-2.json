@@ -1,0 +1,112 @@
+{
+  "id": "sec-2-2",
+  "number": "3.1.2 Dithering",
+  "title": "Dithering",
+  "content": [
+    {
+      "type": "definition",
+      "term": "Dithering",
+      "body": "You have an 8-bit grayscale image (256 gray shades) but your printer can only print **1-bit** (ink or no ink). Dithering trades **intensity resolution** for **spatial resolution** — instead of one pixel per dot, one pixel becomes a small **pattern of dots**.\n\nYour eyes average nearby dots together. Half black, half white in an area → eye perceives it as **medium gray**, even though there's no actual gray dot."
+    },
+    {
+      "type": "definition",
+      "term": "Halftone Printing",
+      "body": "An analog technique used in newspapers. Varying-size filled circles of black ink represent shading — bigger circles = darker areas, smaller = lighter. Look at a newspaper photo with a magnifying glass and you'll see it.\n\n**Dithering is the digital version of halftone printing.**"
+    },
+    {
+      "type": "definition",
+      "term": "Dither Matrix (Threshold Map)",
+      "body": "A small grid of threshold values that controls **at what brightness each dot turns on**. Each position has a different trigger point.\n\nThe 2×2 matrix from the lecture:\n$$\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$$\n- Position (0,0) threshold **0** → turns on first (easiest)\n- Position (1,1) threshold **1** → turns on second\n- Position (0,1) threshold **2** → turns on third\n- Position (1,0) threshold **3** → turns on last (hardest)\n\nThe values are arranged in a **scattered pattern** so dots spread out evenly rather than clustering."
+    },
+    {
+      "type": "example",
+      "title": "How Dots Fill In (2×2 Matrix)",
+      "body": "The order dots turn on as pixel gets darker:\n\n**Step 1** (value > 0): top-left turns on → `■ .` / `. .`\n\n**Step 2** (value > 1): bottom-right turns on (diagonal) → `■ .` / `. ■`\n\n**Step 3** (value > 2): top-right turns on → `■ ■` / `. ■`\n\n**Step 4** (value > 3): all filled → `■ ■` / `■ ■`\n\nSee how dots **spread out evenly** instead of filling left-to-right? That's the whole point of the arrangement."
+    },
+    {
+      "type": "text",
+      "body": "## Approach 1: Simple Dithering (Each pixel → n×n block)\n\n**Step 1:** Rescale pixel value (0–255) to range 0 to n²:\n$$\\text{new\\_value} = \\lfloor \\text{pixel\\_value} \\div (256 / (n^2 + 1)) \\rfloor$$\nFor 2×2: $\\text{new\\_value} = \\lfloor \\text{pixel\\_value} \\div 51.2 \\rfloor$\n\n**Step 2:** The new_value = how many dots to turn ON in the block.\n\n**Step 3:** If new_value > matrix_entry at that position → dot ON.\n\n**Drawback:** Output image becomes **n² times larger** (2×2 matrix = 4× larger, 4×4 matrix = 16× larger)."
+    },
+    {
+      "type": "example",
+      "title": "Simple Dithering — Worked Examples (2×2 Matrix)",
+      "body": "Matrix: $\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$, divisor = 51.2\n\n**Pixel = 180:** rescaled = $\\lfloor 180/51.2 \\rfloor = 3$\n- (0,0): 3>0? YES → ON\n- (0,1): 3>2? YES → ON\n- (1,0): 3>3? NO → OFF\n- (1,1): 3>1? YES → ON\nResult: 3/4 dots → `■ ■` / `. ■` (fairly dark — makes sense for 180/255)\n\n**Pixel = 0:** rescaled=0. 0>nothing → all OFF → `white`\n\n**Pixel = 60:** rescaled=1. Only 1>0 → 1 dot → `■ .` / `. .`\n\n**Pixel = 130:** rescaled=2. 2>0 and 2>1 → 2 dots → `■ .` / `. ■`\n\n**Pixel = 255:** rescaled=4. 4>everything → all 4 ON → `black`"
+    },
+    {
+      "type": "definition",
+      "term": "Ordered Dithering (Same Image Size)",
+      "body": "The smarter version. Each pixel stays as **one pixel** — output image is the same size.\n\n**How:** For pixel at position (row i, col j):\n1. Find matrix position: row = $i \\bmod n$, col = $j \\bmod n$ (matrix **tiles** across the image)\n2. Rescale: $\\lfloor \\text{pixel\\_value} \\div 64 \\rfloor$ (for 2×2, range 0–3)\n3. If rescaled > threshold → **black (1)**, else → **white (0)**"
+    },
+    {
+      "type": "example",
+      "title": "Ordered Dithering — Full 4×4 Image Example",
+      "body": "Matrix: $\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$, divisor = 64\n\nImage pixel values:\n```\n200   50  180   30\n100  220   40  170\n 10  160  240   80\n150   70  120  250\n```\n\nProcessing (pos = (i mod 2, j mod 2), threshold from matrix, rsc = ⌊val/64⌋):\n- (0,0) val=200: pos=(0,0) thr=0, rsc=3. 3>0? → **1**\n- (0,1) val=50: pos=(0,1) thr=2, rsc=0. 0>2? → **0**\n- (0,2) val=180: pos=(0,0) thr=0, rsc=2. 2>0? → **1**\n- (0,3) val=30: pos=(0,1) thr=2, rsc=0. 0>2? → **0**\n- (1,0) val=100: pos=(1,0) thr=3, rsc=1. 1>3? → **0**\n- (1,1) val=220: pos=(1,1) thr=1, rsc=3. 3>1? → **1**\n- (1,2) val=40: pos=(1,0) thr=3, rsc=0. 0>3? → **0**\n- (1,3) val=170: pos=(1,1) thr=1, rsc=2. 2>1? → **1**\n- (2,0) val=10: pos=(0,0) thr=0, rsc=0. 0>0? → **0**\n- (2,1) val=160: pos=(0,1) thr=2, rsc=2. 2>2? → **0**\n- (2,2) val=240: pos=(0,0) thr=0, rsc=3. 3>0? → **1**\n- (2,3) val=80: pos=(0,1) thr=2, rsc=1. 1>2? → **0**\n- (3,0) val=150: pos=(1,0) thr=3, rsc=2. 2>3? → **0**\n- (3,1) val=70: pos=(1,1) thr=1, rsc=1. 1>1? → **0**\n- (3,2) val=120: pos=(1,0) thr=3, rsc=1. 1>3? → **0**\n- (3,3) val=250: pos=(1,1) thr=1, rsc=3. 3>1? → **1**\n\nOutput (same 4×4 size):\n```\n1 0 1 0\n0 1 0 1\n0 0 1 0\n0 0 0 1\n```\nBright pixels (200,220,240,250) → black dots. Dark pixels (10,30,40,50) → white."
+    },
+    {
+      "type": "callout",
+      "style": "info",
+      "body": "**Dithering also works for color!** A 24-bit color image reduced to 5 bits looks blocky with visible color banding. With dithering, the dot patterns simulate the in-between colors — the result looks much smoother."
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "**Simple dithering:** replaces each pixel with an n×n block → image gets n² times larger.\n\n**Ordered dithering:** matrix tiles across the image, each pixel stays one pixel → same image size.\n\nThe comparison: strictly greater than (**>**) the threshold, not ≥."
+    }
+  ],
+  "flashcards": [
+    {
+      "q": "What is dithering?",
+      "a": "Trades intensity resolution for spatial resolution. Simulates gray shades on a 1-bit printer using dot patterns. Your eye averages nearby dots — half black/half white looks like medium gray."
+    },
+    {
+      "q": "What is the connection between dithering and halftone printing?",
+      "a": "Halftone printing is the analog version — newspapers use varying-size ink circles. Dithering is the digital equivalent. Both fool the eye into seeing shades using only black and white dots."
+    },
+    {
+      "q": "What is the 2×2 dither matrix? In what order do dots turn on?",
+      "a": "Matrix: [[0,2],[3,1]]. Dot order: (0,0) with threshold 0 turns on first, then (1,1) threshold 1, then (0,1) threshold 2, then (1,0) threshold 3. Spread diagonally so dots distribute evenly."
+    },
+    {
+      "q": "How do you apply simple dithering? What is the size penalty?",
+      "a": "Rescale pixel: ⌊pixel ÷ 51.2⌋ for 2×2 (range 0–4). If rescaled > matrix_entry → dot ON. Each pixel becomes an n×n block, so the output image is n² times larger (2×2 = 4×, 4×4 = 16×)."
+    },
+    {
+      "q": "Walk through: simple dithering, pixel=180, 2×2 matrix [[0,2],[3,1]].",
+      "a": "Rescaled = ⌊180/51.2⌋ = 3. Compare 3 against each entry: (0,0): 3>0 ON; (0,1): 3>2 ON; (1,0): 3>3 NO; (1,1): 3>1 ON. Result: 3/4 dots on."
+    },
+    {
+      "q": "What is ordered dithering? How does it avoid the size penalty?",
+      "a": "Matrix tiles across the whole image. Each pixel at (i,j) uses threshold at (i mod n, j mod n). Rescale ⌊pixel/64⌋ for 2×2. If rescaled > threshold → black. Each output pixel = one input pixel → same image size."
+    },
+    {
+      "q": "In ordered dithering, pixel at (1,0)=100, matrix [[0,2],[3,1]], divisor=64. Output?",
+      "a": "Position: (1 mod 2, 0 mod 2) = (1,0). Threshold = 3. Rescaled = ⌊100/64⌋ = 1. Is 1 > 3? NO → output 0 (white)."
+    }
+  ],
+  "problems": [
+    {
+      "type": "calculation",
+      "q": "Simple dithering with 2×2 matrix $\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$ (divisor=51.2). Apply to pixel value 130. How many dots are ON? Which positions?",
+      "a": "Rescaled = $\\lfloor 130/51.2 \\rfloor = 2$.\n\nCompare 2 against each matrix entry:\n- (0,0): 2 > 0? **YES → ON**\n- (0,1): 2 > 2? **NO → OFF**\n- (1,0): 2 > 3? **NO → OFF**\n- (1,1): 2 > 1? **YES → ON**\n\n**2 dots ON** — positions (0,0) and (1,1) (diagonal pattern).",
+      "hint": "Rescale first (÷51.2), then compare with each entry using strict >"
+    },
+    {
+      "type": "calculation",
+      "q": "Ordered dithering with 2×2 matrix $\\begin{bmatrix} 0 & 2 \\\\ 3 & 1 \\end{bmatrix}$, divisor=64. Pixel at position $(3,2)$ has value 120. Output?",
+      "a": "Matrix position: $(3 \\bmod 2, 2 \\bmod 2) = (1, 0)$. Threshold = **3**.\n\nRescaled = $\\lfloor 120/64 \\rfloor = 1$.\n\nIs $1 > 3$? **NO → output 0 (white)**.",
+      "hint": "(row mod 2, col mod 2) to find matrix position"
+    },
+    {
+      "type": "calculation",
+      "q": "Ordered dithering, same matrix and divisor. Pixel at $(3,3)$ has value 250. Output?",
+      "a": "Matrix position: $(3 \\bmod 2, 3 \\bmod 2) = (1, 1)$. Threshold = **1**.\n\nRescaled = $\\lfloor 250/64 \\rfloor = 3$.\n\nIs $3 > 1$? **YES → output 1 (black)**.",
+      "hint": "250 is very bright — should produce a black dot"
+    },
+    {
+      "type": "conceptual",
+      "q": "Why does ordered dithering avoid the size penalty of simple dithering?",
+      "a": "In simple dithering, each input pixel is **replaced by an entire n×n block**, so the output is n² times larger.\n\nIn ordered dithering, the matrix tiles across the image as a **repeating threshold map**. Each output pixel still corresponds to exactly one input pixel — just with a different threshold based on its position. Image size is unchanged.",
+      "hint": "Think about what happens to each pixel in each method"
+    }
+  ]
+}
