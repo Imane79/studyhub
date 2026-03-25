@@ -1,0 +1,90 @@
+{
+  "id": "sec-6-4",
+  "number": "8.5.2+",
+  "title": "DCT vs DFT, Matrix Form & JPEG Pipeline",
+  "content": [
+    {
+      "type": "definition",
+      "term": "DCT vs DFT",
+      "body": "**DFT (Discrete Fourier Transform):** uses both cosine and sine (complex exponentials). Produces real AND imaginary parts.\n\n**DCT (Discrete Cosine Transform):** uses only cosines. Real numbers only. No imaginary part.\n\n**How DCT avoids imaginary numbers:** It makes a **symmetric copy** of the input. Original 8 samples [0,1,2,3,4,5,6,7] → DCT effectively works on 16 samples: [0,1,2,3,4,5,6,7, 7,6,5,4,3,2,1,0]. When a signal is symmetric, the sine part of its DFT is always zero — only the cosine part remains. That is the DCT."
+    },
+    {
+      "type": "example",
+      "title": "DCT vs DFT — Ramp Signal [0,1,2,3,4,5,6,7]",
+      "body": "**DCT coefficients:** [9.90, −6.44, 0, −0.67, 0, −0.20, 0, −0.51]\n→ Many zeros, energy concentrated in first 2 terms.\n\n**DFT coefficients:** [28.00, −4.00, 9.66, −4.00, 4.00, −4.00, 1.66, −4.00]\n→ Energy spread out — fewer zeros, harder to compress.\n\n**Using only the first 3 terms:**\n- DCT approximation → closely follows the original ramp ✓\n- DFT approximation → oscillates badly, misses the shape ✗\n\n**Conclusion:** DCT concentrates energy better → more efficient for compression → why JPEG and all major video codecs use DCT, not DFT."
+    },
+    {
+      "type": "text",
+      "body": "**The 2D DCT is separable** — it can be computed as two consecutive 1D DCTs:\n1. Apply 1D DCT to each **row**\n2. Apply 1D DCT to each **column** of the result\n\nThis reduces iterations from 8×8 = 64 down to 8+8 = 16. That's why real-time video compression is computationally feasible."
+    },
+    {
+      "type": "math",
+      "label": "Matrix Form of 2D DCT",
+      "expression": "F = T \\cdot f \\cdot T^T \\quad (\\text{DCT: pixels} \\to \\text{frequency}) \\qquad f = T^T \\cdot F \\cdot T \\quad (\\text{IDCT: frequency} \\to \\text{pixels})"
+    },
+    {
+      "type": "definition",
+      "term": "DCT Matrix T",
+      "body": "$$T[i,j] = \\begin{cases} \\dfrac{1}{2\\sqrt{2}} & i = 0 \\\\[6pt] \\dfrac{1}{2}\\cos\\!\\left(\\dfrac{(2j+1)\\,i\\,\\pi}{16}\\right) & i > 0 \\end{cases}$$\n\n**Key property — orthogonal matrix:** $T^T = T^{-1}$\n\nThe transpose equals the inverse. This is why the IDCT is just $T^T \\cdot F \\cdot T$ — no need to compute a full matrix inverse. Just transpose."
+    },
+    {
+      "type": "definition",
+      "term": "Orthogonal & Orthonormal Basis Functions",
+      "body": "The DCT basis functions have two special properties:\n\n**Orthogonal:** Different basis functions don't interfere with each other.\n$$\\sum_i B_p(i) \\cdot B_q(i) = 0 \\quad \\text{when } p \\neq q$$\nPractical meaning: you can change one DCT coefficient without affecting any other coefficient.\n\n**Orthonormal:** Orthogonal AND each basis function has length 1.\n$$\\sum_i B_p(i) \\cdot B_p(i) = 1 \\quad \\text{when } p = q$$\nThis is what makes the DCT matrix orthogonal ($T^T = T^{-1}$) — and what keeps the IDCT simple."
+    },
+    {
+      "type": "example",
+      "title": "The Full JPEG Pipeline",
+      "body": "**ENCODING:**\n\n1. Split image into **8×8 pixel blocks**\n2. Apply **2D DCT** to each block → 64 DCT coefficients\n3. F(0,0) = DC (average brightness, biggest). Most high-frequency AC (bottom-right) are small.\n4. **[LOSSY STEP] Quantize:** divide each coefficient by a quantization value and round. Small coefficients → 0. Larger quantization values → more zeros → more compression → more quality loss.\n5. **Lossless encode** remaining non-zero coefficients with Huffman or Arithmetic coding (from Lecture 5)\n\n**DECODING (reverse each step):**\n1. Huffman decode\n2. Dequantize (multiply back by quantization values)\n3. Apply **IDCT** → reconstruct pixel block\n4. Assemble blocks → reconstructed image\n\nThe loss is permanent — after quantization, the zeroed coefficients are gone and cannot be recovered."
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "**Must-know facts:**\n- DCT concentrates energy better than DFT → fewer non-zero coefficients → better compression\n- 2D DCT is separable: rows then columns, 16 iterations not 64\n- Matrix form: F = T·f·T^T, inverse: f = T^T·F·T\n- T^T = T^(-1) because basis functions are orthonormal\n- JPEG lossy step: quantize DCT coefficients (divide + round → zeros)\n- High compression = large quantization values = more zeros = more quality loss"
+    }
+  ],
+  "flashcards": [
+    {
+      "q": "Why does DCT use only real numbers while DFT needs complex numbers?",
+      "a": "DCT makes a symmetric copy of the input signal. Symmetric signals have a zero sine component in their DFT — only the cosine part remains. That real-only cosine representation is the DCT."
+    },
+    {
+      "q": "For the ramp [0,1,2,3,4,5,6,7]: why is DCT better than DFT for compression?",
+      "a": "DCT coefficients: [9.90,−6.44,0,−0.67,...] — many zeros, energy in first 2 terms. DFT: [28,−4,9.66,−4,4,−4,1.66,−4] — energy spread out. Using only 3 DCT terms gives a good ramp. Using 3 DFT terms oscillates badly. DCT concentrates energy → fewer terms needed → better compression."
+    },
+    {
+      "q": "What does 'the 2D DCT is separable' mean? Why does it matter?",
+      "a": "You can compute 2D DCT as two 1D DCTs: first across rows, then across columns. Reduces from 64 iterations to 8+8=16. This is why real-time video compression is computationally feasible."
+    },
+    {
+      "q": "What is the matrix form of the DCT? What about IDCT?",
+      "a": "DCT: F = T·f·T^T. IDCT: f = T^T·F·T. T is the DCT matrix, T^T is its transpose. The IDCT is just transposing T — no need for a full matrix inverse."
+    },
+    {
+      "q": "Why does T^T = T^(-1)? What property causes this?",
+      "a": "The DCT basis functions are **orthonormal** — orthogonal (different functions don't interfere) AND each has length 1. This makes T an orthogonal matrix, where the transpose equals the inverse by definition."
+    },
+    {
+      "q": "What is the lossy step in JPEG? What controls quality?",
+      "a": "The lossy step is **quantization**: each DCT coefficient is divided by a quantization value and rounded. Small coefficients become zero. Larger quantization values → more zeros → higher compression → lower quality. The quantization values form a quantization matrix — different for each frequency."
+    },
+    {
+      "q": "Describe the complete JPEG encode/decode pipeline.",
+      "a": "Encode: split into 8×8 blocks → 2D DCT → quantize (lossy, zeros small coefficients) → Huffman encode.\nDecode: Huffman decode → dequantize → IDCT → assemble blocks.\nThe quantization step is irreversible — zeroed coefficients are lost forever."
+    }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "In JPEG, what happens to image quality when you increase the quantization values (e.g., use Q=90 vs Q=10 where higher Q = larger quantization divisors)?",
+      "a": "Larger quantization divisors → more DCT coefficients round to zero → fewer coefficients survive → smaller file but lower quality. More high-frequency detail is lost, causing visible blocking artifacts on edges. Q=10 (high quantization) produces a much smaller file than Q=90 (low quantization) but at the cost of visible quality degradation.",
+      "hint": "Think about what happens when you divide a small number by a large number and round."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why does JPEG produce 'blocking artifacts' at high compression levels?",
+      "a": "JPEG processes independent 8×8 pixel blocks. At high compression, most DCT coefficients are zeroed, leaving only the DC (average brightness) and a few low-frequency terms per block. Each block reconstructs to a slightly different average with smoothed-out detail. The boundaries between blocks become visible as a grid of square patches — blocking artifacts. This is especially visible in smooth gradient areas.",
+      "hint": "Think about what happens at the edges of adjacent 8×8 blocks when only DC survives."
+    }
+  ]
+}

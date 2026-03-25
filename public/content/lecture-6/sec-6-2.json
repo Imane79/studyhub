@@ -1,0 +1,71 @@
+{
+  "id": "sec-6-2",
+  "number": "8.4.3",
+  "title": "Vector Quantization",
+  "content": [
+    {
+      "type": "text",
+      "body": "Shannon's information theory says compression always works better on **groups of samples** than on individual ones.\n\n**Scalar quantization:** each pixel value is quantized independently — one value at a time.\n\n**Vector quantization (VQ):** group several values into a **vector** and quantize the entire vector at once. By treating groups together, you can exploit the correlation between neighboring values."
+    },
+    {
+      "type": "definition",
+      "term": "Codebook",
+      "body": "A collection of pre-computed **code vectors** — the VQ equivalent of a LUT. Each entry is a vector (a small pattern of values), not a single color.\n\n- Encoding: for each input vector, find the **closest code vector** in the codebook. Output its **index**.\n- Decoding: receive the index, look it up in the codebook, output that code vector."
+    },
+    {
+      "type": "example",
+      "title": "VQ Step by Step",
+      "body": "Input pixels: [100, 102, 98, 101, 200, 198, 203, 199]\n\n**Step 1 — Split into vectors of size 4:**\n- Vector 1: [100, 102, 98, 101]\n- Vector 2: [200, 198, 203, 199]\n\n**Step 2 — Codebook:**\n| Index | Code Vector |\n|-------|-------------|\n| 0 | [100, 100, 100, 100] |\n| 1 | [150, 150, 150, 150] |\n| 2 | [200, 200, 200, 200] |\n\n**Step 3 — Find closest for each vector:**\n- Vector 1 → closest to Index 0\n- Vector 2 → closest to Index 2\n\n**Encoded output:** indices [0, 2] — 2 numbers instead of 8.\n\n**Decoded output:** [100,100,100,100] and [200,200,200,200] — close to original but not exact → **lossy**."
+    },
+    {
+      "type": "text",
+      "body": "**Why VQ beats scalar quantization:**\n\nScalar quantization treats each value independently — it ignores the fact that neighboring pixels are usually similar (correlated). VQ exploits this: the codebook captures **common patterns** that naturally occur in the data. When you find the closest code vector, you're matching an entire pattern at once — much more efficient than matching one pixel at a time."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "body": "**Connection to indexed images (HW1):** An 8-bit indexed image uses a LUT where each pixel stores a color index. VQ is the same idea generalized — instead of a single color per entry, each codebook entry is a vector (a group of pixel values). The pixel index = the VQ code."
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "Key VQ facts: (1) Input is split into vectors. (2) Each vector is replaced by the index of the closest codebook entry. (3) Decoder just does a table lookup. (4) Loss comes from the approximation — the code vector is close to, but not exactly, the input vector."
+    }
+  ],
+  "flashcards": [
+    {
+      "q": "What is the difference between scalar and vector quantization?",
+      "a": "Scalar: each sample quantized independently, one at a time. Vector: samples grouped into vectors, the entire group quantized at once. VQ exploits correlation between neighboring values → more efficient compression."
+    },
+    {
+      "q": "What is a codebook in VQ? What does encoding produce?",
+      "a": "A codebook is a table of pre-computed code vectors (like a LUT for patterns). Encoding finds the closest code vector for each input vector and outputs its **index**. You store indices instead of the raw values."
+    },
+    {
+      "q": "Why does VQ compress better than scalar quantization?",
+      "a": "Neighboring pixels are correlated — they form recognizable patterns. The codebook captures these common patterns. Matching a whole pattern at once is more efficient than quantizing each value independently."
+    },
+    {
+      "q": "How is VQ related to 8-bit indexed images?",
+      "a": "An indexed image uses a LUT: each pixel stores a color index, not the color itself. VQ generalizes this — instead of single colors, each codebook entry is a vector (group of values). Same concept, bigger entries."
+    },
+    {
+      "q": "Where does the loss come from in VQ?",
+      "a": "The code vector is the closest match in the codebook, not the exact input. The decoder outputs the code vector, not the original values. The difference between them is the quantization error — the lossy part."
+    }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "You have input pixels [50, 52, 49, 51] and a codebook: Index 0 = [50,50,50,50], Index 1 = [100,100,100,100], Index 2 = [150,150,150,150]. Which index is chosen? What is the decoded output? Is there any error?",
+      "a": "Index 0 = [50,50,50,50] is closest to [50,52,49,51].\nDecoded output: [50,50,50,50].\nError: [0,2,-1,1] — small differences. This is the quantization loss.",
+      "hint": "Find which codebook entry has the smallest total difference from the input vector."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why does VQ with vector size 1 reduce to scalar quantization?",
+      "a": "If each vector contains only 1 sample, you're matching one value at a time against a codebook of single values — that's exactly scalar quantization. VQ generalizes scalar quantization by increasing the vector size.",
+      "hint": "Think about what 'grouping into vectors of size 1' means."
+    }
+  ]
+}
