@@ -4,45 +4,8 @@
   "title": "CIE Color Science & Chromaticity",
   "content": [
     {
-      "type": "text",
-      "body": "**The Colorimeter Experiment:** You show a person a target color on one side of a screen. On the other side: three adjustable lights — Red, Green, Blue (the **color primaries**). The person adjusts brightness of each until the mix **matches** the target.\n\nBy repeating this for every wavelength across 400–700 nm, you get three curves: $\\bar{r}(\\lambda)$, $\\bar{g}(\\lambda)$, $\\bar{b}(\\lambda)$ — the **CIE RGB color-matching functions**."
-    },
-    {
-      "type": "definition",
-      "term": "Negative Color-Matching Values",
-      "body": "For some wavelengths (especially blue-green, ~500 nm), you **cannot** match the target color by mixing positive R, G, B amounts. The only way to get a match is to add some primary light to the **target side**.\n\nMathematically, this records as a **negative value** in the matching function.\n\n**Conceptual example — matching a vivid cyan at 500 nm:**\n- You mix Blue + Green primaries. Close, but not vivid enough.\n- More Blue = too bluish. More Green = too greenish.\n- **Solution:** add a little Red light to the TARGET side. Now both sides match.\n- In the math: $\\bar{r}(500\\text{ nm})$ is **negative**.\n\n**Practical meaning:** No RGB display can show every possible color. Some very saturated colors are physically impossible to produce by mixing R, G, B light."
-    },
-    {
-      "type": "definition",
-      "term": "CIE XYZ System",
-      "body": "Created to eliminate negative values. Uses **fictitious primaries** (not real lights) that produce $\\bar{x}(\\lambda)$, $\\bar{y}(\\lambda)$, $\\bar{z}(\\lambda)$ with only **positive values** everywhere.\n\n**Key fact:** $\\bar{y}(\\lambda)$ was deliberately set equal to $V(\\lambda)$ — so the **Y tristimulus value directly = luminance (brightness)**.\n\nFor light with SPD $E(\\lambda)$:\n$$X = \\int E(\\lambda)\\,\\bar{x}(\\lambda)\\,d\\lambda, \\quad Y = \\int E(\\lambda)\\,\\bar{y}(\\lambda)\\,d\\lambda, \\quad Z = \\int E(\\lambda)\\,\\bar{z}(\\lambda)\\,d\\lambda$$"
-    },
-    {
-      "type": "definition",
-      "term": "Chromaticity Coordinates",
-      "body": "X, Y, Z is 3D (includes brightness). To get just color (no brightness), divide by the total:\n$$x = \\frac{X}{X+Y+Z}, \\quad y = \\frac{Y}{X+Y+Z}, \\quad z = \\frac{Z}{X+Y+Z}$$\nSince $x+y+z=1$ always, $z$ is redundant: $z = 1-x-y$. Only **x and y** are needed to plot any color."
-    },
-    {
-      "type": "example",
-      "title": "Chromaticity Calculations — Three Worked Examples",
-      "body": "**Example 1 — Basic:** X=30, Y=40, Z=10. Total=80.\n$$x = 30/80 = 0.375, \\quad y = 40/80 = 0.500, \\quad z = 10/80 = 0.125$$\nCheck: $0.375 + 0.500 + 0.125 = 1.0$ ✓\n\n**Example 2 — White point:** X=Y=Z=100. Total=300.\n$$x = 100/300 = 1/3 \\approx 0.333, \\quad y = 1/3 \\approx 0.333$$\n**White point is always at (1/3, 1/3).** For equi-energy white, X=Y=Z, so all three coordinates = 1/3.\n\n**Example 3 — Reddish color:** X=60, Y=30, Z=10. Total=100.\n$$x = 0.60, \\quad y = 0.30, \\quad z = 1 - 0.6 - 0.3 = 0.1$$\nx=0.6 is high → lots of X, correlates with red. Far from white point (0.333, 0.333) → fairly saturated reddish color."
-    },
-    {
-      "type": "text",
-      "body": "**Reading the Chromaticity Diagram:**\n- **Horseshoe boundary (spectrum locus):** pure spectral colors — most saturated possible\n- **White point (~1/3, 1/3):** center. Colors near it are grayish/desaturated.\n- **Saturation:** how close to the boundary (vivid) vs white point (washed out)\n- **Mixing two colors:** result lies on the **straight line** between them\n\n**Mixing example:** Color A at (0.2, 0.3) + Color B at (0.5, 0.4), equal amounts:\n$$x = (0.2+0.5)/2 = 0.35, \\quad y = (0.3+0.4)/2 = 0.35$$\nResult (0.35, 0.35) is close to the white point → fairly desaturated.\n\n**Dominant wavelength:** Draw a line from the white point through your color point and extend it to the horseshoe. Where it hits = the pure spectral color your color most resembles."
-    },
-    {
-      "type": "text",
-      "body": "**Gamut:** On the chromaticity diagram, a display's three primaries form a **triangle**. Everything inside = colors the display CAN show. Everything outside = **out of gamut** — you'd need a **negative** amount of one primary, which is impossible.\n\n**Example — monitor primaries:**\n- R: (0.64, 0.33), G: (0.30, 0.60), B: (0.15, 0.06)\n- Color at (0.35, 0.40) → inside triangle → **can display** ✓\n- Color at (0.10, 0.75) → outside triangle → **out of gamut** ✗\n\n**Handling out-of-gamut:** Find the closest in-gamut color by drawing a line from the out-of-gamut color to the white point — use the intersection with the triangle boundary."
-    },
-    {
-      "type": "text",
-      "body": "**XYZ → RGB Transform (SMPTE standard):**\n$$\\begin{pmatrix}X\\\\Y\\\\Z\\end{pmatrix} = \\begin{pmatrix}0.3935 & 0.3653 & 0.1916\\\\0.2124 & 0.7011 & 0.0866\\\\0.0187 & 0.1119 & 0.9582\\end{pmatrix}\\begin{pmatrix}R\\\\G\\\\B\\end{pmatrix}$$\nTo go XYZ→RGB, invert this matrix. **You won't memorize these numbers.** Just know: if any resulting RGB value is **negative** → that color is **out of gamut**.\n\n**Example:** After XYZ→RGB conversion you get R=0.8, G=−0.1, B=0.3. G is negative → **out of gamut** → must approximate with closest displayable color."
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "**Grassman's Law:** Color matching is **linear**. If color1 matches mix1 and color2 matches mix2, then (color1+color2) matches (mix1+mix2). This linearity is what makes matrix transforms valid for color conversion.\n\n**Additive color:** self-luminous sources (screens, projectors). R+G=Yellow. R+G+B=White."
+      "type": "markdown",
+      "body": "## Color Matching\n\nMatch a target color using **three primaries** (R, G, B):\n\n$$\\text{Target} = r \\cdot R + g \\cdot G + b \\cdot B$$\n\n(r, g, b) = amounts of each primary needed\n\n**Problem:** Some colors require **negative** amounts — can't emit negative light!\n\n**Solution:** Move that primary to the target side of the equation.\n\n**Color matching functions:** r̄(λ), ḡ(λ), b̄(λ) — how much R,G,B needed to match each wavelength → these have negative lobes.\n\n---\n\n## CIE XYZ Color Space\n\nCreate **fictitious primaries** with no negative values:\n\n$$\\bar{x}(\\lambda),; \\bar{y}(\\lambda),; \\bar{z}(\\lambda) \\quad \\text{— all positive!}$$\n\n**Key property:** ȳ(λ) **exactly equals V(λ)** → Y represents **luminance** (brightness)\n\n$$X = \\int E(\\lambda) \\times \\bar{x}(\\lambda) \\, d\\lambda$$\n$$Y = \\int E(\\lambda) \\times \\bar{y}(\\lambda) \\, d\\lambda$$\n$$Z = \\int E(\\lambda) \\times \\bar{z}(\\lambda) \\, d\\lambda$$\n\nResult: (X, Y, Z) triplet — represents any visible color\n\n---\n\n## Chromaticity Diagram\n\n**Normalized coordinates** (remove brightness, keep just color):\n\n$$x = \\frac{X}{X+Y+Z} \\qquad y = \\frac{Y}{X+Y+Z} \\qquad z = \\frac{Z}{X+Y+Z}$$\n\nNote: x + y + z = 1 → only need x and y to describe color\n\n**The diagram:**\n* **Horseshoe shape** = all visible colors\n* **Edge** = pure spectral colors\n* **Inside** = color mixtures\n* **Bottom straight line** = purples (not in spectrum)\n* **Center area** = white point (equal energy, labeled E or D65)\n\n---\n\n## Gamut\n\nTriangle formed by **three display primaries** on the chromaticity diagram.\n\n* **Inside triangle** = colors the display CAN show\n* **Outside triangle** = out of gamut (would need negative primary amount)\n\n**Grassmann's Law:** Color matching is **linear**\n\n$$\\text{color}_1 + \\text{color}_2 = \\text{mix}_1 + \\text{mix}_2$$\n\n👉 This is why matrix math works in color science"
     }
   ],
   "flashcards": [
@@ -89,28 +52,28 @@
   ],
   "problems": [
     {
-      "type": "calculation",
-      "q": "Given X=30, Y=40, Z=10, compute chromaticity coordinates x, y, z.",
-      "a": "Total = $30+40+10 = 80$.\n$x = 30/80 = \\mathbf{0.375}$, $y = 40/80 = \\mathbf{0.500}$, $z = 10/80 = \\mathbf{0.125}$.\nCheck: $0.375+0.500+0.125 = 1.0$ ✓",
-      "hint": "x = X/(X+Y+Z), then z = 1-x-y"
+      "type": "conceptual",
+      "q": "What is the problem with real RGB primaries in color matching, and how does CIE XYZ solve it?",
+      "a": "Some colors require **negative** amounts of a primary (e.g. r < 0) — physically impossible since you cannot emit negative light.\n\nCIE XYZ solves this by defining **fictitious primaries** X̄, Ȳ, Z̄ that are mathematically constructed so all matching values are ≥ 0 for every visible color.",
+      "hint": "Negative values = physically impossible. XYZ uses imaginary primaries to avoid this."
+    },
+    {
+      "type": "conceptual",
+      "q": "What special property does the Y component of CIE XYZ have?",
+      "a": "ȳ(λ) is designed to **exactly equal V(λ)**, the luminous efficiency function.\n\nThis means **Y = luminance (brightness)**. If you only want brightness, just use Y. X and Z carry color information but have no direct perceptual meaning.",
+      "hint": "ȳ(λ) = V(λ). Y = luminance."
     },
     {
       "type": "calculation",
-      "q": "Given X=45, Y=45, Z=45. Compute x and y. What kind of light is this?",
-      "a": "Total = 135. $x = 45/135 = \\mathbf{1/3 \\approx 0.333}$, $y = 1/3 \\approx 0.333$.\n\nX=Y=Z → **equi-energy white point** at (1/3, 1/3).",
-      "hint": "When X=Y=Z, all chromaticity coords are equal"
+      "q": "Given X=0.5, Y=0.4, Z=0.1, compute the chromaticity coordinates x and y.",
+      "a": "$X+Y+Z = 0.5 + 0.4 + 0.1 = 1.0$\n\n$x = 0.5/1.0 = \\mathbf{0.5}$\n\n$y = 0.4/1.0 = \\mathbf{0.4}$\n\nNote: z = 0.1/1.0 = 0.1, and x+y+z = 1 ✓. Only x and y are needed.",
+      "hint": "x = X/(X+Y+Z), y = Y/(X+Y+Z). You only need two coordinates since x+y+z=1."
     },
     {
-      "type": "calculation",
-      "q": "Given X=60, Y=30, Z=10. Compute x, y. Is this a saturated or desaturated color? Red or blue direction?",
-      "a": "Total = 100. $x = 0.60$, $y = 0.30$, $z = 0.10$.\n\nFar from white point (0.333, 0.333) → **saturated**. High x → **reddish direction**.",
-      "hint": "Compare to white point (0.333, 0.333)"
-    },
-    {
-      "type": "calculation",
-      "q": "Color A is at (0.2, 0.3) and Color B is at (0.5, 0.4) on the chromaticity diagram. You mix them in equal amounts. What is the resulting chromaticity point?",
-      "a": "Equal mix = midpoint:\n$x = (0.2+0.5)/2 = \\mathbf{0.35}$, $y = (0.3+0.4)/2 = \\mathbf{0.35}$.\n\nResult at (0.35, 0.35) — close to white point (0.333, 0.333) → fairly desaturated.",
-      "hint": "Equal mix = midpoint of the line connecting the two colors"
+      "type": "conceptual",
+      "q": "What is a display's gamut, and why can some colors not be shown on any display?",
+      "a": "A display's **gamut** is the triangle formed by its three primaries on the chromaticity diagram. Colors inside the triangle can be displayed; colors outside cannot.\n\nColors outside the gamut would require a **negative** amount of one primary — physically impossible. No display can show every visible color because no real primaries span the entire horseshoe.",
+      "hint": "Gamut = triangle of primaries. Outside = need negative light = impossible."
     }
   ]
 }

@@ -14,7 +14,8 @@ export type ContentBlockType =
   | 'callout'
   | 'table'
   | 'image'
-  | 'list';
+  | 'list'
+  | 'markdown';
 
 export type CalloutStyle = 'info' | 'warning' | 'tip' | 'exam';
 
@@ -73,6 +74,11 @@ export interface ListBlock {
   items: string[];
 }
 
+export interface MarkdownBlock {
+  type: 'markdown';
+  body: string;
+}
+
 export type ContentBlock =
   | TextBlock
   | DefinitionBlock
@@ -82,7 +88,8 @@ export type ContentBlock =
   | CalloutBlock
   | TableBlock
   | ImageBlock
-  | ListBlock;
+  | ListBlock
+  | MarkdownBlock;
 
 export interface Flashcard {
   q: string;

@@ -4,86 +4,8 @@
   "title": "SNR & Signal Quality",
   "content": [
     {
-      "type": "definition",
-      "term": "SNR — Signal-to-Noise Ratio",
-      "body": "SNR measures **how much louder the desired signal is compared to background noise**. Higher SNR = cleaner signal.\n\nExpressed in **decibels (dB)**. There are two versions depending on whether you are comparing voltages or powers:\n\n$$\\text{SNR}_{voltage} = 20 \\times \\log_{10}\\!\\left(\\frac{V_{signal}}{V_{noise}}\\right)$$\n\n$$\\text{SNR}_{power} = 10 \\times \\log_{10}\\!\\left(\\frac{P_{signal}}{P_{noise}}\\right)$$\n\n**Rule:** voltage uses **20**, power uses **10**. The factor of 2 difference exists because power is proportional to voltage squared: $P \\propto V^2$, so $\\log(V^2) = 2\\log(V)$."
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "Always check: is the ratio a **voltage** ratio or a **power** ratio? Use **20** for voltage, **10** for power. A signal that is 10× louder in voltage is 100× louder in power — both give 20 dB."
-    },
-    {
-      "type": "example",
-      "title": "SNR Example 1 — Voltage Ratio 10×",
-      "body": "**$V_{signal} = 10 \\times V_{noise}$**\n\n$$\\text{SNR} = 20 \\times \\log_{10}(10) = 20 \\times 1 = \\mathbf{20 \\text{ dB}}$$"
-    },
-    {
-      "type": "example",
-      "title": "SNR Example 2 — Power Ratio 100×",
-      "body": "**$P_{signal} = 100 \\times P_{noise}$**\n\n$$\\text{SNR} = 10 \\times \\log_{10}(100) = 10 \\times 2 = \\mathbf{20 \\text{ dB}}$$\n\nNote: 10× voltage and 100× power give the **same 20 dB** — because $10^2 = 100$. They describe the same physical situation."
-    },
-    {
-      "type": "example",
-      "title": "SNR Example 3 — Voltage Ratio 100×",
-      "body": "**Voltage ratio = 100**\n\n$$\\text{SNR} = 20 \\times \\log_{10}(100) = 20 \\times 2 = \\mathbf{40 \\text{ dB}}$$"
-    },
-    {
-      "type": "example",
-      "title": "SNR Example 4 — Reverse Calculation",
-      "body": "**SNR = 60 dB. What is the voltage ratio?**\n\n$$60 = 20 \\times \\log_{10}(x)$$\n$$\\log_{10}(x) = 3$$\n$$x = 10^3 = \\mathbf{1000}$$\n\nThe signal is **1000× louder** in voltage than the noise."
-    },
-    {
-      "type": "table",
-      "headers": ["Sound Level (dB)", "Example"],
-      "rows": [
-        ["0 dB", "Threshold of hearing"],
-        ["10 dB", "Rustle of leaves"],
-        ["20 dB", "Very quiet room"],
-        ["40 dB", "Average room"],
-        ["60 dB", "Normal conversation"],
-        ["70 dB", "Busy street"],
-        ["80 dB", "Loud radio"],
-        ["90 dB", "Train"],
-        ["100 dB", "Riveter"],
-        ["120 dB", "Threshold of discomfort"],
-        ["140 dB", "Threshold of pain"],
-        ["160 dB", "Damage to ear drum"]
-      ]
-    },
-    {
-      "type": "text",
-      "body": "**Quantization Noise (Section 6.1.5)**\n\nWhen a sample is quantized (rounded to the nearest digital level), the difference between the actual analog value and the rounded value is called **quantization error**.\n\nThis error is not real noise — it is simply **rounding error** — but it behaves statistically like noise, so it is treated as noise.\n\n**Maximum quantization error** = $\\Delta V / 2$ (half of one step size), where $\\Delta V$ is the interval between adjacent quantization levels."
-    },
-    {
-      "type": "definition",
-      "term": "SQNR — Signal-to-Quantization-Noise Ratio",
-      "body": "Measures how much louder the signal is compared to the quantization error introduced by the digitization process.\n\n$$\\boxed{\\text{SQNR} \\approx 6.02 \\times N \\text{ dB}}$$\n\nwhere $N$ = number of bits per sample.\n\n**Derivation:**\n$$\\text{SQNR} = 20 \\times \\log_{10}\\left(\\frac{2^{N-1}}{0.5}\\right) = 20 \\times \\log_{10}(2^N) = 20 \\times N \\times \\log_{10}(2) \\approx 20 \\times N \\times 0.301 = 6.02 \\times N$$\n\n**Key insight:** every additional bit of quantization depth adds approximately **6 dB** of signal quality."
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "Memorize: **SQNR = 6.02 × N dB**. Each extra bit ≈ 6 dB improvement. This is one of the most-tested formulas in this section."
-    },
-    {
-      "type": "example",
-      "title": "SQNR Example 1 — 8-bit (Telephone)",
-      "body": "$$\\text{SQNR} = 6.02 \\times 8 = \\mathbf{48.16 \\text{ dB}}$$\n\nThis is typical **telephone quality** — acceptable for voice but noticeable noise in music."
-    },
-    {
-      "type": "example",
-      "title": "SQNR Example 2 — 16-bit (CD)",
-      "body": "$$\\text{SQNR} = 6.02 \\times 16 = \\mathbf{96.32 \\text{ dB}}$$\n\n**CD quality** — far exceeds the dynamic range of most listening environments."
-    },
-    {
-      "type": "example",
-      "title": "SQNR Example 3 — Required Bits for 72 dB",
-      "body": "**How many bits are needed for SQNR ≥ 72 dB?**\n\n$$N = \\frac{72}{6.02} = 11.96$$\n\nSince $N$ must be a whole number, round **up** → need at least $N = \\mathbf{12}$ bits."
-    },
-    {
-      "type": "example",
-      "title": "SQNR Example 4 — 24-bit (Professional)",
-      "body": "$$\\text{SQNR} = 6.02 \\times 24 = \\mathbf{144.48 \\text{ dB}}$$\n\n**Professional/studio quality** — far exceeds human hearing's dynamic range (~120 dB)."
+      "type": "markdown",
+      "body": "## Signal-to-Noise Ratio (SNR)\n\n$$SNR = \\frac{\\text{Signal Power}}{\\text{Noise Power}}$$\n\nHigher SNR = better quality\n\n### Voltage-based (use 20):\n$$SNR = 20 \\log_{10}\\left(\\frac{V_{signal}}{V_{noise}}\\right)$$\n\n### Power-based (use 10):\n$$SNR = 10 \\log_{10}\\left(\\frac{P_{signal}}{P_{noise}}\\right)$$\n\n**Key rule:** Voltage → 20,  Power → 10\n\n---\n\n## SNR Examples\n\n**Example 1 — Voltage ratio 10:1:**\n$$SNR = 20 \\log_{10}(10) = 20 \\times 1 = \\mathbf{20 \\text{ dB}}$$\n\n**Example 2 — Power ratio 10:1:**\n$$SNR = 10 \\log_{10}(10) = 10 \\times 1 = \\mathbf{10 \\text{ dB}}$$\n\n👉 Same ratio, different dB — voltage vs power!\n\n**Example 3 — Equal signal and noise (ratio 1:1):**\n$$SNR = 20 \\log_{10}(1) = 20 \\times 0 = \\mathbf{0 \\text{ dB}}$$\n\nSignal equals noise → poor quality!\n\n---\n\n## Quantization Noise (SQNR)\n\nError from rounding during quantization — unavoidable in digital systems.\n\n$$SQNR \\approx 6.02 \\times N$$\n\nWhere N = number of bits. **Each extra bit → +6 dB improvement**\n\n| Standard | Bits | SQNR |\n|----------|------|------|\n| Telephone | 8 | ≈ 48 dB |\n| CD audio | 16 | ≈ 96 dB |\n| Studio | 24 | ≈ 144 dB |\n\n**Reverse — how many bits for 60 dB?**\n\n$$N = 60 \\div 6.02 \\approx 9.97 \\rightarrow \\text{need } \\mathbf{10 \\text{ bits}}$$\n\nAlways **round up!**\n\n---\n\n## Human Perception & Companding\n\n**Weber's Law:** Humans perceive **ratios** (logarithmic), not linear differences → why we use dB.\n\n**Linear quantization:** ❌ Same precision everywhere → wastes bits on loud sounds\n\n**Non-linear quantization (Companding):**\n✅ Quiet sounds → more precision\n✅ Loud sounds → less precision\n→ Matches human perception\n\nStandards: **μ-law** (US/Japan), **A-law** (Europe)"
     }
   ],
   "flashcards": [
@@ -115,27 +37,33 @@
   "problems": [
     {
       "type": "calculation",
-      "q": "The signal power is 1000× the noise power. Calculate the SNR in dB.",
-      "a": "Power ratio → use 10:\n$$\\text{SNR} = 10 \\times \\log_{10}(1000) = 10 \\times 3 = \\mathbf{30 \\text{ dB}}$$",
-      "hint": "Power ratio → multiply by 10"
+      "q": "Calculate SNR in dB for: (a) voltage ratio 10:1, (b) power ratio 10:1. Why are the answers different?",
+      "a": "**(a) Voltage:** $SNR = 20\\log_{10}(10) = 20 \\times 1 = \\mathbf{20 \\text{ dB}}$\n\n**(b) Power:** $SNR = 10\\log_{10}(10) = 10 \\times 1 = \\mathbf{10 \\text{ dB}}$\n\nDifferent because power ∝ voltage² — doubling voltage quadruples power, so the scale differs.",
+      "hint": "Voltage → multiply log by 20. Power → multiply log by 10."
     },
     {
       "type": "calculation",
-      "q": "An audio system uses 12-bit quantization. Calculate its SQNR.",
-      "a": "$$\\text{SQNR} = 6.02 \\times 12 = \\mathbf{72.24 \\text{ dB}}$$",
-      "hint": "Apply SQNR = 6.02 × N directly"
+      "q": "Calculate SNR for voltage ratio 100:1 and voltage ratio 1:1.",
+      "a": "**100:1:** $SNR = 20\\log_{10}(100) = 20 \\times 2 = \\mathbf{40 \\text{ dB}}$\n\n**1:1:** $SNR = 20\\log_{10}(1) = 20 \\times 0 = \\mathbf{0 \\text{ dB}}$\n\n0 dB means signal = noise — unusable quality.",
+      "hint": "log₁₀(100) = 2, log₁₀(1) = 0."
     },
     {
       "type": "calculation",
-      "q": "A professional recording system requires an SQNR of at least 120 dB. What is the minimum number of bits required?",
-      "a": "$$N = \\frac{120}{6.02} = 19.93$$\n\nRound up → need at least $N = \\mathbf{20}$ bits per sample.",
-      "hint": "Rearrange SQNR = 6.02 × N → N = SQNR / 6.02, then round up"
+      "q": "Calculate SQNR for: (a) 8-bit telephone, (b) 16-bit CD, (c) 24-bit studio.",
+      "a": "**(a) 8-bit:** $6.02 \\times 8 = \\mathbf{48.16 \\text{ dB}}$\n\n**(b) 16-bit:** $6.02 \\times 16 = \\mathbf{96.32 \\text{ dB}}$\n\n**(c) 24-bit:** $6.02 \\times 24 = \\mathbf{144.48 \\text{ dB}}$\n\nEach extra bit adds ~6 dB.",
+      "hint": "SQNR ≈ 6.02 × N. Just multiply."
     },
     {
       "type": "calculation",
-      "q": "An SNR is measured as 80 dB. What is the voltage ratio of signal to noise?",
-      "a": "$$80 = 20 \\times \\log_{10}(x)$$\n$$\\log_{10}(x) = 4$$\n$$x = 10^4 = \\mathbf{10{,}000}$$\n\nThe signal voltage is **10,000× greater** than the noise voltage.",
-      "hint": "Solve for x: divide both sides by 20, then raise 10 to that power"
+      "q": "How many bits are needed to achieve at least 90 dB SQNR?",
+      "a": "$N = 90 \\div 6.02 \\approx 14.95$\n\nRound up → need **15 bits**",
+      "hint": "N = target dB ÷ 6.02. Always round up."
+    },
+    {
+      "type": "conceptual",
+      "q": "What is companding and why does it produce better audio quality than linear quantization for the same number of bits?",
+      "a": "**Companding** (compress + expand) uses non-linear quantization:\n* **Quiet sounds** get finer quantization steps → lower noise when it matters most\n* **Loud sounds** get coarser steps → ear less sensitive to noise there\n\nLinear quantization wastes the same precision on loud sounds that the ear barely distinguishes. Companding matches Weber's Law — humans perceive ratios, not absolute differences.",
+      "hint": "Human hearing is logarithmic. Companding allocates bits where perception is most sensitive."
     }
   ]
 }

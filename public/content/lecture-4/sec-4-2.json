@@ -4,80 +4,8 @@
   "title": "Sound, Digitization & Nyquist Theorem",
   "content": [
     {
-      "type": "text",
-      "body": "**Sound** is a **pressure wave** — a vibrating source compresses and expands air molecules, creating alternating regions of high and low pressure that travel outward.\n\nKey properties:\n- **1-dimensional signal:** amplitude varies over time (unlike images, which are 2D)\n- **Continuous (analog):** the wave is a smooth, unbroken curve in reality\n\n**Wave behaviors:**\n- **Reflection:** the wave bounces off surfaces\n- **Refraction:** the wave changes angle when entering a different medium\n- **Diffraction:** the wave bends around obstacles"
-    },
-    {
-      "type": "definition",
-      "term": "Frequency vs Pitch",
-      "body": "- **Frequency:** an **objective, physical** measurement — cycles per second (Hz). A440 has exactly 440 oscillation cycles per second.\n- **Pitch:** a **subjective, perceptual** quality — how 'high' or 'low' a sound seems to a listener.\n\nFrequency and pitch are closely related but not identical. Two sounds at the same frequency may be perceived at different pitches depending on context.\n\n**Octave = doubling of frequency.** A4 = 440 Hz, next A up = 880 Hz, next = 1760 Hz."
-    },
-    {
-      "type": "definition",
-      "term": "Harmonics",
-      "body": "Real instruments do not produce a single pure frequency — they produce a **fundamental frequency** plus **integer multiples** called harmonics.\n\nExample (A4 = 440 Hz): 440, 880, 1320, 1760 Hz…\n\nThe mix of harmonics gives each instrument its unique **timbre** (sound color) — why a violin and a piano playing A4 sound different even at the same pitch."
-    },
-    {
-      "type": "text",
-      "body": "**Digitization** converts a continuous analog signal into discrete numbers. It has **two independent dimensions**:\n\n1. **Sampling (in time):** measure the amplitude at evenly spaced time intervals. The rate = **sampling frequency** (Hz)\n2. **Quantization (in amplitude):** round each measured value to the nearest discrete level. With **N bits**, there are $2^N$ possible levels\n\n**Three questions to answer when digitizing audio:**\n1. What sampling rate?\n2. How many bits (quantization depth)?\n3. What file format?\n\n**CD Audio standard:** 44,100 Hz, 16 bits per sample, 2 channels (stereo)"
-    },
-    {
-      "type": "callout",
-      "style": "info",
-      "body": "Sampling ≠ Quantization. Sampling happens in the **time domain** (how often you measure). Quantization happens in the **amplitude domain** (how precisely you measure). They are two separate steps."
-    },
-    {
-      "type": "text",
-      "body": "**The Aliasing Problem**\n\nIf you sample too slowly, the samples no longer represent the original signal correctly — they appear to come from a completely different, lower frequency. This wrong detected frequency is called an **alias**."
-    },
-    {
-      "type": "table",
-      "headers": ["Sampling Rate", "What Happens", "Result"],
-      "rows": [
-        ["= f_true", "Sample taken at same point every cycle", "All samples identical → detected as 0 Hz (DC)"],
-        ["1.5 × f_true", "Samples trace a slow pattern", "Alias: f_alias = 1.5f − f = 0.5f (half the real frequency)"],
-        ["≥ 2 × f_true", "Enough samples to reconstruct correctly", "No aliasing — signal recovered accurately"]
-      ]
-    },
-    {
-      "type": "definition",
-      "term": "Nyquist Theorem",
-      "body": "To correctly capture (and later reconstruct) a signal, the **sampling rate must be at least twice the maximum frequency** present in the signal:\n\n$$f_{sampling} \\geq 2 \\times f_{max}$$\n\n- **Nyquist rate** = $2 \\times f_{max}$ — the minimum acceptable sampling rate\n- **Nyquist frequency** = $\\frac{f_{sampling}}{2}$ — the highest frequency that can be correctly captured at a given sampling rate"
-    },
-    {
-      "type": "math",
-      "label": "Alias Frequency Formula (Eq. 6.1)",
-      "expression": "f_{alias} = f_{sampling} - f_{true} \\quad \\text{(when } f_{true} < f_{sampling} < 2 \\times f_{true}\\text{)}"
-    },
-    {
-      "type": "example",
-      "title": "Example 1 — No Aliasing",
-      "body": "**Sound up to 4 kHz, sampled at 10 kHz.**\n\nNyquist rate = 2 × 4,000 = **8,000 Hz**\n\n10,000 ≥ 8,000 → sampling rate is above the Nyquist rate → **no aliasing**. The signal is correctly captured."
-    },
-    {
-      "type": "example",
-      "title": "Example 2 — Aliasing",
-      "body": "**5 kHz sound, sampled at 8 kHz.**\n\nNyquist rate = 2 × 5,000 = 10,000 Hz\n\n8,000 < 10,000 → sampling rate is too low → **aliasing occurs**.\n\n$$f_{alias} = 8{,}000 - 5{,}000 = 3{,}000 \\text{ Hz}$$\n\nYou hear a 3 kHz tone instead of the real 5 kHz tone."
-    },
-    {
-      "type": "example",
-      "title": "Example 3 — Why CD Uses 44.1 kHz",
-      "body": "**Human hearing goes up to ~20 kHz.**\n\nNyquist rate = 2 × 20,000 = 40,000 Hz (minimum)\n\nCD uses **44,100 Hz** — above the minimum, giving a safety margin and room for the anti-aliasing filter to roll off smoothly."
-    },
-    {
-      "type": "example",
-      "title": "Example 4 — Telephone Bandwidth",
-      "body": "**Telephone bandwidth: 200–3,400 Hz.**\n\nMaximum frequency = 3,400 Hz → Nyquist rate = 2 × 3,400 = **6,800 Hz**\n\nIn practice, telephone systems use **8,000 Hz** — a comfortable margin above the Nyquist rate."
-    },
-    {
-      "type": "definition",
-      "term": "Anti-Aliasing Filter",
-      "body": "A **low-pass filter** applied to the analog signal **before sampling**. It removes (attenuates) all frequency components above the Nyquist frequency ($f_{sampling}/2$), preventing them from folding back as aliases.\n\nWithout this filter, any high-frequency content above the Nyquist frequency would alias down into the audible band and corrupt the recording."
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "The Nyquist Theorem is the most important concept in this section. Know the formula $f_{sampling} \\geq 2 \\times f_{max}$, know the alias formula $f_{alias} = f_{sampling} - f_{true}$, and be able to check whether aliasing occurs and calculate the alias frequency."
+      "type": "markdown",
+      "body": "## What is sound?\n\n* Wave (vibration in air) — continuous, **1D** (varies over time only)\n* Compare: images are 2D (x and y)\n\n**Frequency (Hz):** physical measurement → **Pitch:** human perception\n\n👉 High frequency = high pitch\n\nReal sound = **fundamental + harmonics** — harmonics give sound its character\n\n---\n\n## Digitization\n\n$$\\text{Sound} \\rightarrow \\text{Microphone} \\rightarrow \\text{ADC} \\rightarrow \\text{Digital}$$\n\n### Two steps\n\n**1. Sampling** — take values at regular time intervals\n* Parameter: **sampling rate (fs)** in Hz\n\n**2. Quantization** — round values to discrete levels\n* Parameter: **bits (N)**\n\n---\n\n## Nyquist Theorem (CRITICAL)\n\n**The problem — Aliasing:**\n* Sampling too slow → wrong frequency appears → signal misrepresented\n\n$$f_s \\ge 2 f_{max}$$\n\nSampling rate must be **at least twice** the highest frequency.\n\n$$f_{Nyquist} = \\frac{f_s}{2}$$\n\nMaximum frequency you can correctly capture.\n\n$$f_{alias} = f_s - f_{true}$$\n\nFrequency that appears when aliasing occurs.\n\n---\n\n## Example 1: Minimum sampling rate\n\nSignal max frequency = 5 kHz\n\n$$f_s \\ge 2 \\times 5000 = 10{,}000 \\text{ Hz}$$\n\nNeed at least **10 kHz** sampling rate.\n\n---\n\n## Example 2: Detecting aliasing\n\n* Signal = 7 kHz, Sampling = 10 kHz\n\n$$f_{Nyquist} = 10{,}000 \\div 2 = 5{,}000 \\text{ Hz}$$\n\n7 kHz > 5 kHz → **Aliasing occurs!**\n\n$$f_{alias} = 10{,}000 - 7{,}000 = 3{,}000 \\text{ Hz}$$\n\nThe 7 kHz signal appears as **3 kHz**"
     }
   ],
   "flashcards": [
@@ -117,27 +45,27 @@
   "problems": [
     {
       "type": "calculation",
-      "q": "A sound has a maximum frequency of 6 kHz and is sampled at 9 kHz. (a) Does aliasing occur? (b) If yes, what is the alias frequency?",
-      "a": "(a) Nyquist rate = 2 × 6,000 = **12,000 Hz**. Sampling rate 9,000 < 12,000 → **yes, aliasing occurs**.\n\n(b) $f_{alias} = f_{sampling} - f_{true} = 9{,}000 - 6{,}000 = \\mathbf{3{,}000 \\text{ Hz}}$\n\nYou hear a 3 kHz tone instead of the real 6 kHz tone.",
-      "hint": "Check: is f_sampling ≥ 2 × f_true? If not, use f_alias = f_sampling − f_true"
+      "q": "What is the minimum sampling rate needed to correctly capture a signal with maximum frequency 5 kHz?",
+      "a": "$f_s \\ge 2 \\times f_{max} = 2 \\times 5{,}000 = \\mathbf{10{,}000 \\text{ Hz}}$\n\nNeed at least 10 kHz.",
+      "hint": "Nyquist: fs ≥ 2 × fmax."
     },
     {
       "type": "calculation",
-      "q": "A medical audio system must capture signals up to 8 kHz. What is the minimum sampling rate required?",
-      "a": "Nyquist rate = $2 \\times f_{max} = 2 \\times 8{,}000 = \\mathbf{16{,}000 \\text{ Hz}}$\n\nThe system must sample at **at least 16 kHz** to avoid aliasing.",
-      "hint": "Apply the Nyquist theorem directly"
+      "q": "A 7 kHz signal is sampled at 10 kHz. Does aliasing occur? If so, what alias frequency appears?",
+      "a": "$f_{Nyquist} = 10{,}000 \\div 2 = 5{,}000$ Hz\n\n7 kHz > 5 kHz → **Yes, aliasing occurs!**\n\n$f_{alias} = f_s - f_{true} = 10{,}000 - 7{,}000 = \\mathbf{3{,}000 \\text{ Hz}}$\n\nThe 7 kHz signal appears as 3 kHz.",
+      "hint": "Check: is f > fNyquist? Then alias = fs − f."
     },
     {
       "type": "calculation",
-      "q": "A system samples at 12 kHz. What is its Nyquist frequency — i.e., the highest frequency it can correctly capture?",
-      "a": "Nyquist frequency = $\\frac{f_{sampling}}{2} = \\frac{12{,}000}{2} = \\mathbf{6{,}000 \\text{ Hz}}$\n\nAny frequency above 6 kHz would alias. The anti-aliasing filter must block everything above 6 kHz.",
-      "hint": "Nyquist frequency = sampling rate ÷ 2"
+      "q": "Human hearing range is 20 Hz to 20 kHz. What minimum sampling rate is needed? What does CD audio use and why?",
+      "a": "$f_s \\ge 2 \\times 20{,}000 = \\mathbf{40{,}000 \\text{ Hz}}$\n\nCD audio uses **44,100 Hz** — slightly above the 40 kHz minimum, with extra margin to allow for a practical anti-aliasing filter roll-off.",
+      "hint": "fmax = 20 kHz. Nyquist says double it. CD adds a safety margin."
     },
     {
-      "type": "conceptual",
-      "q": "A 3 kHz tone is sampled at 3 kHz (sampling rate equals the tone frequency). What does the sampled signal look like, and what frequency does it represent?",
-      "a": "When sampling rate equals the tone frequency, the sampler hits **the same phase point every cycle** — all samples are identical (e.g., all zeros if sampling at the zero crossing). The samples look like a **constant DC signal** — zero frequency.\n\nThis is a severe aliasing case: the measured frequency is 0 Hz instead of 3 kHz. The Nyquist theorem requires sampling at **≥ 2 × 3 = 6 kHz** to correctly capture this signal.",
-      "hint": "What does 'same point every cycle' mean for the measured value?"
+      "type": "calculation",
+      "q": "A signal at 12 kHz is sampled at 10 kHz. What alias frequency appears?",
+      "a": "$f_{Nyquist} = 10{,}000 \\div 2 = 5{,}000$ Hz\n\n12 kHz > 5 kHz → aliasing occurs\n\n$f_{alias} = 10{,}000 - 12{,}000 = -2{,}000$ Hz\n\nTake absolute value: **2 kHz** appears.",
+      "hint": "If alias = fs − f is negative, take the absolute value."
     }
   ]
 }

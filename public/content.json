@@ -378,13 +378,43 @@
             },
             {
               "type": "table",
-              "headers": ["Format", "Color Depth", "Compression", "Best For"],
+              "headers": [
+                "Format",
+                "Color Depth",
+                "Compression",
+                "Best For"
+              ],
               "rows": [
-                ["GIF", "8-bit (256 colors)", "LZW (lossless)", "Animation, simple graphics"],
-                ["JPEG", "24-bit", "Lossy DCT", "Photographs (Q=75 → 5.6% size!)"],
-                ["PNG", "Up to 48-bit", "Lossless", "Web graphics, screenshots, text"],
-                ["TIFF", "1/8/24-bit", "Optional (tag-based)", "Professional/archival"],
-                ["BMP", "1/8/24/32-bit", "None (usually)", "Windows uncompressed (B,G,R,A order!)"]
+                [
+                  "GIF",
+                  "8-bit (256 colors)",
+                  "LZW (lossless)",
+                  "Animation, simple graphics"
+                ],
+                [
+                  "JPEG",
+                  "24-bit",
+                  "Lossy DCT",
+                  "Photographs (Q=75 → 5.6% size!)"
+                ],
+                [
+                  "PNG",
+                  "Up to 48-bit",
+                  "Lossless",
+                  "Web graphics, screenshots, text"
+                ],
+                [
+                  "TIFF",
+                  "1/8/24-bit",
+                  "Optional (tag-based)",
+                  "Professional/archival"
+                ],
+                [
+                  "BMP",
+                  "1/8/24/32-bit",
+                  "None (usually)",
+                  "Windows uncompressed (B,G,R,A order!)"
+                ]
               ]
             },
             {
@@ -500,14 +530,35 @@
             },
             {
               "type": "table",
-              "headers": ["Color", "Wavelength Range"],
+              "headers": [
+                "Color",
+                "Wavelength Range"
+              ],
               "rows": [
-                ["Violet", "~400–450 nm"],
-                ["Blue", "~450–495 nm"],
-                ["Green", "~495–570 nm"],
-                ["Yellow", "~570–590 nm"],
-                ["Orange", "~590–620 nm"],
-                ["Red", "~620–700+ nm"]
+                [
+                  "Violet",
+                  "~400–450 nm"
+                ],
+                [
+                  "Blue",
+                  "~450–495 nm"
+                ],
+                [
+                  "Green",
+                  "~495–570 nm"
+                ],
+                [
+                  "Yellow",
+                  "~570–590 nm"
+                ],
+                [
+                  "Orange",
+                  "~590–620 nm"
+                ],
+                [
+                  "Red",
+                  "~620–700+ nm"
+                ]
               ]
             },
             {
@@ -521,12 +572,32 @@
             },
             {
               "type": "table",
-              "headers": ["", "Rods", "Cones"],
+              "headers": [
+                "",
+                "Rods",
+                "Cones"
+              ],
               "rows": [
-                ["Count", "~120 million", "~6 million"],
-                ["Works in", "Low light (night)", "Bright light (day)"],
-                ["Color?", "No (grayscale only)", "Yes (3 types: R, G, B)"],
-                ["Detail", "Low", "High"]
+                [
+                  "Count",
+                  "~120 million",
+                  "~6 million"
+                ],
+                [
+                  "Works in",
+                  "Low light (night)",
+                  "Bright light (day)"
+                ],
+                [
+                  "Color?",
+                  "No (grayscale only)",
+                  "Yes (3 types: R, G, B)"
+                ],
+                [
+                  "Detail",
+                  "Low",
+                  "High"
+                ]
               ]
             },
             {
@@ -886,47 +957,77 @@
           "title": "Compression Fundamentals & Entropy",
           "content": [
             {
-              "type": "definition",
-              "term": "Compression",
-              "body": "The process of reducing the total number of bits needed to represent information. You have original data → run through an **encoder** → smaller representation → later a **decoder** reconstructs it."
+              "type": "text",
+              "body": "## What is compression?\n\n* Original data → **encoder** → smaller\n* Smaller → **decoder** → get back original"
             },
             {
               "type": "text",
-              "body": "**Lossless compression:** The decoder can perfectly reconstruct the original data — every single bit is identical.\n\n**Lossy compression:** Some information is permanently lost. The decoded data is only an approximation. Lecture 5 focuses entirely on **lossless** techniques."
+              "body": "### Lossless\n* Get back **exact** original\n* Every bit identical\n* **← This lecture**\n\n### Lossy\n* Get back **approximation**\n* Some info lost forever\n* ← Next lecture"
             },
             {
               "type": "math",
               "label": "Compression Ratio",
-              "expression": "CR = \\frac{B_0}{B_1}"
+              "expression": "\\text{Compression Ratio} = \\frac{B_0}{B_1}"
             },
             {
               "type": "text",
-              "body": "Where $B_0$ = bits **before** compression, $B_1$ = bits **after** compression.\n\n- Ratio of 2.0 → compressed file is half the original size\n- Ratio of 1.0 → no compression happened at all\n- Ratio < 1.0 → the \"compressed\" file is actually **bigger** (bad!)"
+              "body": "* B₀ = bits BEFORE (original)\n* B₁ = bits AFTER (compressed)\n\n* Ratio = 2.0 → half the size ✅\n* Ratio = 1.0 → no compression\n* Ratio < 1.0 → got bigger ❌"
             },
             {
-              "type": "definition",
-              "term": "Self-Information",
-              "body": "If a symbol $s_i$ has probability $p_i$, the amount of information it carries is $I(s_i) = \\log_2(1/p_i)$.\n\n**Intuition:** A **rare** symbol is surprising — it carries **more** information. A **common** symbol is expected — it carries **less** information."
+              "type": "math",
+              "label": "Self-Information",
+              "expression": "I(s_i) = \\log_2\\left(\\frac{1}{p_i}\\right)"
             },
             {
-              "type": "example",
-              "title": "Self-Information Values",
-              "body": "- $p = 0.5$ → $I = \\log_2(1/0.5) = \\log_2(2) = \\mathbf{1}$ bit\n- $p = 0.25$ → $I = \\log_2(1/0.25) = \\log_2(4) = \\mathbf{2}$ bits\n- $p = 0.125$ → $I = \\log_2(8) = \\mathbf{3}$ bits\n\nEvery time the probability **halves**, the information goes up by **1 bit**."
+              "type": "text",
+              "body": "* Rare symbol → surprising → **MORE** info\n* Common symbol → expected → **LESS** info"
             },
             {
-              "type": "definition",
-              "term": "Entropy (H)",
-              "body": "The **average** information per symbol across the entire source:\n$$H(S) = \\sum_i p_i \\log_2(1/p_i) = -\\sum_i p_i \\log_2(p_i)$$\nEntropy is the **theoretical minimum** average bits per symbol. No lossless compression can ever do better."
+              "type": "table",
+              "headers": [
+                "Probability",
+                "Information"
+              ],
+              "rows": [
+                [
+                  "0.5",
+                  "1 bit"
+                ],
+                [
+                  "0.25",
+                  "2 bits"
+                ],
+                [
+                  "0.125",
+                  "3 bits"
+                ]
+              ]
             },
             {
-              "type": "example",
-              "title": "Entropy: Two Key Cases",
-              "body": "**Case 1 — Uniform (worst for compression):**\nAn image where all 256 gray levels are equally likely ($p = 1/256$):\n$$H = \\log_2(256) = \\mathbf{8 \\text{ bits/symbol}}$$\nYou need a full 8 bits per pixel — **cannot compress at all**. When everything is equally likely, there is no pattern to exploit.\n\n**Case 2 — Skewed (good for compression):**\nAn image with only two values where most pixels are one value → entropy ≈ **0.92 bits/symbol**. Far less than 8 bits — lots of compression potential."
+              "type": "text",
+              "body": "👉 Probability halves → info goes up 1 bit"
+            },
+            {
+              "type": "math",
+              "label": "Entropy (H)",
+              "expression": "H(S) = \\sum p_i \\times \\log_2\\left(\\frac{1}{p_i}\\right) = -\\sum p_i \\times \\log_2(p_i)"
             },
             {
               "type": "callout",
-              "style": "exam",
-              "body": "**Key inequality:** $H \\leq \\bar{l} < H + 1$. Entropy is the lower bound. Huffman gets close but can never beat it. A memoryless source has each symbol independent of previous symbols."
+              "body": "**CRITICAL:**\n* Entropy = **theoretical minimum** bits needed\n* **No lossless compression can beat entropy**\n* Entropy is the floor"
+            },
+            {
+              "type": "text",
+              "body": "**Case 1: Uniform** — All 256 gray levels equally likely:\n$$H = \\log_2(256) = 8 \\text{ bits}$$\n❌ Cannot compress at all → No pattern to exploit\n\n**Case 2: Skewed** — Mostly one value:\n$$H ≈ 0.92 \\text{ bits}$$\n✅ HUGE compression potential → Pattern exists"
+            },
+            {
+              "type": "math",
+              "label": "Fundamental Rule",
+              "expression": "H \\le \\bar{l}"
+            },
+            {
+              "type": "text",
+              "body": "* H = entropy (minimum)\n* l̄ = average code length (what you achieve)\n\n👉 You can get close but **never beat** entropy"
             }
           ],
           "flashcards": [
@@ -994,33 +1095,27 @@
           "title": "Run-Length & Huffman Coding",
           "content": [
             {
-              "type": "definition",
-              "term": "Run-Length Coding (RLC)",
-              "body": "Exploits **memory** (patterns) in the source — unlike Huffman and Arithmetic which assume memoryless sources.\n\nIf symbols form continuous groups (runs), store the symbol and **how many times it repeats** instead of every individual symbol.\n\n**Example:** `0000001111110000000000111` → `(0,6)(1,7)(0,10)(1,3)`\n\n**Best case:** Long runs of the same value (mostly-white scanned documents). **Worst case:** Alternating 010101 — RLC makes it bigger."
+              "type": "text",
+              "body": "**When to use RLC:**\n✅ Data has **long runs** (same value repeats)\n❌ Data alternates (010101...)\n\nInstead of storing each bit: store **symbol** + **count**"
+            },
+            {
+              "type": "example",
+              "label": "RLC Example",
+              "body": "**Original:**\n```\n0000001111110000000000111\n```\n**Encoded:**\n```\n(0, 6), (1, 7), (0, 10), (1, 3)\n```\n👉 \"Six 0s, then seven 1s, then ten 0s, then three 1s\"\n\nBest case: scanned documents, binary images with large uniform regions"
             },
             {
               "type": "text",
-              "body": "**Huffman Coding** gives **short codes to common symbols** and **long codes to rare symbols**.\n\n**Algorithm:**\n1. Count frequencies. Sort from least to most frequent.\n2. Repeatedly pick the **two smallest**, combine into one node (sum frequencies). Repeat until one root remains.\n3. Read codes: trace root-to-leaf paths. **Left = 0, Right = 1**.\n4. Encode: replace each symbol with its code.\n5. Decode: walk the tree bit by bit — when you hit a leaf, output that symbol and restart from root."
+              "body": "**Huffman Coding goal:**\n✅ Short codes → common symbols\n✅ Long codes → rare symbols\n→ Fewer bits on average\n\n**Algorithm (6 steps):**\n1. **Count** frequencies\n2. **Sort** (smallest first)\n3. **Build tree** (combine two smallest, repeat)\n4. **Read codes** (left=0, right=1)\n5. **Encode** (replace letters with codes)\n6. **Decode** (walk tree bit by bit)"
             },
             {
               "type": "example",
-              "title": "Huffman — 'banana' Full Walkthrough",
-              "body": "**Frequencies:** b=1, n=2, a=3\n\n**Build tree:**\n1. Pick two smallest: b(1) + n(2) → merge → node(3)\n2. List now: node(3), a(3)\n3. Merge node(3) + a(3) → root(6)\n\n**Tree:**\n```\n      (6)\n     /   \\\n   (3)    a\n  /   \\\n b     n\n```\n\n**Codes (left=0, right=1):**\n- **a** → right = **1** (1 bit) ← most common gets shortest!\n- **b** → left, left = **00** (2 bits)\n- **n** → left, right = **01** (2 bits)\n\n**Encode 'banana':** b(00) a(1) n(01) a(1) n(01) a(1) = **001011011** → **9 bits**\n\nOriginal: 6 × 8 = 48 bits → $CR = 48/9 = \\mathbf{5.33}$\n\n**Average code length:** $\\bar{l} = 0.5 \\times 1 + 0.333 \\times 2 + 0.167 \\times 2 = \\mathbf{1.5 \\text{ bits/symbol}}$\n\n**Entropy:** $H = 1.459$ bits. Check: $1.459 \\leq 1.5 < 2.459$ ✓\n\n**Decode '001011011':** Start at root: 0→left, 0→left→**b**; 1→right→**a**; 0→left, 1→right→**n**; 1→**a**; 0→left, 1→right→**n**; 1→**a** = **banana** ✓"
+              "label": "Huffman Worked Example: \"banana\"",
+              "body": "**Step 1 — Count:** b→1, n→2, a→3\n\n**Step 2 — Sort:** b:1, n:2, a:3\n\n**Step 3 — Build tree:**\nPick b(1)+n(2):\n```\n    (3)\n   /   \\\n  b     n\n```\nPick (3)+a(3):\n```\n       (6)\n      /   \\\n    (3)    a\n   /   \\\n  b     n\n```\n\n**Step 4 — Codes:** a → **1**,  b → **00**,  n → **01**\n\n**Step 5 — Encode:**\n```\nb  a  n  a  n  a\n00  1  01  1  01  1\n```\nResult: **001011011** (9 bits) vs 6×8 = 48 bits → saved 39 bits!\n\n**Step 6 — Decode \"001011011\":**\n```\n0,0 → b\n1   → a\n0,1 → n\n1   → a\n0,1 → n\n1   → a\n```\nOutput: **banana** ✓"
             },
             {
               "type": "example",
-              "title": "Huffman — 'ABRACADABRA' Full Walkthrough",
-              "body": "**Frequencies:** C=1, D=1, B=2, R=2, A=5\n\n**Build tree:**\n1. Merge C(1)+D(1) → CD(2). List: B(2), R(2), CD(2), A(5)\n2. Merge B(2)+R(2) → BR(4). List: CD(2), BR(4), A(5)\n3. Merge CD(2)+BR(4) → CDBR(6). List: A(5), CDBR(6)\n4. Merge A(5)+CDBR(6) → root(11)\n\n**Codes:**\n- **A** → left = **0** (1 bit) — appears 5/11 times, nearly half!\n- **C** → right, left, left = **100** (3 bits)\n- **D** → right, left, right = **101** (3 bits)\n- **B** → right, right, left = **110** (3 bits)\n- **R** → right, right, right = **111** (3 bits)\n\n**Encode 'ABRACADABRA':** 0·110·111·0·100·0·101·0·110·111·0 = **01101110100010101101110** → **23 bits**\n\nOriginal: 11 × 8 = 88 bits → $CR = 88/23 = \\mathbf{3.83}$\n\n**Average code length:** $\\bar{l} = \\frac{5}{11}×1 + \\frac{2}{11}×3 + \\frac{2}{11}×3 + \\frac{1}{11}×3 + \\frac{1}{11}×3 = \\mathbf{2.09 \\text{ bits/symbol}}$"
-            },
-            {
-              "type": "definition",
-              "term": "Extended Huffman Coding",
-              "body": "The problem: all codewords have **integer** bit lengths. Wasteful when a symbol has high probability (ideal might be 0.3 bits, minimum is 1 bit).\n\nThe solution: group **k** symbols together and assign one codeword to the group. Average bits/symbol: $H \\leq \\bar{l} < H + 1/k$. The $1/k$ term shrinks as k grows — better compression. But alphabet size explodes to $n^k$."
-            },
-            {
-              "type": "callout",
-              "style": "exam",
-              "body": "**4 Huffman properties to know:**\n1. **Unique Prefix:** No code is a prefix of another — decoding is never ambiguous.\n2. **Optimality:** Minimum redundancy. Two least-frequent symbols always have the same code length.\n3. **Guarantee:** $H \\leq \\bar{l} < H + 1$. Always within 1 bit of entropy.\n4. **Tie-breaking:** When two nodes have equal frequency, picking order affects the tree shape but **NOT** the average code length."
+              "label": "Performance Calculation",
+              "body": "**Average code length:**\n```\na: 3/6 × 1 bit  = 0.5\nn: 2/6 × 2 bits = 0.66\nb: 1/6 × 2 bits = 0.34\n```\nl̄ = **1.5 bits/symbol**\n\n**Entropy:**\n```\nH = -(0.5×log₂0.5) - (0.33×log₂0.33) - (0.17×log₂0.17)\nH ≈ 1.459 bits/symbol\n```\n\n**Check:** H ≤ l̄ < H+1\n1.459 ≤ 1.5 < 2.459 ✓"
             }
           ],
           "flashcards": [
@@ -1062,9 +1157,9 @@
             },
             {
               "type": "calculation",
-              "q": "Build Huffman codes for 'ABRACADABRA' (A=5, B=2, R=2, C=1, D=1). What is the encoded bit string and compression ratio vs 8-bit ASCII?",
-              "a": "**Tree merges:** C(1)+D(1)→CD(2); B(2)+R(2)→BR(4); CD(2)+BR(4)→CDBR(6); A(5)+CDBR(6)→root(11)\n\n**Codes:** A=0, C=100, D=101, B=110, R=111\n\n**Encoded:** 0·110·111·0·100·0·101·0·110·111·0 = **01101110100010101101110** (23 bits)\n\n**CR** = (11×8)/23 = 88/23 = **3.83**",
-              "hint": "A is most frequent — it should get the shortest code (1 bit)."
+              "q": "RLC encoding: encode the binary string `0000001111110000000000111`. Give the run-length pairs and explain the result.",
+              "a": "Read consecutive runs of the same bit:\n\n- Six 0s → **(0, 6)**\n- Seven 1s → **(1, 7)**\n- Ten 0s → **(0, 10)**\n- Three 1s → **(1, 3)**\n\n**Output:** (0,6), (1,7), (0,10), (1,3)\n\n**Original:** 25 bits. **Encoded:** 4 pairs = 8 values (much smaller with long runs).",
+              "hint": "Count how many times each symbol repeats in a row, then move on when it changes."
             },
             {
               "type": "calculation",
@@ -1080,43 +1175,40 @@
           "title": "LZW & Arithmetic Coding",
           "content": [
             {
-              "type": "definition",
-              "term": "LZW Compression",
-              "body": "A **dictionary-based** method. Huffman looks at individual characters — LZW finds **repeated patterns** (strings) and gives them a single code.\n\nBoth encoder and decoder build the **same dictionary** from scratch — it never needs to be transmitted.\n\n**Initial dictionary:** just the individual characters (A=1, B=2, ...).\n**Rule:** extend the current string as long as it's in the dictionary. When current+next is NOT found: output code for current, add the new longer string, restart from next character."
+              "type": "text",
+              "body": "**Why Arithmetic beats Huffman:**\n* Huffman: each symbol = whole number of bits\n* If prob = 0.9 → should use 0.15 bits, but must use ≥1 bit → waste\n\n**Arithmetic solution:**\n* Encode **entire message** as one number\n* Can use fractional bits per symbol\n* Gets closer to entropy\n\n**Setup:** Each symbol gets a **range** in [0, 1)\n* More probable → bigger range\n* Ranges don't overlap, together cover 0 to 1"
+            },
+            {
+              "type": "math",
+              "label": "Encoding Formula (same every step)",
+              "expression": "\\text{new\\_low} = \\text{old\\_low} + \\text{old\\_range} \\times \\text{Range\\_low}\\\\\\text{new\\_high} = \\text{old\\_low} + \\text{old\\_range} \\times \\text{Range\\_high}"
             },
             {
               "type": "example",
-              "title": "LZW Encoding 'ABABBA'",
-              "body": "**Initial dictionary:** 1=A, 2=B\n\n**s=A.** Read c=B. 'AB' not in dict → output **1**(A), add 3:AB, s=B\n\n**s=B.** Read c=A. 'BA' not in dict → output **2**(B), add 4:BA, s=A\n\n**s=A.** Read c=B. 'AB' in dict! (code 3) → s=AB. Keep going.\n\n**s=AB.** Read c=B. 'ABB' not in dict → output **3**(AB), add 5:ABB, s=B\n\n**s=B.** Read c=A. 'BA' in dict! (code 4) → s=BA. Keep going.\n\n**End of input.** Output **4**(BA).\n\n**Output codes: 1, 2, 3, 4** — turned 6 characters into 4 codes. $CR = 6/4 = 1.5$"
-            },
-            {
-              "type": "example",
-              "title": "LZW Decoding — codes 1, 2, 3, 4",
-              "body": "**Starting dictionary:** 1=A, 2=B\n\n**Rule:** output the string for each code, then add previous_output + first_char_of_current_output to dictionary.\n\n**Code 1** → 'A'. Output **A**. (First code — nothing to add yet.) prev='A'\n\n**Code 2** → 'B'. Output **B**. Add prev+first(B) = 'A'+'B' = 'AB' → code **3**. prev='B'\n\n**Code 3** → 'AB'. Output **AB**. Add prev+first(AB) = 'B'+'A' = 'BA' → code **4**. prev='AB'\n\n**Code 4** → 'BA'. Output **BA**. Add prev+first(BA) = 'AB'+'B' = 'ABB' → code **5**. prev='BA'\n\n**Total output:** A + B + AB + BA = **ABABBA** ✓"
+              "label": "Arithmetic Encode \"BAC\"",
+              "body": "**Ranges:** A=[0,0.5), B=[0.5,0.8), C=[0.8,1.0)\n**Start:** low=0, high=1, range=1\n\n**Symbol B:**\n```\nnew_low  = 0 + 1×0.5 = 0.5\nnew_high = 0 + 1×0.8 = 0.8\nrange = 0.3\n```\nInterval: **[0.5, 0.8)**\n\n**Symbol A:**\n```\nnew_low  = 0.5 + 0.3×0   = 0.5\nnew_high = 0.5 + 0.3×0.5 = 0.65\nrange = 0.15\n```\nInterval: **[0.5, 0.65)**\n\n**Symbol C:**\n```\nnew_low  = 0.5 + 0.15×0.8 = 0.62\nnew_high = 0.5 + 0.15×1.0 = 0.65\nrange = 0.03\n```\nFinal: **[0.62, 0.65)** → pick **0.63**"
             },
             {
               "type": "text",
-              "body": "**Special LZW decoding case:** Sometimes the decoder gets a code that hasn't been added to its dictionary yet. This happens when the encoder adds a string and immediately uses it.\n\n**Solution:** `entry = previous_string + first_character_of_previous_string`"
-            },
-            {
-              "type": "definition",
-              "term": "Arithmetic Coding",
-              "body": "Encodes the **entire message** as a single decimal number between 0 and 1. Instead of coding each symbol separately (Huffman), one number represents the whole sequence.\n\nEach symbol gets a **range** (slice of [0,1)). Larger ranges for more probable symbols. Encoding = zooming into the interval for each symbol.\n\n**Encoding formula (each step):**\n$$\\text{new\\_low} = \\text{old\\_low} + \\text{range} \\times \\text{Range\\_low}(s)$$\n$$\\text{new\\_high} = \\text{old\\_low} + \\text{range} \\times \\text{Range\\_high}(s)$$\n\n**Decoding formula (each step):**\n1. Find symbol where $\\text{Range\\_low} \\leq \\text{value} < \\text{Range\\_high}$\n2. Output that symbol\n3. $\\text{value} = (\\text{value} - \\text{Range\\_low}) / (\\text{Range\\_high} - \\text{Range\\_low})$"
+              "body": "**Decoding formula (each step):**\n1. Find symbol where Range_low ≤ value < Range_high\n2. Output that symbol\n3. value = (value - Range_low) / (Range_high - Range_low)\n4. Repeat"
             },
             {
               "type": "example",
-              "title": "Arithmetic Coding — Encode 'BAC'",
-              "body": "**Ranges:** A=[0, 0.5), B=[0.5, 0.8), C=[0.8, 1.0)\n\n**Start:** low=0, high=1, range=1\n\n**Symbol B** (0.5 to 0.8):\n- new_low = 0 + 1×0.5 = **0.5**\n- new_high = 0 + 1×0.8 = **0.8**, range=0.3\n\n**Symbol A** (0 to 0.5):\n- new_low = 0.5 + 0.3×0 = **0.5**\n- new_high = 0.5 + 0.3×0.5 = **0.65**, range=0.15\n\n**Symbol C** (0.8 to 1.0):\n- new_low = 0.5 + 0.15×0.8 = **0.62**\n- new_high = 0.5 + 0.15×1.0 = **0.65**, range=0.03\n\n**Final interval: [0.62, 0.65)**. Code: pick any number inside → **0.63**\n\n**Decode 0.63:** 0.63 ∈ [0.5,0.8) → **B**. New value=(0.63−0.5)/0.3=0.4333. 0.4333 ∈ [0,0.5) → **A**. New value=0.4333/0.5=0.8666. 0.8666 ∈ [0.8,1.0) → **C**. Result: **BAC** ✓"
-            },
-            {
-              "type": "example",
-              "title": "Arithmetic Coding — Lecture Example: Encode 'CAEE$'",
-              "body": "**Probability table:**\n\n| Symbol | Prob | Range |\n|--------|------|-------|\n| A | 0.2 | [0, 0.2) |\n| B | 0.1 | [0.2, 0.3) |\n| C | 0.2 | [0.3, 0.5) |\n| D | 0.05 | [0.5, 0.55) |\n| E | 0.3 | [0.55, 0.85) |\n| F | 0.05 | [0.85, 0.9) |\n| $ | 0.1 | [0.9, 1.0) |\n\n**Start:** low=0, high=1, range=1\n\n**C** (0.3→0.5): low=0.3, high=0.5, range=0.2\n\n**A** (0→0.2): low=0.3+0.2×0=0.3, high=0.3+0.2×0.2=0.34, range=0.04\n\n**E** (0.55→0.85): low=0.3+0.04×0.55=0.322, high=0.3+0.04×0.85=0.334, range=0.012\n\n**E** (0.55→0.85): low=0.322+0.012×0.55=0.3286, high=0.322+0.012×0.85=0.3322, range=0.0036\n\n**$** (0.9→1.0): low=0.3286+0.0036×0.9=**0.33184**, high=0.3286+0.0036×1.0=**0.33220**\n\n**Final interval: [0.33184, 0.33220)**. Code: **0.33203125** (binary: 01010101 = 8 bits for 5 symbols)"
+              "label": "Decode 0.63",
+              "body": "**Step 1:** 0.63 in [0.5, 0.8) → **B**\n```\nvalue = (0.63 - 0.5) / 0.3 = 0.4333\n```\n**Step 2:** 0.4333 in [0, 0.5) → **A**\n```\nvalue = (0.4333 - 0) / 0.5 = 0.8666\n```\n**Step 3:** 0.8666 in [0.8, 1.0) → **C**\n\nResult: **BAC** ✓"
             },
             {
               "type": "callout",
-              "style": "exam",
-              "body": "**Why Arithmetic beats Huffman:** With Huffman, every symbol uses a whole number of bits. Arithmetic coding encodes the whole message as one number — no integer rounding, so it gets closer to the entropy lower bound.\n\n**Adaptive Arithmetic Coding:** Both sides start with no knowledge, update probability counts after each symbol. No need to send the probability table — both sides stay in sync automatically."
+              "body": "**Adaptive arithmetic:** Start with no knowledge, update probabilities after each symbol. Both sides learn together → no need to send table."
+            },
+            {
+              "type": "text",
+              "body": "**LZW — Dictionary Coding:**\nBuild a **dictionary** of patterns as you go:\n* Find repeated patterns → replace with short codes\n\n1. Start with basic dictionary (single chars)\n2. Find longest match in dictionary\n3. Output its code\n4. Add (current + next char) to dictionary\n5. Repeat"
+            },
+            {
+              "type": "example",
+              "label": "LZW Encode \"ABABABABA\"",
+              "body": "**Initial dictionary:** 1=A, 2=B\n\n| Input | Match | Output | Add to dict |\n|-------|-------|--------|-------------|\n| A | A(1) | 1 | 3: AB |\n| B | B(2) | 2 | 4: BA |\n| AB | AB(3) | 3 | 5: ABA |\n| AB | AB(3) | 3 | 6: ABA (dup) |\n| A | A(1) | 1 | — |\n\nEncoded: **1, 2, 3, 3, 1**\n\n9 chars → 5 codes\n\n**Decoding:** Start with same dictionary, read code → output string → add (prev + first char of current) → Decoder rebuilds same dictionary!"
             }
           ],
           "flashcards": [
@@ -1164,9 +1256,9 @@
           "problems": [
             {
               "type": "calculation",
-              "q": "LZW encoding: starting dictionary 1=A, 2=B. Encode 'ABABBA'. Show all steps and give output codes.",
-              "a": "**s=A**, c=B: AB not in dict → output **1**, add 3:AB, s=B\n**s=B**, c=A: BA not in dict → output **2**, add 4:BA, s=A\n**s=A**, c=B: AB in dict! → s=AB\n**s=AB**, c=B: ABB not in dict → output **3**, add 5:ABB, s=B\n**s=B**, c=A: BA in dict! → s=BA\n**EOF** → output **4**\n\n**Output: 1, 2, 3, 4.** $CR = 6/4 = 1.5$",
-              "hint": "The key step is when 'AB' is already in the dictionary — you extend instead of outputting."
+              "q": "LZW encoding: starting dictionary 1=A, 2=B. Encode `ABABABABA`. Show all steps (input, match, output, dictionary add).",
+              "a": "| Input | Match | Output | Add to dict |\n|-------|-------|--------|-------------|\n| A | A(1) | **1** | 3: AB |\n| B | B(2) | **2** | 4: BA |\n| AB | AB(3) | **3** | 5: ABA |\n| AB | AB(3) | **3** | 6: ABA (dup) |\n| A | A(1) | **1** | — |\n\n**Output codes:** 1, 2, 3, 3, 1\n\n9 characters → 5 codes ✓",
+              "hint": "After outputting a code, add (current match + next char) to the dictionary. Restart with the next character."
             },
             {
               "type": "calculation",
@@ -1182,9 +1274,9 @@
             },
             {
               "type": "calculation",
-              "q": "Arithmetic Coding lecture example: using the table (A=0.2, B=0.1, C=0.2, D=0.05, E=0.3, F=0.05, $=0.1), encode 'CAEE$'. What is the final interval?",
-              "a": "**Start:** low=0, high=1, range=1\n\n**C** [0.3,0.5): low=0.3, high=0.5, range=0.2\n\n**A** [0,0.2): low=0.3+0.2×0=0.3, high=0.3+0.2×0.2=0.34, range=0.04\n\n**E** [0.55,0.85): low=0.3+0.04×0.55=0.322, high=0.3+0.04×0.85=0.334, range=0.012\n\n**E** [0.55,0.85): low=0.322+0.012×0.55=0.3286, high=0.322+0.012×0.85=0.3322, range=0.0036\n\n**$** [0.9,1.0): low=0.3286+0.0036×0.9=**0.33184**, high=0.3286+0.0036×1.0=**0.33220**\n\n**Final interval: [0.33184, 0.33220)**",
-              "hint": "Build the probability ranges first (cumulative). Apply formula at each step."
+              "q": "Arithmetic Coding: A=[0,0.5), B=[0.5,0.8), C=[0.8,1.0). Decode the value **0.63**. Show each step.",
+              "a": "**Step 1:** 0.63 falls in [0.5, 0.8) → output **B**\n```\nvalue = (0.63 − 0.5) / 0.3 = 0.4333\n```\n\n**Step 2:** 0.4333 falls in [0, 0.5) → output **A**\n```\nvalue = (0.4333 − 0) / 0.5 = 0.8666\n```\n\n**Step 3:** 0.8666 falls in [0.8, 1.0) → output **C**\n\nResult: **BAC** ✓",
+              "hint": "At each step: find which range the value falls in, output that symbol, then rescale: value = (value − range_low) / (range_high − range_low)."
             }
           ]
         },
@@ -1194,60 +1286,116 @@
           "title": "Differential & Lossless JPEG Coding",
           "content": [
             {
-              "type": "text",
-              "body": "Images have a special property: **neighboring pixels are usually very similar.** Instead of storing actual pixel values, store **how much each pixel differs from its neighbor**. These differences are much smaller numbers clustered around zero → narrower histogram → lower entropy → better compression."
-            },
-            {
-              "type": "definition",
-              "term": "Horizontal Difference (Eq. 7.9)",
-              "body": "$$d(x, y) = I(x, y) - I(x-1, y)$$\nEach pixel minus its **left** neighbor.\n\n**Example:** Row 150, 153, 148, 155, 152 → differences: —, **3, −5, 7, −3**. Small numbers are far easier to compress than the originals."
-            },
-            {
-              "type": "definition",
-              "term": "2D Laplacian Difference (Eq. 7.10)",
-              "body": "Uses all **four** neighbors (above, below, left, right):\n$$d(x, y) = 4 \\cdot I(x,y) - I(x, y-1) - I(x, y+1) - I(x+1, y) - I(x-1, y)$$\nIn smooth image regions this is nearly **zero** everywhere — extremely compressible."
-            },
-            {
-              "type": "example",
-              "title": "Laplacian Difference Worked Example",
-              "body": "```\n        above = 98\nleft = 101   X = 100   right = 99\n        below = 102\n```\n$$d = 4 \\times 100 - 98 - 102 - 99 - 101 = 400 - 400 = \\mathbf{0}$$\n\nZero! Because X is almost exactly the average of its neighbors. In smooth image areas this is near zero almost everywhere."
-            },
-            {
-              "type": "text",
-              "body": "**Lossless JPEG** applies this idea with a predictor. For each pixel X, it **predicts** its value from already-decoded neighbors, then encodes only the **prediction error**.\n\nNeighbor layout:\n```\nC  B\nA  X\n```\n- **A** = pixel to the left\n- **B** = pixel above\n- **C** = pixel above-left\n\nAll three are already decoded (processing goes left-to-right, top-to-bottom). The prediction error (actual − predicted) is compressed with Huffman coding."
-            },
-            {
-              "type": "table",
-              "headers": ["Predictor", "Formula", "Description"],
-              "rows": [
-                ["P1", "$A$", "Left neighbor"],
-                ["P2", "$B$", "Above neighbor"],
-                ["P3", "$C$", "Above-left neighbor"],
-                ["P4", "$A + B - C$", "Planar prediction"],
-                ["P5", "$A + (B-C)/2$", "Weighted horizontal"],
-                ["P6", "$B + (A-C)/2$", "Weighted vertical"],
-                ["P7", "$(A+B)/2$", "Average of left and above"]
-              ]
-            },
-            {
-              "type": "example",
-              "title": "Lossless JPEG — Why P4 (A+B-C) Works",
-              "body": "**Setup:** C=100, B=102, A=103, actual X=104\n\n**P4 prediction:** $A + B - C = 103 + 102 - 100 = 105$\n\n**Error:** $104 - 105 = \\mathbf{-1}$ ← tiny! We encode −1 instead of 104.\n\n**Decoder:** Knows A, B, C. Computes prediction=105. Receives error=−1. Reconstructs: $105 + (-1) = \\mathbf{104}$ ✓\n\n**Why it works geometrically:** Imagine pixels forming a smooth gradient:\n```\nC=50   B=60\nA=70   X=?\n```\nRightward increase = B−C = 10. Downward increase = A−C = 20. X = C + 10 + 20 = 80.\nP4: A+B−C = 70+60−50 = **80**. Exactly right! P4 assumes the image is locally a **smooth plane**."
-            },
-            {
-              "type": "table",
-              "headers": ["Method", "Compression Ratio (Lena image)", "Notes"],
-              "rows": [
-                ["Lossless JPEG", "1.45", "Best — prediction exploits spatial redundancy first"],
-                ["Optimal Lossless JPEG", "1.49", "Best predictor chosen per image"],
-                ["Huffman alone", "1.02", "Barely any compression on raw pixels"],
-                ["LZW (compress)", "0.86", "Actually got BIGGER — LZW struggles with images!"]
-              ]
-            },
-            {
               "type": "callout",
-              "style": "exam",
-              "body": "Know all 7 predictors. The key insight: plain Huffman on raw pixels barely compresses (H is high). Prediction first reduces entropy dramatically — then Huffman compresses the small errors efficiently.\n\n**Full pipeline — Encoding:** Original image → Pick predictor → Compute errors → Compress errors with Huffman → Output\n\n**Full pipeline — Decoding:** Decompress errors → For each pixel: actual = predicted + error → Reconstructed image (perfectly lossless)"
+              "body": "**Key insight:** Neighboring pixels usually similar → Store **differences**, not raw values"
+            },
+            {
+              "type": "example",
+              "label": "Why Differences Help",
+              "body": "**Original pixels:**\n```\n100, 102, 101, 103, 100, 99, 101, 102\n```\n**Differences:**\n```\n-, 2, -1, 2, -3, -1, 2, 1\n```\n👉 Tiny numbers clustered around zero → **Lower entropy** → better compression"
+            },
+            {
+              "type": "math",
+              "label": "Method 1: Horizontal Difference",
+              "expression": "d(x, y) = I(x, y) - I(x-1, y)"
+            },
+            {
+              "type": "math",
+              "label": "Method 2: 2D Laplacian",
+              "expression": "d(x, y) = 4I(x,y) - I(x,y-1) - I(x,y+1) - I(x+1,y) - I(x-1,y)"
+            },
+            {
+              "type": "example",
+              "label": "2D Laplacian Example",
+              "body": "```\n        98\n101  [100]  99\n       102\n```\nd = 4×100 - 98 - 102 - 99 - 101 = **0**\n\nIn smooth areas → near zero everywhere → very compressible"
+            },
+            {
+              "type": "text",
+              "body": "**Lossless JPEG method:**\nFor each pixel:\n1. **Predict** from neighbors\n2. Encode the **error** (actual - predicted)\n\n```\nC  B\nA  X\n```\n* A = left, B = above, C = diagonal (all already decoded)"
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Predictor",
+                "Formula",
+                "What it does"
+              ],
+              "rows": [
+                [
+                  "P1",
+                  "A",
+                  "Just left"
+                ],
+                [
+                  "P2",
+                  "B",
+                  "Just above"
+                ],
+                [
+                  "P3",
+                  "C",
+                  "Just diagonal"
+                ],
+                [
+                  "P4",
+                  "A+B-C",
+                  "Smooth plane (BEST)"
+                ],
+                [
+                  "P5",
+                  "A+(B-C)/2",
+                  "Mostly A"
+                ],
+                [
+                  "P6",
+                  "B+(A-C)/2",
+                  "Mostly B"
+                ],
+                [
+                  "P7",
+                  "(A+B)/2",
+                  "Average"
+                ]
+              ]
+            },
+            {
+              "type": "example",
+              "label": "Worked Example: Using P4",
+              "body": "```\nC=100  B=102\nA=103  X=?     (actual X=104)\n```\n**Prediction:** P4 = A+B-C = 103+102-100 = **105**\n**Error:** actual - predicted = 104 - 105 = **-1**\n\nEncode **-1** instead of **104** → tiny number!\n\n**Decoder:**\n* Knows A, B, C → computes 105 → receives -1 → 105+(-1) = **104** ✓"
+            },
+            {
+              "type": "example",
+              "label": "Why P4 Works — Smooth Gradient",
+              "body": "```\nC=50   B=60    (going right +10)\nA=70   X=?     (going down +20)\n```\nX should be: 50 + 10 + 20 = 80\nP4 = 70 + 60 - 50 = **80** ✓\n→ Assumes image is locally a smooth plane"
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Method",
+                "Compression Ratio"
+              ],
+              "rows": [
+                [
+                  "Lossless JPEG",
+                  "1.45 ✅"
+                ],
+                [
+                  "Optimal L-JPEG",
+                  "1.49 ✅"
+                ],
+                [
+                  "Huffman alone",
+                  "1.02 ❌"
+                ],
+                [
+                  "LZW",
+                  "0.86 ❌ (bigger!)"
+                ]
+              ]
+            },
+            {
+              "type": "text",
+              "body": "**Encoding pipeline:**\n```\nImage → Pick predictor → Compute errors → Huffman → Output\n```\n**Decoding pipeline:**\n```\nInput → Huffman → For each pixel: actual = predicted + error → Image\n```\nPerfectly reversible = truly lossless"
             }
           ],
           "flashcards": [
@@ -1297,9 +1445,9 @@
             },
             {
               "type": "calculation",
-              "q": "For Lossless JPEG predictor P7 ($\\frac{A+B}{2}$), if A=120, B=130, and actual pixel=128, what is the prediction error?",
-              "a": "Predicted = $(120+130)/2 = \\mathbf{125}$\n\nError = $128 - 125 = \\mathbf{3}$",
-              "hint": "P7 = (A+B)/2 = average of left and above."
+              "q": "For Lossless JPEG predictor P4 ($A+B-C$), given a smooth gradient: C=50, B=60, A=70. What should pixel X be, and what does P4 predict?",
+              "a": "The gradient goes right (+10) and down (+20), so X = 50 + 10 + 20 = **80**.\n\n**P4 prediction:**  + B - C = 70 + 60 - 50 = mathbf{80}$ ✓\n\nError = 80 − 80 = **0** — perfect prediction!\n\n→ P4 assumes the image is locally a smooth plane. In smooth regions the error is near zero → very compressible.",
+              "hint": "P4 = A + B - C models a linear plane through the three neighbors. It works perfectly when the image is smooth."
             },
             {
               "type": "calculation",

@@ -4,69 +4,8 @@
   "title": "Lossy Compression & Distortion Measures",
   "content": [
     {
-      "type": "text",
-      "body": "**Why lossy compression?** Lossless compression typically achieves only ~1.5–2× compression. That is not enough for multimedia streaming. Lossy compression allows some data loss in exchange for much higher ratios — 10×, 20×, even 50×. The trade-off is: more compression = more distortion. The goal is to throw away what the human eye or ear will not notice."
-    },
-    {
-      "type": "callout",
-      "style": "info",
-      "body": "Lossless tops out around 2×. Lossy can reach 50×. The challenge is making the distortion imperceptible."
-    },
-    {
-      "type": "definition",
-      "term": "MSE — Mean Square Error",
-      "body": "Measures how far the reconstructed signal is from the original, on average:\n$$\\text{MSE} = \\frac{1}{N} \\sum_{n=1}^{N} (x_n - y_n)^2$$\nwhere $x_n$ = original value, $y_n$ = reconstructed value, $N$ = number of samples.\n\n- Differences are **squared** → all positive, big errors penalised more.\n- Then **averaged** over all samples.\n- MSE = 0 → perfect lossless reconstruction. Lower MSE = better quality."
-    },
-    {
-      "type": "example",
-      "title": "MSE Worked Example",
-      "body": "Original: [100, 120, 130, 110]\nReconstructed: [98, 125, 128, 112]\n\nDifferences: [2, −5, 2, −2]\nSquared: [4, 25, 4, 4]\nSum = 37\n$$\\text{MSE} = \\frac{37}{4} = \\mathbf{9.25}$$"
-    },
-    {
-      "type": "definition",
-      "term": "SNR — Signal to Noise Ratio",
-      "body": "Compares the power of the original signal to the power of the distortion (noise):\n$$\\text{SNR} = 10 \\times \\log_{10}\\!\\left(\\frac{\\sigma_x^2}{\\sigma_d^2}\\right)$$\nwhere $\\sigma_x^2$ = average square of original values (signal power), $\\sigma_d^2$ = MSE (noise power).\nResult is in **decibels (dB)**. Higher SNR = better quality."
-    },
-    {
-      "type": "example",
-      "title": "SNR Worked Example",
-      "body": "Continuing from the MSE example above (MSE = 9.25).\n\n$$\\sigma_x^2 = \\frac{100^2 + 120^2 + 130^2 + 110^2}{4} = \\frac{10000+14400+16900+12100}{4} = \\frac{53400}{4} = 13350$$\n\n$$\\text{SNR} = 10 \\times \\log_{10}\\!\\left(\\frac{13350}{9.25}\\right) = 10 \\times \\log_{10}(1443.2) = 10 \\times 3.159 = \\mathbf{31.59 \\text{ dB}}$$"
-    },
-    {
-      "type": "definition",
-      "term": "PSNR — Peak Signal to Noise Ratio",
-      "body": "Like SNR but uses the **peak possible value** as the reference instead of the actual signal power:\n$$\\text{PSNR} = 10 \\times \\log_{10}\\!\\left(\\frac{x_{\\text{peak}}^2}{\\sigma_d^2}\\right)$$\nwhere $x_{\\text{peak}}$ = maximum possible value (255 for an 8-bit image), $\\sigma_d^2$ = MSE.\n\n**Key difference from SNR:** SNR uses the average signal power; PSNR uses a fixed peak value. This gives a standardised reference point, making it easier to compare across different images. PSNR is more commonly used in image compression."
-    },
-    {
-      "type": "example",
-      "title": "PSNR Worked Example",
-      "body": "8-bit image → $x_{\\text{peak}} = 255$. MSE = 9.25.\n\n$$\\text{PSNR} = 10 \\times \\log_{10}\\!\\left(\\frac{255^2}{9.25}\\right) = 10 \\times \\log_{10}\\!\\left(\\frac{65025}{9.25}\\right) = 10 \\times \\log_{10}(7027) = 10 \\times 3.847 = \\mathbf{38.47 \\text{ dB}}$$"
-    },
-    {
-      "type": "table",
-      "label": "PSNR Quality Guide",
-      "headers": ["PSNR range", "Perceived quality"],
-      "rows": [
-        ["> 40 dB", "Excellent — distortion virtually invisible"],
-        ["30–40 dB", "Good — minor artefacts, acceptable"],
-        ["20–30 dB", "Noticeable degradation"],
-        ["< 20 dB", "Poor — severe artefacts"]
-      ]
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "**SNR vs PSNR:** SNR uses actual average signal power ($\\sigma_x^2$). PSNR uses the peak value squared ($x_{\\text{peak}}^2 = 255^2$ for 8-bit). PSNR is preferred in image compression because it provides a consistent reference independent of image content."
-    },
-    {
-      "type": "definition",
-      "term": "Rate-Distortion Theory (Section 8.3)",
-      "body": "The fundamental trade-off in lossy compression:\n- More bits → less distortion (better quality, larger file)\n- Fewer bits → more distortion\n\nThe **rate-distortion function** $R(D)$ gives the minimum bit-rate needed to achieve distortion level $D$. The curve is always decreasing.\n\n- $D = 0$ → $R = H$ (entropy — the lossless minimum)\n- As $D$ increases → $R$ decreases\n- At $D = D_{\\max}$ → $R = 0$ (output is meaningless)"
-    },
-    {
-      "type": "callout",
-      "style": "tip",
-      "body": "Think of the R-D curve as a budget: you decide how much distortion is acceptable, and the curve tells you the minimum file size you can achieve. No algorithm can beat the R-D function."
+      "type": "markdown",
+      "body": "## Why lossy?\n\n**Lossless problem:** only 1.5×–2× compression — not enough for video/photos\n\n**Lossy solution:** allow some loss → get 10×, 20×, 50× compression\n\nTrick: throw away what humans won't notice\n\n$$\\text{More compression} \\Longrightarrow \\text{More distortion}$$\n\n---\n\n## Mean Square Error (MSE)\n\n$$\\text{MSE} = \\frac{1}{N} \\sum (x_n - y_n)^2$$\n\n* xₙ = original,  yₙ = reconstructed,  N = total values\n* **Lower MSE = better quality**\n\n**Example:**\n\nOriginal: [100, 120, 130, 110]  |  Reconstructed: [98, 125, 128, 112]\n\n```\nDifferences: [2, -5, 2, -2]\nSquared:     [4, 25,  4,  4]\nSum = 37\nMSE = 37 / 4 = 9.25\n```\n\n---\n\n## Signal to Noise Ratio (SNR)\n\n$$\\text{SNR} = 10 \\log_{10}\\left(\\frac{\\sigma^2_x}{\\text{MSE}}\\right)$$\n\n* σ²ₓ = signal power (average of squared original values)\n* **Higher SNR = better quality**, measured in dB\n\n**Example (same data):**\n\n```\nσ²ₓ = (100² + 120² + 130² + 110²) / 4 = 53400 / 4 = 13350\nSNR = 10 × log₁₀(13350 / 9.25) = 10 × log₁₀(1443.2) = 10 × 3.159 = 31.59 dB\n```\n\n---\n\n## Peak SNR (PSNR)\n\n$$\\text{PSNR} = 10 \\log_{10}\\left(\\frac{x^2_{peak}}{\\text{MSE}}\\right)$$\n\n* x_peak = max possible value (255 for 8-bit images)\n* **Most common metric for images**\n\n**Example (8-bit, MSE = 9.25):**\n\n```\nPSNR = 10 × log₁₀(255² / 9.25) = 10 × log₁₀(7027) = 10 × 3.847 = 38.47 dB\n```\n\n| PSNR | Quality |\n|------|---------|\n| > 40 dB | Excellent (nearly perfect) |\n| 30–40 dB | Good (minor differences) |\n| 20–30 dB | Noticeable degradation |\n| < 20 dB | Poor (visible artifacts) |\n\n---\n\n## Rate-Distortion Theory\n\n* **More bits (R) → less distortion (D)**\n* **Fewer bits → more distortion**\n\n**The R(D) curve:**\n* At D=0 (perfect): R = H (entropy — same as lossless)\n* At D=max (garbage): R = 0 (no bits needed)\n* Always decreasing — each point = different quality level"
     }
   ],
   "flashcards": [
@@ -102,27 +41,27 @@
   "problems": [
     {
       "type": "calculation",
-      "q": "Compute the MSE between original [80, 90, 100, 110] and reconstructed [82, 88, 103, 107].",
-      "a": "Differences: [−2, 2, −3, 3]\nSquared: [4, 4, 9, 9]\nSum = 26\n$$\\text{MSE} = \\frac{26}{4} = \\mathbf{6.5}$$",
-      "hint": "MSE = (1/N) × Σ(xₙ − yₙ)². Square each difference first, then average."
+      "q": "Calculate MSE for: Original=[100, 120, 130, 110], Reconstructed=[98, 125, 128, 112].",
+      "a": "Differences: [2, −5, 2, −2]\n\nSquared: [4, 25, 4, 4]\n\nSum = 37\n\n$MSE = 37 / 4 = \\mathbf{9.25}$",
+      "hint": "MSE = (1/N) × Σ(x−y)². Square each difference, sum them, divide by N."
     },
     {
       "type": "calculation",
-      "q": "Using the values from the previous problem (original [80,90,100,110], MSE = 6.5), compute the SNR in dB.",
-      "a": "$$\\sigma_x^2 = \\frac{80^2+90^2+100^2+110^2}{4} = \\frac{6400+8100+10000+12100}{4} = \\frac{36600}{4} = 9150$$\n$$\\text{SNR} = 10 \\times \\log_{10}\\!\\left(\\frac{9150}{6.5}\\right) = 10 \\times \\log_{10}(1407.7) = 10 \\times 3.149 = \\mathbf{31.49 \\text{ dB}}$$",
-      "hint": "SNR = 10 × log₁₀(σ²ₓ / MSE). Compute σ²ₓ as the average of the squared original values."
+      "q": "Using the same data (original=[100,120,130,110], MSE=9.25), calculate SNR in dB.",
+      "a": "$\\sigma^2_x = (100^2 + 120^2 + 130^2 + 110^2) / 4 = (10000+14400+16900+12100)/4 = 53400/4 = 13350$\n\n$SNR = 10 \\log_{10}(13350 / 9.25) = 10 \\log_{10}(1443.2) = 10 \\times 3.159 = \\mathbf{31.59 \\text{ dB}}$",
+      "hint": "σ²ₓ = average of squared original values. SNR = 10 log₁₀(σ²ₓ / MSE)."
     },
     {
       "type": "calculation",
-      "q": "Compute the PSNR for an 8-bit image with MSE = 6.5.",
-      "a": "$$\\text{PSNR} = 10 \\times \\log_{10}\\!\\left(\\frac{255^2}{6.5}\\right) = 10 \\times \\log_{10}\\!\\left(\\frac{65025}{6.5}\\right) = 10 \\times \\log_{10}(10003.8) = 10 \\times 4.000 = \\mathbf{40.0 \\text{ dB}}$$\nThis is at the threshold of excellent quality.",
-      "hint": "PSNR = 10 × log₁₀(255² / MSE). For 8-bit images, peak = 255 always."
+      "q": "For an 8-bit image (peak=255) with MSE=9.25, calculate PSNR. What quality level does this indicate?",
+      "a": "$PSNR = 10 \\log_{10}(255^2 / 9.25) = 10 \\log_{10}(65025 / 9.25) = 10 \\log_{10}(7027) = 10 \\times 3.847 = \\mathbf{38.47 \\text{ dB}}$\n\n30–40 dB → **Good quality** (minor differences visible only on close inspection).",
+      "hint": "PSNR = 10 log₁₀(255² / MSE). 255² = 65025."
     },
     {
-      "type": "conceptual",
-      "q": "An 8-bit image compressed at a low bit-rate has PSNR = 18 dB. Another compressed at a higher bit-rate has PSNR = 35 dB. Which is better and why?",
-      "a": "The 35 dB version is better quality. 35 dB falls in the 'good' range (30–40 dB). 18 dB is below 20 dB — 'poor' with severe artefacts. Higher PSNR = lower MSE = reconstructed image is closer to the original.",
-      "hint": "Use the PSNR quality table: >40 excellent, 30–40 good, 20–30 noticeable, <20 poor."
+      "type": "calculation",
+      "q": "Calculate MSE and PSNR for: Original=[200, 210], Reconstructed=[195, 220]. Is this good quality?",
+      "a": "Differences: [5, −10]\n\nSquared: [25, 100]\n\n$MSE = 125/2 = 62.5$\n\n$PSNR = 10 \\log_{10}(65025/62.5) = 10 \\log_{10}(1040.4) = 10 \\times 3.017 = \\mathbf{30.17 \\text{ dB}}$\n\nJust inside the 30–40 dB **good** range.",
+      "hint": "N=2 here. 255²=65025."
     }
   ]
 }

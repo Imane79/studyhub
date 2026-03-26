@@ -4,57 +4,8 @@
   "title": "Transform Coding & the DCT",
   "content": [
     {
-      "type": "text",
-      "body": "**The problem with raw pixels:** Neighboring pixels are usually similar (correlated). Correlated data is hard to compress — each value contains redundant information shared with its neighbors.\n\n**Transform coding solution:** Convert the data into a different representation where values are **uncorrelated** (independent). In this new representation:\n- Most important information concentrates into just a **few large values**\n- Remaining values are small → can be **zeroed or coarsely quantized** without visible damage\n\nThis is why transform coding enables high compression with low distortion."
-    },
-    {
-      "type": "definition",
-      "term": "Spatial Frequency",
-      "body": "How many times pixel values **change** across an image block.\n\n- **Low spatial frequency:** values change slowly — smooth areas like sky, walls, backgrounds\n- **High spatial frequency:** values change rapidly — edges, textures, fine details\n\nThe DCT decomposes a block into its frequency components — it tells you how much of each spatial frequency is present in the block."
-    },
-    {
-      "type": "definition",
-      "term": "DC vs AC Components",
-      "body": "**DC component F(0) or F(0,0):** The average value of all pixels in the block. Usually the **largest** coefficient because it represents the overall brightness.\n\n**AC components F(u>0):** The variations and changes in the block. Higher u → higher frequency → faster oscillations → finer detail.\n\nAfter DCT, the energy of a typical image block is concentrated in a few low-frequency (small u,v) coefficients. High-frequency coefficients are usually near zero."
-    },
-    {
-      "type": "math",
-      "label": "1D DCT Formula",
-      "expression": "F(u) = \\frac{C(u)}{2} \\sum_{i=0}^{7} \\cos\\!\\left(\\frac{(2i+1)u\\pi}{16}\\right) f(i), \\quad C(u) = \\begin{cases} \\frac{\\sqrt{2}}{2} & u=0 \\\\ 1 & u>0 \\end{cases}"
-    },
-    {
-      "type": "callout",
-      "style": "tip",
-      "body": "You won't compute the DCT formula by hand on the exam. Focus on understanding what it does: it transforms 8 pixel values into 8 frequency coefficients. F(0) = average (DC). F(1)–F(7) = increasing spatial frequencies (AC)."
-    },
-    {
-      "type": "example",
-      "title": "1D DCT — Three Key Examples",
-      "body": "**Example 1 — Constant signal (pure DC):**\nf(i) = [100, 100, 100, 100, 100, 100, 100, 100]\nAll values identical → zero variation → pure DC signal.\nDCT output: F(0) ≈ 283 (large), F(1) through F(7) = **0**.\nWhy? No variation → no AC components. All energy in the average.\n\n**Example 2 — Alternating signal (pure high frequency):**\nf(i) = [20, −20, 20, −20, 20, −20, 20, −20]\nRapid alternation → high spatial frequency.\nDCT output: F(0) = 0 (average is zero), most F(u) = 0, but **F(4) is large**.\nWhy? The oscillation matches the 4th basis function exactly. All energy in one coefficient.\n\n**Example 3 — Ramp (gradually increasing):**\nf(i) = [0, 1, 2, 3, 4, 5, 6, 7]\nDCT output: F(0) ≈ 9.90 (DC average), F(1) ≈ −6.44 (main slope), rest are tiny.\nMost information in just **2 coefficients**. If you zero the remaining 6 → still a very good ramp approximation.\n\n**This is exactly how compression works:** keep the big coefficients, throw away the small ones."
-    },
-    {
-      "type": "math",
-      "label": "2D DCT Formula (for 8×8 image blocks)",
-      "expression": "F(u,v) = \\frac{C(u)C(v)}{4} \\sum_{i=0}^{7}\\sum_{j=0}^{7} \\cos\\!\\left(\\frac{(2i+1)u\\pi}{16}\\right)\\cos\\!\\left(\\frac{(2j+1)v\\pi}{16}\\right) f(i,j)"
-    },
-    {
-      "type": "text",
-      "body": "The 2D DCT produces an **8×8 block of DCT coefficients**:\n- **F(0,0) — top-left:** DC component = average brightness of the block (usually the largest value)\n- **Moving right (increasing v):** higher horizontal frequency → finer vertical stripes\n- **Moving down (increasing u):** higher vertical frequency → finer horizontal stripes\n- **F(7,7) — bottom-right:** highest frequency in both directions → finest checkerboard pattern\n\nAny 8×8 pixel block = weighted sum of 64 basis patterns. The DCT gives the weight (coefficient) for each pattern."
-    },
-    {
-      "type": "math",
-      "label": "2D Inverse DCT (IDCT)",
-      "expression": "f(i,j) = \\sum_{u=0}^{7}\\sum_{v=0}^{7} \\frac{C(u)C(v)}{4} \\cos\\!\\left(\\frac{(2i+1)u\\pi}{16}\\right)\\cos\\!\\left(\\frac{(2j+1)v\\pi}{16}\\right) F(u,v)"
-    },
-    {
-      "type": "example",
-      "title": "IDCT — Building Back Up Step by Step",
-      "body": "Starting from DCT coefficients, you rebuild the signal one component at a time:\n\n1. **DC only:** flat constant — just the average brightness. Very rough.\n2. **Add AC1:** main trend appears. Shape starts forming.\n3. **Add AC2:** more detail emerges.\n4. **Add AC3, AC4...:** each additional component refines the approximation.\n5. **All 7 AC components added:** perfect reconstruction.\n\n**Key insight:** the first few components capture most of the information. Later ones add fine details the eye may not even notice — those are the ones we can safely throw away."
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "**For 8×8 blocks:** DCT produces 64 coefficients. Top-left F(0,0) = DC (biggest). Bottom-right F(7,7) = highest frequency (usually smallest, close to zero). Compression works by quantizing/zeroing the small high-frequency coefficients."
+      "type": "markdown",
+      "body": "## Why Transform Coding?\n\n**Raw pixels problem:**\n* Neighboring pixels are **correlated** (similar) → redundant info → hard to compress\n\n**Transform solution:**\n* Convert to frequency domain → values become **uncorrelated**\n* Energy concentrates in **few coefficients**\n* Small coefficients → throw away → compression!\n\n---\n\n## Discrete Cosine Transform (DCT)\n\n* **Low frequency:** values change slowly (smooth regions)\n* **High frequency:** values change quickly (edges, details)\n\nDCT decomposes signal into **cosine waves** of different frequencies:\n* **F(0)** = DC component (average — constant part)\n* **F(u > 0)** = AC components (variations)\n\n### 1D DCT Formula\n\n$$F(u) = \\frac{C(u)}{2} \\sum_{i=0}^{7} \\cos\\left(\\frac{(2i+1)u\\pi}{16}\\right) f(i)$$\n\n$$C(u) = \\begin{cases} 1/\\sqrt{2} & u=0 \\\\ 1 & u>0 \\end{cases}$$\n\n---\n\n## DCT Examples\n\n**Example 1 — Constant [100, 100, 100, 100, 100, 100, 100, 100]:**\n* F(0) ≈ 283 (DC, **all** energy here)\n* F(1) to F(7) = 0\n* Constant signal → all energy in one coefficient!\n\n**Example 2 — Alternating [20, −20, 20, −20, 20, −20, 20, −20]:**\n* F(0) = 0 (average is zero)\n* F(4) is large — rapid alternation → energy in high freq\n\n**Example 3 — Ramp [0, 1, 2, 3, 4, 5, 6, 7]:**\n* F(0) ≈ 9.90 (DC average)\n* F(1) ≈ −6.44 (main slope)\n* F(2) to F(7) ≈ 0 (small)\n* Most info in just 2 coefficients!\n\n---\n\n## Key insight\n\nFor natural signals:\n* **Few low-freq coefficients = BIG** → keep\n* **Many high-freq coefficients = SMALL** → throw away\n\n→ This is how compression happens"
     }
   ],
   "flashcards": [
@@ -94,21 +45,21 @@
   "problems": [
     {
       "type": "conceptual",
-      "q": "An 8×8 image block has pixel values that are all the same (e.g., 128). After DCT, how many non-zero coefficients are there? Which one? What is its meaning?",
-      "a": "Only **1 non-zero coefficient**: F(0,0), the DC component.\nIt represents the average brightness of the block = 128.\nAll AC coefficients F(u,v) for u>0 or v>0 are zero, because there is no variation at all in the block.",
-      "hint": "A constant block has zero spatial frequency variation."
+      "q": "A DCT is applied to [100, 100, 100, 100, 100, 100, 100, 100]. Describe the output without calculating. Why?",
+      "a": "F(0) will be large (≈283) and **all other coefficients = 0**.\n\nA constant signal has no variation — zero frequency content beyond DC. DCT perfectly captures this: all energy in one value. This block compresses to a single number.",
+      "hint": "Constant = zero variation = only DC component."
     },
     {
       "type": "conceptual",
-      "q": "Explain why you can compress an image by keeping only the low-frequency DCT coefficients and setting high-frequency ones to zero.",
-      "a": "Natural images are mostly smooth — large areas of similar color with occasional edges. Low-frequency DCT coefficients capture the overall brightness and gradual changes (most of the image). High-frequency coefficients capture fine detail and sharp edges, which carry less of the total signal energy. Zeroing the small high-frequency coefficients throws away imperceptible detail while keeping the overall appearance intact.",
-      "hint": "Think about what low vs high spatial frequency means visually."
+      "q": "Why do natural images compress well with DCT? What happens to high-frequency coefficients?",
+      "a": "Natural images have **smooth regions** — neighboring pixels change slowly. When DCT is applied to an 8×8 block from a smooth region, most energy concentrates in the **low-frequency coefficients** (top-left of the 8×8 coefficient grid).\n\nHigh-frequency coefficients are near zero → can be set to zero (quantized away) with little visible quality loss.",
+      "hint": "Smooth = low frequency = energy concentrated at top-left. High-freq coefficients ≈ 0 → discard."
     },
     {
       "type": "conceptual",
-      "q": "You apply IDCT using only the DC coefficient and the first two AC coefficients (3 out of 64 total). Is the result perfect? What is it?",
-      "a": "No, it's not perfect — it's an approximation. The result is a rough reconstruction that captures the average brightness (DC) and the two dominant trends (AC1, AC2). Fine details, textures, and sharp edges (represented by higher AC coefficients) will be missing or blurred. The more coefficients you include, the better the approximation.",
-      "hint": "Perfect IDCT requires all 64 coefficients."
+      "q": "For the ramp [0,1,2,3,4,5,6,7], DCT gives F(0)≈9.90, F(1)≈−6.44, rest≈0. If you only keep F(0) and F(1) and set the rest to zero, what happens when you apply IDCT?",
+      "a": "You get an **approximation** of the ramp — the IDCT reconstructs using only the DC (average) and the main slope component.\n\nThe reconstruction will look like a smooth ramp, very close to the original [0,1,2,3,4,5,6,7], because those two coefficients carry almost all the information. The small high-freq coefficients contribute only minor refinements.",
+      "hint": "IDCT with zeros = approximate reconstruction. Less coefficients = more lossy but still recognizable."
     }
   ]
 }

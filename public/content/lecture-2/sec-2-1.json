@@ -4,52 +4,8 @@
   "title": "Pixels, Bitmaps & Resolution",
   "content": [
     {
-      "type": "text",
-      "body": "A **digital image** is a rectangular grid of pixels. Each pixel stores a color or intensity value. This grid is called a **bitmap** — the 2D array of pixel values that represents the image."
-    },
-    {
-      "type": "definition",
-      "term": "Bitmap",
-      "body": "The two-dimensional array (grid) of pixel values that represents graphics or image data."
-    },
-    {
-      "type": "definition",
-      "term": "Frame Buffer",
-      "body": "Hardware (on the video/graphics card) that stores the bitmap so it can be displayed on screen."
-    },
-    {
-      "type": "definition",
-      "term": "Image Resolution",
-      "body": "The number of pixels in a digital image. More pixels = higher resolution = better quality. Example: $1600 \\times 1200$ is high resolution, $640 \\times 480$ is lower."
-    },
-    {
-      "type": "text",
-      "body": "**1-bit images:** Each pixel is stored as a single bit — 0 (white/background) or 1 (black/foreground). Also called a **binary image** or **1-bit monochrome image**. Think of a black-and-white photocopy — either ink or paper. No gray, no color.\n\n**8-bit grayscale images:** Each pixel is 1 byte (8 bits), giving values 0–255. 0 = black, 255 = white. 256 shades of gray — enough for the human eye to see smooth gradations."
-    },
-    {
-      "type": "math",
-      "label": "Grayscale Storage Formula",
-      "expression": "\\text{Storage} = W \\times H \\times 1 \\text{ byte}"
-    },
-    {
-      "type": "example",
-      "title": "Storage Calculation",
-      "body": "A $640 \\times 480$ grayscale image: $640 \\times 480 \\times 1 = 307{,}200$ bytes = **300 KB**\n\nA $640 \\times 480$ 24-bit color image: $640 \\times 480 \\times 3 = 921{,}600$ bytes = **900 KB** (3× more)"
-    },
-    {
-      "type": "definition",
-      "term": "Bit-Planes",
-      "body": "An 8-bit image can be thought of as **8 separate 1-bit layers** stacked together.\n\n- **Plane 7 (MSB):** Most important brightness info. If pixel value > 127, this bit is 1. Looks like a rough version of the original image.\n- **Plane 0 (LSB):** Finest detail. Looks almost like random noise — represents tiny brightness differences."
-    },
-    {
-      "type": "example",
-      "title": "Bit-Plane Breakdown — Pixel Value 200",
-      "body": "200 in binary = **11001000**\n\n| Plane | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |\n|-------|---|---|---|---|---|---|---|---|\n| Bit   | 1 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |\n\n- Plane 7 = 1 (MSB — carries most visual info)\n- Plane 6 = 1\n- Plane 5 = 0\n- Plane 4 = 0\n- Plane 3 = 1\n- Plane 2, 1, 0 = 0 (LSB — contributes least)"
-    },
-    {
-      "type": "callout",
-      "style": "tip",
-      "body": "Plane 7 alone looks like a rough grayscale version of the whole image. Plane 0 alone looks like random noise. Strip the MSB and the image becomes unrecognizable. Strip the LSB and you barely notice."
+      "type": "markdown",
+      "body": "## 1-Bit Images\n\n* Each pixel = 1 bit (0 or 1)\n* 0 = white, 1 = black\n* No gray, no color\n* Called **binary** or **monochrome**\n\n---\n\n## 8-Bit Grayscale\n\n* Each pixel = 1 byte (8 bits)\n* Range: 0 to 255\n* 0 = black, 255 = white\n* **256 different shades**\n\n---\n\n## Key definitions\n\n**Bitmap:** 2D array of pixel values\n\n**Image resolution:** Number of pixels (e.g., 1600×1200)\n\n**Frame buffer:** Hardware that stores bitmap for display\n\n---\n\n## Storage formula\n\n$$\\text{Storage} = \\text{Width} \\times \\text{Height} \\times 1 \\text{ byte}$$\n\n**Example:** 640×480 grayscale\n\n$$640 \\times 480 = 307{,}200 \\text{ bytes} = 300 \\text{ KB}$$\n\n---\n\n## Bit-Planes\n\n8-bit grayscale = **8 layers stacked**\n\n* **Plane 7 (MSB):** Most important — rough version of image\n* **Plane 0 (LSB):** Least important — looks like noise\n\n**Example:** Pixel value 200 = binary 11001000\n\n```\nPlane 7=1, 6=1, 5=0, 4=0, 3=1, 2=0, 1=0, 0=0\n```"
     }
   ],
   "flashcards": [
@@ -85,21 +41,27 @@
   "problems": [
     {
       "type": "calculation",
-      "q": "Calculate the pixel data storage (in bytes) of a $640 \\times 480$ 8-bit grayscale image.",
-      "a": "Each pixel = 1 byte. Storage = $640 \\times 480 \\times 1 = \\mathbf{307{,}200}$ bytes = 300 KB.",
-      "hint": "8-bit = 1 byte per pixel"
+      "q": "How much storage (in bytes and KB) does a 640×480 grayscale image require?",
+      "a": "$640 \\times 480 \\times 1 = 307{,}200 \\text{ bytes} = \\mathbf{300 \\text{ KB}}$",
+      "hint": "Grayscale = 1 byte per pixel."
     },
     {
       "type": "calculation",
-      "q": "A pixel has value 150. Write it in binary (8 bits) and state which bit-planes are 1.",
-      "a": "$150 = 128 + 16 + 4 + 2 = 10010110$\n\nPlanes that are 1: **7, 4, 2, 1** (MSB through position 1).\nPlanes that are 0: **6, 5, 3, 0**.",
-      "hint": "Convert to binary: 150 = 128+16+4+2. Bit 7 is the leftmost (128s place)."
+      "q": "How much storage does a 1600×1200 grayscale image require? What about 24-bit color?",
+      "a": "**Grayscale:** $1600 \\times 1200 \\times 1 = 1{,}920{,}000$ bytes ≈ **1.92 MB**\n\n**24-bit color:** $1600 \\times 1200 \\times 3 = 5{,}760{,}000$ bytes ≈ **5.76 MB**\n\nColor is exactly 3× larger.",
+      "hint": "Grayscale = W×H×1, Color = W×H×3."
     },
     {
       "type": "calculation",
-      "q": "How much storage does a $1024 \\times 768$ 32-bit image use (pixel data only)?",
-      "a": "$1024 \\times 768 \\times 4 = \\mathbf{3{,}145{,}728}$ bytes (about 3 MB). Each pixel = 4 bytes (R, G, B, A).",
-      "hint": "32 bits = 4 bytes per pixel"
+      "q": "Pixel value = 200. Write it in binary and identify which bit-plane each bit belongs to (plane 7 down to plane 0).",
+      "a": "200 in binary = **11001000**\n\n| Plane | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |\n|-------|---|---|---|---|---|---|---|---|\n| Bit   | 1 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |\n\nPlane 7 (MSB) carries the most visual information. Plane 0 (LSB) is nearly noise.",
+      "hint": "200 = 128+64+8 = 11001000. MSB = plane 7."
+    },
+    {
+      "type": "conceptual",
+      "q": "What is the difference between image resolution and display resolution? Why does a 1600×1200 image look larger on a small screen?",
+      "a": "**Image resolution** = total number of pixels in the image (e.g., 1600×1200).\n\n**Display resolution** = number of pixels on the screen.\n\nA 1600×1200 image on a 800×600 screen needs to be scaled down to fit. On a small but high-res screen it may appear sharper — more pixels per inch.",
+      "hint": "Resolution is about pixel count, not physical size."
     }
   ]
 }

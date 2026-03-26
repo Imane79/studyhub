@@ -4,68 +4,8 @@
   "title": "Quantization, Filtering & Data Rate",
   "content": [
     {
-      "type": "definition",
-      "term": "Linear (Uniform) Quantization",
-      "body": "All quantization levels are **equally spaced** — the step size $\\Delta V$ is constant throughout the entire amplitude range.\n\nSimple to implement, but wastes precision: it assigns the same number of levels to loud signals as to quiet signals, even though the ear's sensitivity is very different across this range."
-    },
-    {
-      "type": "text",
-      "body": "**Weber's Law — Why Linear Quantization is Inefficient**\n\nHuman perception is **logarithmic, not linear**. Weber's Law states:\n$$\\Delta R \\propto \\frac{\\Delta S}{S}$$\nThe perceived change ($\\Delta R$) depends on the ratio of the change to the current signal level, not the absolute change.\n\n**Consequence:** A change from 1→2 feels as significant as a change from 100→200 (both are doublings). This gives a logarithmic response:\n$$r = k \\times \\ln\\left(\\frac{s}{s_0}\\right)$$\n\nWith **linear quantization**:\n- **Quiet sounds** (small amplitude): the step size $\\Delta V$ is large relative to the signal → poor precision → audible noise\n- **Loud sounds** (large amplitude): $\\Delta V$ is tiny relative to the signal → more precision than you can perceive → wasted bits\n\nLinear quantization over-allocates precision to loud sounds and under-allocates it to quiet sounds."
-    },
-    {
-      "type": "definition",
-      "term": "Non-Linear Quantization (Companding)",
-      "body": "Uses **logarithmic compression before quantization** — quiet sounds are expanded (spread over more levels), loud sounds are compressed (fewer levels). After D/A conversion, the inverse expansion is applied.\n\nResult: **finer resolution for quiet sounds, coarser resolution for loud sounds** — matching human perception.\n\nTwo standards:\n- **μ-law (mu-law):** North American and Japanese telephone standard, $\\mu = 255$ (sometimes 100)\n- **A-law:** European telephone standard, $A = 87.6$"
-    },
-    {
-      "type": "example",
-      "title": "Linear vs μ-law — Conceptual Comparison",
-      "body": "**8-bit linear** (256 levels, amplitude 0–255):\n- Quiet sound: level 2 vs level 3 → 1-step difference, same resolution as everything else\n- Loud sound: level 200 vs level 201 → 1-step difference, but at that volume the ear cannot perceive differences this small\n\n**With μ-law:**\n- Quiet range (0–10) mapped to a wide spread of levels (e.g., 0–100 out of 256) → fine resolution where the ear is sensitive\n- Loud range (200–255) compressed into fewer levels → coarser, but imperceptible at that volume\n\nSame 8 bits, dramatically better perceptual quality for speech."
-    },
-    {
-      "type": "callout",
-      "style": "info",
-      "body": "μ-law and A-law both achieve better perceptual quality with the same bit depth. μ-law is North America/Japan; A-law is Europe. For the exam, know which is which and what problem they solve."
-    },
-    {
-      "type": "text",
-      "body": "**Audio Filtering (Section 6.1.7)**\n\nFiltering is applied at **two stages** in audio processing:\n\n**Before sampling (analog → digital):**\n- Apply a **band-pass filter** to keep only the desired frequency range\n- Speech: keep **50 Hz – 10 kHz**\n- Music: keep **20 Hz – 20 kHz**\n- This also serves as the **anti-aliasing filter**, removing frequencies above the Nyquist frequency before sampling\n\n**After D/A conversion (digital → analog):**\n- Apply a **low-pass filter** to smooth the staircase (step-function) output of the DAC\n- DAC output has sharp steps → high-frequency quantization artifacts\n- The low-pass filter removes these artifacts and reconstructs a smooth, continuous waveform"
-    },
-    {
-      "type": "definition",
-      "term": "Data Rate Formula",
-      "body": "The number of bits per second produced by a digitized audio stream:\n\n$$\\text{Data Rate} = f_s \\times B \\times C$$\n\nwhere:\n- $f_s$ = sampling rate (Hz)\n- $B$ = bits per sample\n- $C$ = number of channels (1 = mono, 2 = stereo)"
-    },
-    {
-      "type": "example",
-      "title": "Data Rate Example 1 — Telephone",
-      "body": "**8,000 Hz × 8 bits × 1 channel (mono)**\n\n$$= 64{,}000 \\text{ bits/sec} = \\mathbf{8 \\text{ KB/sec}}$$"
-    },
-    {
-      "type": "example",
-      "title": "Data Rate Example 2 — CD Audio",
-      "body": "**44,100 Hz × 16 bits × 2 channels (stereo)**\n\n$$= 1{,}411{,}200 \\text{ bits/sec} = \\mathbf{176.4 \\text{ KB/sec}}$$"
-    },
-    {
-      "type": "example",
-      "title": "Data Rate Example 3 — 3-Minute CD Track",
-      "body": "**CD rate × 3 minutes:**\n\n$$176.4 \\text{ KB/sec} \\times 180 \\text{ sec} = 31{,}752 \\text{ KB} \\approx \\mathbf{31 \\text{ MB}}$$\n\nThis is uncompressed. MP3 typically compresses this by a factor of ~10."
-    },
-    {
-      "type": "table",
-      "headers": ["Quality Level", "Sampling Rate", "Bits", "Channels", "Data Rate"],
-      "rows": [
-        ["Telephone", "8 kHz", "8 bit", "Mono", "8 KB/sec"],
-        ["AM radio", "11.025 kHz", "8 bit", "Mono", "11 KB/sec"],
-        ["FM radio", "22.05 kHz", "16 bit", "Stereo", "88.2 KB/sec"],
-        ["CD audio", "44.1 kHz", "16 bit", "Stereo", "176.4 KB/sec"],
-        ["DVD audio (max)", "192 kHz", "24 bit", "Up to 6ch", "~1,200 KB/sec"]
-      ]
-    },
-    {
-      "type": "callout",
-      "style": "tip",
-      "body": "To convert bits/sec to KB/sec: divide by 8 (bits per byte), then divide by 1000 (or 1024 depending on convention). For exam calculations, dividing by 8000 in one step works: e.g., 64,000 bits/sec ÷ 8,000 = 8 KB/sec."
+      "type": "markdown",
+      "body": "## Filtering\n\n**Anti-aliasing filter** — applied **before** sampling\n* Removes frequencies above fNyquist\n* Prevents aliasing\n\n**Low-pass filter** — applied **after** playback\n* Smooths the reconstructed signal\n* Removes sampling artifacts\n\n---\n\n## Data Rate Formula (CRITICAL)\n\n$$\\text{Data Rate} = f_s \\times B \\times C$$\n\n* **fs** = sampling rate (Hz)\n* **B** = bits per sample\n* **C** = channels (1 = mono, 2 = stereo)\n\n---\n\n## Example 1: CD audio\n\nfs = 44,100 Hz,  B = 16 bits,  C = 2 (stereo)\n\n$$\\text{Data Rate} = 44{,}100 \\times 16 \\times 2 = 1{,}411{,}200 \\text{ bits/sec}$$\n\n$$\\div 8 = 176{,}400 \\text{ bytes/sec} = \\mathbf{176.4 \\text{ KB/sec}}$$\n\n---\n\n## Example 2: Telephone\n\nfs = 8,000 Hz,  B = 8 bits,  C = 1 (mono)\n\n$$\\text{Data Rate} = 8{,}000 \\times 8 \\times 1 = 64{,}000 \\text{ bits/sec} = \\mathbf{64 \\text{ kbps}}$$\n\n---\n\n## Example 3: File size — 3-minute CD song\n\n$$176{,}400 \\text{ bytes/sec} \\times 180 \\text{ sec} = 31{,}752{,}000 \\text{ bytes} \\approx \\mathbf{30.3 \\text{ MB}}$$\n\nA 3-minute song ≈ **30 MB uncompressed**\n\n---\n\n## Stereo vs Mono\n\nStereo = **2× the data rate** of mono (everything else equal)\n\n---\n\n## Complete Workflow\n\n**Recording:**\n```\nSound → Mic → Anti-alias filter → Sampling (fs ≥ 2fmax) → Quantization (N bits) → Store\n```\n\n**Playback:**\n```\nStore → DAC → Low-pass filter → Speaker → Sound\n```\n\n---\n\n## Common Standards\n\n| Standard | fs | Bits | Channels | Data Rate |\n|----------|----|------|----------|-----------|\n| CD audio | 44.1 kHz | 16 | Stereo | 176.4 KB/s |\n| Telephone | 8 kHz | 8 | Mono | 64 kbps |\n| Studio | 96 kHz | 24 | Stereo | 576 KB/s |"
     }
   ],
   "flashcards": [
@@ -97,21 +37,33 @@
   "problems": [
     {
       "type": "calculation",
-      "q": "Calculate the data rate for FM radio quality audio (22.05 kHz, 16-bit, stereo) in KB/sec.",
-      "a": "$$22{,}050 \\times 16 \\times 2 = 705{,}600 \\text{ bits/sec}$$\n$$705{,}600 \\div 8{,}000 = \\mathbf{88.2 \\text{ KB/sec}}$$",
-      "hint": "Data rate = f_s × bits × channels, then ÷ 8000 to convert to KB/sec"
+      "q": "Calculate the data rate for CD audio: fs=44,100 Hz, 16-bit, stereo. Give answer in bits/sec and KB/sec.",
+      "a": "$44{,}100 \\times 16 \\times 2 = \\mathbf{1{,}411{,}200 \\text{ bits/sec}}$\n\n$\\div 8 = 176{,}400 \\text{ bytes/sec} = \\mathbf{176.4 \\text{ KB/sec}}$",
+      "hint": "Data Rate = fs × B × C. Divide by 8 to convert bits to bytes."
     },
     {
       "type": "calculation",
-      "q": "A voice recorder captures mono audio at 16 kHz with 8-bit samples. How many MB of storage does 10 minutes of recording require?",
-      "a": "Data rate: $16{,}000 \\times 8 \\times 1 = 128{,}000$ bits/sec $= 16$ KB/sec\n\n10 minutes = 600 seconds\n\n$16 \\text{ KB/sec} \\times 600 \\text{ sec} = 9{,}600 \\text{ KB} = \\mathbf{9.6 \\text{ MB}}$",
-      "hint": "Find bits/sec → KB/sec → KB for full duration → convert to MB"
+      "q": "Calculate the data rate for telephone audio: fs=8,000 Hz, 8-bit, mono.",
+      "a": "$8{,}000 \\times 8 \\times 1 = \\mathbf{64{,}000 \\text{ bits/sec}} = 64 \\text{ kbps}$",
+      "hint": "Mono = C=1."
+    },
+    {
+      "type": "calculation",
+      "q": "How large (in MB) is an uncompressed 3-minute CD-quality audio file?",
+      "a": "CD data rate = 176,400 bytes/sec\n\n$176{,}400 \\times (3 \\times 60) = 176{,}400 \\times 180 = 31{,}752{,}000 \\text{ bytes}$\n\n$\\div 1{,}048{,}576 \\approx \\mathbf{30.3 \\text{ MB}}$",
+      "hint": "3 min = 180 seconds. Multiply data rate by duration."
+    },
+    {
+      "type": "calculation",
+      "q": "A studio recording uses 96 kHz, 24-bit, stereo. What is the data rate in KB/sec?",
+      "a": "$96{,}000 \\times 24 \\times 2 = 4{,}608{,}000 \\text{ bits/sec}$\n\n$\\div 8 = 576{,}000 \\text{ bytes/sec} = \\mathbf{576 \\text{ KB/sec}}$\n\nAbout 3.3× more data than CD.",
+      "hint": "Same formula: fs × B × C ÷ 8."
     },
     {
       "type": "conceptual",
-      "q": "Explain why a change from 1 to 2 on a volume scale is perceptually as significant as a change from 100 to 200, according to Weber's Law. What does this imply for audio quantization?",
-      "a": "Weber's Law: perceived change $\\propto \\Delta S / S$ (the ratio of change to current level). Both 1→2 and 100→200 are **doublings** (ratio = 2) — so both feel equally significant to the ear.\n\nImplication for quantization: the **absolute step size** $\\Delta V$ should not be constant. At quiet levels (small $S$), $\\Delta V$ must be small to maintain the same perceptual ratio. At loud levels, $\\Delta V$ can be large. This is exactly what **non-linear (μ-law) quantization** achieves.",
-      "hint": "Focus on the ratio, not the absolute difference"
+      "q": "Why is the anti-aliasing filter applied before sampling, and the low-pass filter applied after playback?",
+      "a": "**Anti-aliasing filter (before sampling):** removes frequencies above fNyquist *before* the ADC sees them. Once aliasing happens during sampling, the alias frequency is indistinguishable from a real signal — it cannot be removed afterwards.\n\n**Low-pass filter (after playback):** the DAC output is a staircase waveform. The filter smooths it, removing high-frequency steps that were introduced by the discrete sampling process.",
+      "hint": "Aliasing is irreversible — must prevent before it happens. DAC staircase is an artifact of reconstruction."
     }
   ]
 }

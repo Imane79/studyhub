@@ -4,43 +4,8 @@
   "title": "LZW & Arithmetic Coding",
   "content": [
     {
-      "type": "definition",
-      "term": "LZW Compression",
-      "body": "A **dictionary-based** method. Huffman looks at individual characters — LZW finds **repeated patterns** (strings) and gives them a single code.\n\nBoth encoder and decoder build the **same dictionary** from scratch — it never needs to be transmitted.\n\n**Initial dictionary:** just the individual characters (A=1, B=2, ...).\n**Rule:** extend the current string as long as it's in the dictionary. When current+next is NOT found: output code for current, add the new longer string, restart from next character."
-    },
-    {
-      "type": "example",
-      "title": "LZW Encoding 'ABABBA'",
-      "body": "**Initial dictionary:** 1=A, 2=B\n\n**s=A.** Read c=B. 'AB' not in dict → output **1**(A), add 3:AB, s=B\n\n**s=B.** Read c=A. 'BA' not in dict → output **2**(B), add 4:BA, s=A\n\n**s=A.** Read c=B. 'AB' in dict! (code 3) → s=AB. Keep going.\n\n**s=AB.** Read c=B. 'ABB' not in dict → output **3**(AB), add 5:ABB, s=B\n\n**s=B.** Read c=A. 'BA' in dict! (code 4) → s=BA. Keep going.\n\n**End of input.** Output **4**(BA).\n\n**Output codes: 1, 2, 3, 4** — turned 6 characters into 4 codes. $CR = 6/4 = 1.5$"
-    },
-    {
-      "type": "example",
-      "title": "LZW Decoding — codes 1, 2, 3, 4",
-      "body": "**Starting dictionary:** 1=A, 2=B\n\n**Rule:** output the string for each code, then add previous_output + first_char_of_current_output to dictionary.\n\n**Code 1** → 'A'. Output **A**. (First code — nothing to add yet.) prev='A'\n\n**Code 2** → 'B'. Output **B**. Add prev+first(B) = 'A'+'B' = 'AB' → code **3**. prev='B'\n\n**Code 3** → 'AB'. Output **AB**. Add prev+first(AB) = 'B'+'A' = 'BA' → code **4**. prev='AB'\n\n**Code 4** → 'BA'. Output **BA**. Add prev+first(BA) = 'AB'+'B' = 'ABB' → code **5**. prev='BA'\n\n**Total output:** A + B + AB + BA = **ABABBA** ✓"
-    },
-    {
-      "type": "text",
-      "body": "**Special LZW decoding case:** Sometimes the decoder gets a code that hasn't been added to its dictionary yet. This happens when the encoder adds a string and immediately uses it.\n\n**Solution:** `entry = previous_string + first_character_of_previous_string`"
-    },
-    {
-      "type": "definition",
-      "term": "Arithmetic Coding",
-      "body": "Encodes the **entire message** as a single decimal number between 0 and 1. Instead of coding each symbol separately (Huffman), one number represents the whole sequence.\n\nEach symbol gets a **range** (slice of [0,1)). Larger ranges for more probable symbols. Encoding = zooming into the interval for each symbol.\n\n**Encoding formula (each step):**\n$$\\text{new\\_low} = \\text{old\\_low} + \\text{range} \\times \\text{Range\\_low}(s)$$\n$$\\text{new\\_high} = \\text{old\\_low} + \\text{range} \\times \\text{Range\\_high}(s)$$\n\n**Decoding formula (each step):**\n1. Find symbol where $\\text{Range\\_low} \\leq \\text{value} < \\text{Range\\_high}$\n2. Output that symbol\n3. $\\text{value} = (\\text{value} - \\text{Range\\_low}) / (\\text{Range\\_high} - \\text{Range\\_low})$"
-    },
-    {
-      "type": "example",
-      "title": "Arithmetic Coding — Encode 'BAC'",
-      "body": "**Ranges:** A=[0, 0.5), B=[0.5, 0.8), C=[0.8, 1.0)\n\n**Start:** low=0, high=1, range=1\n\n**Symbol B** (0.5 to 0.8):\n- new_low = 0 + 1×0.5 = **0.5**\n- new_high = 0 + 1×0.8 = **0.8**, range=0.3\n\n**Symbol A** (0 to 0.5):\n- new_low = 0.5 + 0.3×0 = **0.5**\n- new_high = 0.5 + 0.3×0.5 = **0.65**, range=0.15\n\n**Symbol C** (0.8 to 1.0):\n- new_low = 0.5 + 0.15×0.8 = **0.62**\n- new_high = 0.5 + 0.15×1.0 = **0.65**, range=0.03\n\n**Final interval: [0.62, 0.65)**. Code: pick any number inside → **0.63**\n\n**Decode 0.63:** 0.63 ∈ [0.5,0.8) → **B**. New value=(0.63−0.5)/0.3=0.4333. 0.4333 ∈ [0,0.5) → **A**. New value=0.4333/0.5=0.8666. 0.8666 ∈ [0.8,1.0) → **C**. Result: **BAC** ✓"
-    },
-    {
-      "type": "example",
-      "title": "Arithmetic Coding — Lecture Example: Encode 'CAEE$'",
-      "body": "**Probability table:**\n\n| Symbol | Prob | Range |\n|--------|------|-------|\n| A | 0.2 | [0, 0.2) |\n| B | 0.1 | [0.2, 0.3) |\n| C | 0.2 | [0.3, 0.5) |\n| D | 0.05 | [0.5, 0.55) |\n| E | 0.3 | [0.55, 0.85) |\n| F | 0.05 | [0.85, 0.9) |\n| $ | 0.1 | [0.9, 1.0) |\n\n**Start:** low=0, high=1, range=1\n\n**C** (0.3→0.5): low=0.3, high=0.5, range=0.2\n\n**A** (0→0.2): low=0.3+0.2×0=0.3, high=0.3+0.2×0.2=0.34, range=0.04\n\n**E** (0.55→0.85): low=0.3+0.04×0.55=0.322, high=0.3+0.04×0.85=0.334, range=0.012\n\n**E** (0.55→0.85): low=0.322+0.012×0.55=0.3286, high=0.322+0.012×0.85=0.3322, range=0.0036\n\n**$** (0.9→1.0): low=0.3286+0.0036×0.9=**0.33184**, high=0.3286+0.0036×1.0=**0.33220**\n\n**Final interval: [0.33184, 0.33220)**. Code: **0.33203125** (binary: 01010101 = 8 bits for 5 symbols)"
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "**Why Arithmetic beats Huffman:** With Huffman, every symbol uses a whole number of bits. Arithmetic coding encodes the whole message as one number — no integer rounding, so it gets closer to the entropy lower bound.\n\n**Adaptive Arithmetic Coding:** Both sides start with no knowledge, update probability counts after each symbol. No need to send the probability table — both sides stay in sync automatically."
+      "type": "markdown",
+      "body": "## Arithmetic Coding\n\n### Why better than Huffman?\n\n**Huffman limitation:**\n* Each symbol = whole number of bits\n* If probability = 0.9 → should use 0.15 bits\n* But must use at least 1 bit → waste\n\n**Arithmetic solution:**\n* Encode **entire message** as one number\n* Can use fractional bits per symbol\n* Gets closer to entropy\n\n---\n\n### The setup\n\nEach symbol gets a **range** in [0, 1):\n* More probable → bigger range\n* Ranges don't overlap\n* Together cover 0 to 1\n\n### Encoding formula (SAME EVERY STEP)\n\n$$\\text{new\\_low} = \\text{old\\_low} + \\text{old\\_range} \\times \\text{Range\\_low}$$\n$$\\text{new\\_high} = \\text{old\\_low} + \\text{old\\_range} \\times \\text{Range\\_high}$$\n\n---\n\n### Worked Example: Encode \"BAC\"\n\n**Ranges:** A = [0, 0.5),  B = [0.5, 0.8),  C = [0.8, 1.0)\n\n**Start:** low=0, high=1, range=1\n\n**Symbol B:**\n```\nnew_low  = 0 + 1×0.5 = 0.5\nnew_high = 0 + 1×0.8 = 0.8\nrange = 0.3\n```\n\n**Symbol A:**\n```\nnew_low  = 0.5 + 0.3×0   = 0.5\nnew_high = 0.5 + 0.3×0.5 = 0.65\nrange = 0.15\n```\n\n**Symbol C:**\n```\nnew_low  = 0.5 + 0.15×0.8 = 0.62\nnew_high = 0.5 + 0.15×1.0 = 0.65\nrange = 0.03\n```\n\nFinal: **[0.62, 0.65)** → pick any number inside → **0.63**\n\n---\n\n### Decoding formula (EACH STEP)\n\n1. Find symbol where Range_low ≤ value < Range_high\n2. Output that symbol\n3. value = (value - Range_low) / (Range_high - Range_low)\n4. Repeat\n\n### Decode 0.63\n\n**Step 1:** value=0.63 falls in [0.5, 0.8) → **B**\n```\nvalue = (0.63 - 0.5) / 0.3 = 0.4333\n```\n\n**Step 2:** value=0.4333 falls in [0, 0.5) → **A**\n```\nvalue = (0.4333 - 0) / 0.5 = 0.8666\n```\n\n**Step 3:** value=0.8666 falls in [0.8, 1.0) → **C**\n\nResult: **BAC** ✓\n\n---\n\n### Adaptive arithmetic\n\n* Start with no knowledge\n* Update probabilities after each symbol\n* Both sides learn together → no need to send table\n\n---\n\n## Dictionary Coding (LZW)\n\nBuild a **dictionary** of patterns as you go:\n* Find repeated patterns → replace with short codes\n\n### How it works\n\n1. Start with basic dictionary (single chars)\n2. Find longest match in dictionary\n3. Output its code\n4. Add (current + next char) to dictionary\n5. Repeat\n\n### Worked Example: Encode \"ABABABABA\"\n\n**Initial dictionary:** 1=A, 2=B\n\n| Input | Match | Output | Add to dict |\n|-------|-------|--------|-------------|\n| A     | A(1)  | 1      | 3: AB       |\n| B     | B(2)  | 2      | 4: BA       |\n| AB    | AB(3) | 3      | 5: ABA      |\n| AB    | AB(3) | 3      | 6: ABA (dup)|\n| A     | A(1)  | 1      | —           |\n\nEncoded: **1, 2, 3, 3, 1** — 9 chars → 5 codes\n\n### Decoding\n\n1. Start with same basic dictionary\n2. Read code → output corresponding string\n3. Add (previous + first char of current) to dictionary\n4. Repeat\n\n→ Decoder rebuilds same dictionary!"
     }
   ],
   "flashcards": [
@@ -88,27 +53,45 @@
   "problems": [
     {
       "type": "calculation",
-      "q": "LZW encoding: starting dictionary 1=A, 2=B. Encode 'ABABBA'. Show all steps and give output codes.",
-      "a": "**s=A**, c=B: AB not in dict → output **1**, add 3:AB, s=B\n**s=B**, c=A: BA not in dict → output **2**, add 4:BA, s=A\n**s=A**, c=B: AB in dict! → s=AB\n**s=AB**, c=B: ABB not in dict → output **3**, add 5:ABB, s=B\n**s=B**, c=A: BA in dict! → s=BA\n**EOF** → output **4**\n\n**Output: 1, 2, 3, 4.** $CR = 6/4 = 1.5$",
-      "hint": "The key step is when 'AB' is already in the dictionary — you extend instead of outputting."
+      "q": "Arithmetic Coding: A=[0,0.5), B=[0.5,0.8), C=[0.8,1.0). Encode \"BAC\". Show each step.",
+      "a": "**Start:** low=0, high=1, range=1\n\n**B:** low=0+1×0.5=0.5, high=0+1×0.8=0.8, range=0.3\n\n**A:** low=0.5+0.3×0=0.5, high=0.5+0.3×0.5=0.65, range=0.15\n\n**C:** low=0.5+0.15×0.8=0.62, high=0.5+0.15×1.0=0.65, range=0.03\n\nFinal: **[0.62, 0.65)** → code = **0.63**",
+      "hint": "new_low = old_low + old_range × Range_low. Same formula every step."
     },
     {
       "type": "calculation",
-      "q": "LZW decoding: starting dictionary 1=A, 2=B. Decode codes 1, 2, 3, 4. Show all steps.",
-      "a": "**Code 1** → A. Output **A**. prev=A.\n**Code 2** → B. Output **B**. Add A+B=AB → code **3**. prev=B.\n**Code 3** → AB. Output **AB**. Add B+A=BA → code **4**. prev=AB.\n**Code 4** → BA. Output **BA**. Add AB+B=ABB → code **5**. prev=BA.\n\n**Output: ABABBA ✓**",
-      "hint": "Add: previous_output + first_char_of_current_output to dictionary at each step."
+      "q": "Arithmetic Coding: A=[0,0.5), B=[0.5,0.8), C=[0.8,1.0). Encode \"AAA\". Show each step.",
+      "a": "**Start:** low=0, high=1, range=1\n\n**A (1st):** low=0+1×0=0, high=0+1×0.5=0.5, range=0.5 → **[0, 0.5)**\n\n**A (2nd):** low=0+0.5×0=0, high=0+0.5×0.5=0.25, range=0.25 → **[0, 0.25)**\n\n**A (3rd):** low=0+0.25×0=0, high=0+0.25×0.5=0.125, range=0.125 → **[0, 0.125)**\n\nCode: **0.1** (or 0.0625 — any value in [0, 0.125) works)\n\nNotice: interval keeps shrinking with each symbol.",
+      "hint": "A has Range_low=0, so new_low stays the same each time. The interval just gets smaller."
     },
     {
       "type": "calculation",
-      "q": "Arithmetic Coding: A=[0,0.5), B=[0.5,0.8), C=[0.8,1.0). Encode 'BAC'. Show each step.",
-      "a": "**Start:** low=0, high=1, range=1\n\n**B** (0.5→0.8): low=0+1×0.5=0.5, high=0+1×0.8=0.8, range=0.3\n\n**A** (0→0.5): low=0.5+0.3×0=0.5, high=0.5+0.3×0.5=0.65, range=0.15\n\n**C** (0.8→1.0): low=0.5+0.15×0.8=0.62, high=0.5+0.15×1.0=0.65, range=0.03\n\n**Final: [0.62, 0.65)**. Code = **0.63**",
-      "hint": "new_low = old_low + old_range × Range_low(symbol)"
+      "q": "Arithmetic Coding: A=[0,0.5), B=[0.5,0.8), C=[0.8,1.0). Decode the value **0.63**. Show each step.",
+      "a": "**Step 1:** 0.63 in [0.5, 0.8) → **B**\nvalue = (0.63−0.5)/0.3 = 0.4333\n\n**Step 2:** 0.4333 in [0, 0.5) → **A**\nvalue = (0.4333−0)/0.5 = 0.8666\n\n**Step 3:** 0.8666 in [0.8, 1.0) → **C**\n\nResult: **BAC** ✓",
+      "hint": "Find which range the value falls in, output that symbol, then rescale: (value − low) / (high − low)."
     },
     {
       "type": "calculation",
-      "q": "Arithmetic Coding lecture example: using the table (A=0.2, B=0.1, C=0.2, D=0.05, E=0.3, F=0.05, $=0.1), encode 'CAEE$'. What is the final interval?",
-      "a": "**Start:** low=0, high=1, range=1\n\n**C** [0.3,0.5): low=0.3, high=0.5, range=0.2\n\n**A** [0,0.2): low=0.3+0.2×0=0.3, high=0.3+0.2×0.2=0.34, range=0.04\n\n**E** [0.55,0.85): low=0.3+0.04×0.55=0.322, high=0.3+0.04×0.85=0.334, range=0.012\n\n**E** [0.55,0.85): low=0.322+0.012×0.55=0.3286, high=0.322+0.012×0.85=0.3322, range=0.0036\n\n**$** [0.9,1.0): low=0.3286+0.0036×0.9=**0.33184**, high=0.3286+0.0036×1.0=**0.33220**\n\n**Final interval: [0.33184, 0.33220)**",
-      "hint": "Build the probability ranges first (cumulative). Apply formula at each step."
+      "q": "Arithmetic Coding: A=[0,0.5), B=[0.5,0.8), C=[0.8,1.0). Encode \"BC\".",
+      "a": "**Start:** low=0, high=1, range=1\n\n**B:** low=0+1×0.5=0.5, high=0+1×0.8=0.8, range=0.3 → **[0.5, 0.8)**\n\n**C:** low=0.5+0.3×0.8=0.74, high=0.5+0.3×1.0=0.8, range=0.06 → **[0.74, 0.8)**\n\nCode: **0.75**",
+      "hint": "C has Range_low=0.8, Range_high=1.0."
+    },
+    {
+      "type": "calculation",
+      "q": "LZW encoding: starting dictionary 1=A, 2=B. Encode \"ABABABABA\". Show all steps.",
+      "a": "| Input | Match | Output | Add to dict |\n|-------|-------|--------|-------------|\n| A | A(1) | **1** | 3: AB |\n| B | B(2) | **2** | 4: BA |\n| AB | AB(3) | **3** | 5: ABA |\n| AB | AB(3) | **3** | 6: ABA (dup) |\n| A | A(1) | **1** | — |\n\nOutput: **1, 2, 3, 3, 1** → 9 chars compressed to 5 codes",
+      "hint": "After outputting a code, add (current match + next char) to the dictionary."
+    },
+    {
+      "type": "calculation",
+      "q": "LZW encoding: starting dictionary 1=A, 2=B, 3=C. Encode \"ABCABC\". Show all steps.",
+      "a": "| Input | Match | Output | Add to dict |\n|-------|-------|--------|-------------|\n| A | A(1) | **1** | 4: AB |\n| B | B(2) | **2** | 5: BC |\n| C | C(3) | **3** | 6: CA |\n| AB | AB(4) | **4** | 7: ABC |\n| C | C(3) | **3** | — |\n\nOutput: **1, 2, 3, 4, 3** → 6 chars to 5 codes\n\nNotice: the second \"ABC\" partially used code 4!",
+      "hint": "Start with 3 entries this time (1=A, 2=B, 3=C). Dictionary grows as patterns are found."
+    },
+    {
+      "type": "calculation",
+      "q": "LZW encoding: starting dictionary 1=A, 2=B. Encode \"AAAAAAA\". Show all steps.",
+      "a": "| Input | Match | Output | Add to dict |\n|-------|-------|--------|-------------|\n| A | A(1) | **1** | 3: AA |\n| AA | AA(3) | **3** | 4: AAA |\n| AAA | AAA(4) | **4** | 5: AAAA |\n| AAAA | AAAA(5) | **5** | — |\n\nOutput: **1, 3, 4, 5** → 7 chars to 4 codes\n\nRepeated symbols → dictionary grows fast → good compression!",
+      "hint": "With all same symbols, the match keeps growing longer each time."
     }
   ]
 }

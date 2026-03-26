@@ -4,112 +4,8 @@
   "title": "Differential & Lossless JPEG Coding",
   "content": [
     {
-      "type": "text",
-      "body": "Images have a special property: **neighboring pixels are usually very similar.** Instead of storing actual pixel values, store **how much each pixel differs from its neighbor**. These differences are much smaller numbers clustered around zero → narrower histogram → lower entropy → better compression."
-    },
-    {
-      "type": "definition",
-      "term": "Horizontal Difference (Eq. 7.9)",
-      "body": "$$d(x, y) = I(x, y) - I(x-1, y)$$\nEach pixel minus its **left** neighbor.\n\n**Example:** Row 150, 153, 148, 155, 152 → differences: —, **3, −5, 7, −3**. Small numbers are far easier to compress than the originals."
-    },
-    {
-      "type": "definition",
-      "term": "2D Laplacian Difference (Eq. 7.10)",
-      "body": "Uses all **four** neighbors (above, below, left, right):\n$$d(x, y) = 4 \\cdot I(x,y) - I(x, y-1) - I(x, y+1) - I(x+1, y) - I(x-1, y)$$\nIn smooth image regions this is nearly **zero** everywhere — extremely compressible."
-    },
-    {
-      "type": "example",
-      "title": "Laplacian Difference Worked Example",
-      "body": "```\n        above = 98\nleft = 101   X = 100   right = 99\n        below = 102\n```\n$$d = 4 \\times 100 - 98 - 102 - 99 - 101 = 400 - 400 = \\mathbf{0}$$\n\nZero! Because X is almost exactly the average of its neighbors. In smooth image areas this is near zero almost everywhere."
-    },
-    {
-      "type": "text",
-      "body": "**Lossless JPEG** applies this idea with a predictor. For each pixel X, it **predicts** its value from already-decoded neighbors, then encodes only the **prediction error**.\n\nNeighbor layout:\n```\nC  B\nA  X\n```\n- **A** = pixel to the left\n- **B** = pixel above\n- **C** = pixel above-left\n\nAll three are already decoded (processing goes left-to-right, top-to-bottom). The prediction error (actual − predicted) is compressed with Huffman coding."
-    },
-    {
-      "type": "table",
-      "headers": [
-        "Predictor",
-        "Formula",
-        "Description"
-      ],
-      "rows": [
-        [
-          "P1",
-          "$A$",
-          "Left neighbor"
-        ],
-        [
-          "P2",
-          "$B$",
-          "Above neighbor"
-        ],
-        [
-          "P3",
-          "$C$",
-          "Above-left neighbor"
-        ],
-        [
-          "P4",
-          "$A + B - C$",
-          "Planar prediction"
-        ],
-        [
-          "P5",
-          "$A + (B-C)/2$",
-          "Weighted horizontal"
-        ],
-        [
-          "P6",
-          "$B + (A-C)/2$",
-          "Weighted vertical"
-        ],
-        [
-          "P7",
-          "$(A+B)/2$",
-          "Average of left and above"
-        ]
-      ]
-    },
-    {
-      "type": "example",
-      "title": "Lossless JPEG — Why P4 (A+B-C) Works",
-      "body": "**Setup:** C=100, B=102, A=103, actual X=104\n\n**P4 prediction:** $A + B - C = 103 + 102 - 100 = 105$\n\n**Error:** $104 - 105 = \\mathbf{-1}$ ← tiny! We encode −1 instead of 104.\n\n**Decoder:** Knows A, B, C. Computes prediction=105. Receives error=−1. Reconstructs: $105 + (-1) = \\mathbf{104}$ ✓\n\n**Why it works geometrically:** Imagine pixels forming a smooth gradient:\n```\nC=50   B=60\nA=70   X=?\n```\nRightward increase = B−C = 10. Downward increase = A−C = 20. X = C + 10 + 20 = 80.\nP4: A+B−C = 70+60−50 = **80**. Exactly right! P4 assumes the image is locally a **smooth plane**."
-    },
-    {
-      "type": "table",
-      "headers": [
-        "Method",
-        "Compression Ratio (Lena image)",
-        "Notes"
-      ],
-      "rows": [
-        [
-          "Lossless JPEG",
-          "1.45",
-          "Best — prediction exploits spatial redundancy first"
-        ],
-        [
-          "Optimal Lossless JPEG",
-          "1.49",
-          "Best predictor chosen per image"
-        ],
-        [
-          "Huffman alone",
-          "1.02",
-          "Barely any compression on raw pixels"
-        ],
-        [
-          "LZW (compress)",
-          "0.86",
-          "Actually got BIGGER — LZW struggles with images!"
-        ]
-      ]
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "Know all 7 predictors. The key insight: plain Huffman on raw pixels barely compresses (H is high). Prediction first reduces entropy dramatically — then Huffman compresses the small errors efficiently.\n\n**Full pipeline — Encoding:** Original image → Pick predictor → Compute errors → Compress errors with Huffman → Output\n\n**Full pipeline — Decoding:** Decompress errors → For each pixel: actual = predicted + error → Reconstructed image (perfectly lossless)"
+      "type": "markdown",
+      "body": "## Key insight\n\n**Neighboring pixels usually similar**\n\n→ Store **differences**, not raw values\n\n---\n\n## Why it helps\n\n**Original pixels:**\n```\n100, 102, 101, 103, 100, 99, 101, 102\n```\n\n**Differences:**\n```\n—, 2, −1, 2, −3, −1, 2, 1\n```\n\n👉 Tiny numbers clustered around zero → **Lower entropy** → better compression\n\n---\n\n## Two difference methods\n\n### Method 1: Horizontal difference\n\n$$d(x, y) = I(x, y) - I(x-1, y)$$\n\nEach pixel minus left neighbor\n\n### Method 2: 2D Laplacian\n\n$$d(x, y) = 4I(x,y) - I(x,y-1) - I(x,y+1) - I(x+1,y) - I(x-1,y)$$\n\nUses all 4 neighbors\n\n**Example:**\n```\n        98\n101  [100]  99\n       102\n\nd = 4×100 - 98 - 102 - 99 - 101 = 0\n```\n\nIn smooth areas → near zero everywhere → very compressible\n\n---\n\n## Lossless JPEG\n\nFor each pixel:\n1. **Predict** from neighbors\n2. Encode the **error** (actual - predicted)\n\n```\nC  B\nA  X\n```\n\n* A = left,  B = above,  C = diagonal\n* All already decoded\n\n### The 7 predictors\n\n| Predictor | Formula | What it does |\n|-----------|---------|--------------|\n| P1 | A | Just left |\n| P2 | B | Just above |\n| P3 | C | Just diagonal |\n| P4 | A+B-C | Smooth plane (BEST) |\n| P5 | A+(B-C)/2 | Mostly A |\n| P6 | B+(A-C)/2 | Mostly B |\n| P7 | (A+B)/2 | Average |\n\nPick one for whole image\n\n---\n\n### Worked Example: Using P4\n\n```\nC=100  B=102\nA=103  X=?     (actual X=104)\n```\n\n**Prediction:**\n```\nP4 = A + B - C = 103 + 102 - 100 = 105\n```\n\n**Error:**\n```\nactual - predicted = 104 - 105 = -1\n```\n\nEncode **-1** instead of **104** → tiny number!\n\n**Decoder:**\n* Knows A, B, C (already decoded)\n* Computes prediction = 105\n* Receives error = -1\n* Reconstructs: 105 + (-1) = **104** ✓\n\n---\n\n### Why P4 works\n\n```\nC=50   B=60    (going right +10)\nA=70   X=?     (going down +20)\n```\n\nX should be: 50 + 10 + 20 = 80\n\nP4 = A + B - C = 70 + 60 - 50 = **80** ✓\n\n→ Assumes image is locally a smooth plane\n\n---\n\n## Performance comparison\n\n| Method | Compression Ratio |\n|--------|------------------|\n| Lossless JPEG | 1.45 ✅ |\n| Optimal L-JPEG | 1.49 ✅ |\n| Huffman alone | 1.02 ❌ |\n| LZW | 0.86 ❌ (bigger!) |\n\n---\n\n## Full pipeline\n\n**Encoding:**\n```\nImage → Pick predictor → Compute errors → Huffman → Output\n```\n\n**Decoding:**\n```\nInput → Huffman → For each pixel: actual = predicted + error → Image\n```\n\nPerfectly reversible = truly lossless"
     }
   ],
   "flashcards": [
@@ -153,27 +49,45 @@
   "problems": [
     {
       "type": "calculation",
-      "q": "For Lossless JPEG predictor P4 ($A+B-C$), if A=103, B=102, C=100, and actual pixel=104, what is the prediction and error?",
-      "a": "Predicted = $A+B-C = 103+102-100 = \\mathbf{105}$\n\nError = actual − predicted = $104 - 105 = \\mathbf{-1}$\n\nDecoder: computes 105, receives error −1, reconstructs $105+(-1)=104$ ✓",
-      "hint": "P4 = A + B - C. Error = actual - predicted."
+      "q": "Lossless JPEG, predictor P4 (A+B−C): C=100, B=102, A=103, actual X=104. Find the prediction and error.",
+      "a": "**Prediction:** P4 = A+B−C = 103+102−100 = **105**\n\n**Error:** 104−105 = **−1**\n\nDecoder: knows A,B,C → computes 105 → receives −1 → 105+(−1) = **104** ✓",
+      "hint": "Error = actual − predicted. A small error means good compression."
     },
     {
       "type": "calculation",
-      "q": "For Lossless JPEG predictor P7 ($\\frac{A+B}{2}$), if A=120, B=130, and actual pixel=128, what is the prediction error?",
-      "a": "Predicted = $(120+130)/2 = \\mathbf{125}$\n\nError = $128 - 125 = \\mathbf{3}$",
-      "hint": "P7 = (A+B)/2 = average of left and above."
+      "q": "Same neighbors (C=100, B=102, A=103, actual X=104). Now use P7 = (A+B)/2. Find the prediction and error. How does it compare to P4?",
+      "a": "**P7 prediction:** (103+102)/2 = 102.5 ≈ **103**\n\n**Error:** 104−103 = **+1**\n\nP4 gave error=−1, P7 gives error=+1. Both are small, but **P4 is slightly better here**.\n\nDifferent predictors give different errors — the best one depends on the image.",
+      "hint": "P7 averages A and B. Compare the absolute error values to see which predictor performed better."
     },
     {
       "type": "calculation",
-      "q": "Compute the 2D Laplacian difference for pixel X=100 with neighbors: above=98, below=102, left=101, right=99.",
-      "a": "$$d = 4 \\times 100 - 98 - 102 - 99 - 101 = 400 - 400 = \\mathbf{0}$$\n\nZero — X is the average of its neighbors. This is typical for smooth image regions.",
-      "hint": "d = 4×X − (above + below + left + right)"
+      "q": "Same neighbors (C=100, B=102, A=103, actual X=104). Use P1 = A. Find the prediction and error.",
+      "a": "**P1 prediction:** A = **103**\n\n**Error:** 104−103 = **+1**\n\nP1 (just left neighbor) gives the same error as P7 here. It is the simplest predictor and works well for horizontal patterns.",
+      "hint": "P1 just uses the left neighbor. No calculation needed."
+    },
+    {
+      "type": "calculation",
+      "q": "Lossless JPEG, predictor P4: C=50, B=60, A=70, actual X=80. Find the error. What does this tell you about P4?",
+      "a": "**Prediction:** P4 = 70+60−50 = **80**\n\n**Error:** 80−80 = **0**\n\nPerfect prediction! Error = 0 means nothing needs to be encoded for this pixel.\n\nP4 models a smooth linear gradient perfectly — it assumes the image is locally a flat plane.",
+      "hint": "When the image is a smooth gradient, P4 predicts exactly right → zero error → maximum compression."
+    },
+    {
+      "type": "calculation",
+      "q": "Compute the 2D Laplacian for pixel X=100 with neighbors: above=98, below=102, left=101, right=99.",
+      "a": "$d = 4×100 − 98 − 102 − 99 − 101 = 400 − 400 = \\mathbf{0}$\n\nX is the average of its four neighbors — smooth region. Zero difference = nothing to store = perfect compression.",
+      "hint": "$d = 4I(x,y) − I(\\text{above}) − I(\\text{below}) − I(\\text{left}) − I(\\text{right})$"
     },
     {
       "type": "conceptual",
-      "q": "The table shows: Lossless JPEG CR=1.45, Huffman alone CR=1.02, LZW CR=0.86. Why does LZW actually make images bigger?",
-      "a": "LZW works by finding **repeated string patterns**. In natural images, pixel values form smooth gradients — the specific byte patterns don't repeat very often. LZW adds dictionary overhead without finding many matching patterns, resulting in a larger output than the original.\n\nLossless JPEG succeeds because it first exploits **spatial correlation** (prediction), reducing pixel values to small errors near zero. Then Huffman compresses these efficiently. The two-step approach is key.",
-      "hint": "Think about what LZW is good at (repeated text patterns) vs what images actually contain."
+      "q": "In Lossless JPEG, what predictor do you use for the first pixel, the first row, and the first column? Why?",
+      "a": "**First pixel (0,0):** No neighbors at all → store the **raw value** directly, no prediction.\n\n**First row:** Only A (left) is available → must use **P1 = A**.\n\n**First column:** Only B (above) is available → must use **P2 = B**.\n\nC and other neighbors simply do not exist at the image boundaries.",
+      "hint": "You can only predict from neighbors that have already been decoded."
+    },
+    {
+      "type": "conceptual",
+      "q": "The performance table shows Lossless JPEG CR=1.45, Huffman alone CR=1.02, LZW CR=0.86. Why does prediction before coding matter so much?",
+      "a": "Raw pixel values (e.g. 100–104) have high entropy — hard to compress.\n\nAfter prediction, you encode **errors** (e.g. −1, 0, +1) which cluster near zero — much lower entropy.\n\nLZW on raw pixels finds almost no repeated byte patterns → gets bigger (0.86 < 1). Huffman on raw pixels barely helps (1.02). But prediction + Huffman on small errors = 1.45.",
+      "hint": "Think about what Huffman and LZW need: skewed/repeated data. Raw pixel values rarely provide that; prediction residuals do."
     }
   ]
 }

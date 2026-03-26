@@ -4,43 +4,8 @@
   "title": "DCT vs DFT, Matrix Form & JPEG Pipeline",
   "content": [
     {
-      "type": "definition",
-      "term": "DCT vs DFT",
-      "body": "**DFT (Discrete Fourier Transform):** uses both cosine and sine (complex exponentials). Produces real AND imaginary parts.\n\n**DCT (Discrete Cosine Transform):** uses only cosines. Real numbers only. No imaginary part.\n\n**How DCT avoids imaginary numbers:** It makes a **symmetric copy** of the input. Original 8 samples [0,1,2,3,4,5,6,7] → DCT effectively works on 16 samples: [0,1,2,3,4,5,6,7, 7,6,5,4,3,2,1,0]. When a signal is symmetric, the sine part of its DFT is always zero — only the cosine part remains. That is the DCT."
-    },
-    {
-      "type": "example",
-      "title": "DCT vs DFT — Ramp Signal [0,1,2,3,4,5,6,7]",
-      "body": "**DCT coefficients:** [9.90, −6.44, 0, −0.67, 0, −0.20, 0, −0.51]\n→ Many zeros, energy concentrated in first 2 terms.\n\n**DFT coefficients:** [28.00, −4.00, 9.66, −4.00, 4.00, −4.00, 1.66, −4.00]\n→ Energy spread out — fewer zeros, harder to compress.\n\n**Using only the first 3 terms:**\n- DCT approximation → closely follows the original ramp ✓\n- DFT approximation → oscillates badly, misses the shape ✗\n\n**Conclusion:** DCT concentrates energy better → more efficient for compression → why JPEG and all major video codecs use DCT, not DFT."
-    },
-    {
-      "type": "text",
-      "body": "**The 2D DCT is separable** — it can be computed as two consecutive 1D DCTs:\n1. Apply 1D DCT to each **row**\n2. Apply 1D DCT to each **column** of the result\n\nThis reduces iterations from 8×8 = 64 down to 8+8 = 16. That's why real-time video compression is computationally feasible."
-    },
-    {
-      "type": "math",
-      "label": "Matrix Form of 2D DCT",
-      "expression": "F = T \\cdot f \\cdot T^T \\quad (\\text{DCT: pixels} \\to \\text{frequency}) \\qquad f = T^T \\cdot F \\cdot T \\quad (\\text{IDCT: frequency} \\to \\text{pixels})"
-    },
-    {
-      "type": "definition",
-      "term": "DCT Matrix T",
-      "body": "$$T[i,j] = \\begin{cases} \\dfrac{1}{2\\sqrt{2}} & i = 0 \\\\[6pt] \\dfrac{1}{2}\\cos\\!\\left(\\dfrac{(2j+1)\\,i\\,\\pi}{16}\\right) & i > 0 \\end{cases}$$\n\n**Key property — orthogonal matrix:** $T^T = T^{-1}$\n\nThe transpose equals the inverse. This is why the IDCT is just $T^T \\cdot F \\cdot T$ — no need to compute a full matrix inverse. Just transpose."
-    },
-    {
-      "type": "definition",
-      "term": "Orthogonal & Orthonormal Basis Functions",
-      "body": "The DCT basis functions have two special properties:\n\n**Orthogonal:** Different basis functions don't interfere with each other.\n$$\\sum_i B_p(i) \\cdot B_q(i) = 0 \\quad \\text{when } p \\neq q$$\nPractical meaning: you can change one DCT coefficient without affecting any other coefficient.\n\n**Orthonormal:** Orthogonal AND each basis function has length 1.\n$$\\sum_i B_p(i) \\cdot B_p(i) = 1 \\quad \\text{when } p = q$$\nThis is what makes the DCT matrix orthogonal ($T^T = T^{-1}$) — and what keeps the IDCT simple."
-    },
-    {
-      "type": "example",
-      "title": "The Full JPEG Pipeline",
-      "body": "**ENCODING:**\n\n1. Split image into **8×8 pixel blocks**\n2. Apply **2D DCT** to each block → 64 DCT coefficients\n3. F(0,0) = DC (average brightness, biggest). Most high-frequency AC (bottom-right) are small.\n4. **[LOSSY STEP] Quantize:** divide each coefficient by a quantization value and round. Small coefficients → 0. Larger quantization values → more zeros → more compression → more quality loss.\n5. **Lossless encode** remaining non-zero coefficients with Huffman or Arithmetic coding (from Lecture 5)\n\n**DECODING (reverse each step):**\n1. Huffman decode\n2. Dequantize (multiply back by quantization values)\n3. Apply **IDCT** → reconstruct pixel block\n4. Assemble blocks → reconstructed image\n\nThe loss is permanent — after quantization, the zeroed coefficients are gone and cannot be recovered."
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "**Must-know facts:**\n- DCT concentrates energy better than DFT → fewer non-zero coefficients → better compression\n- 2D DCT is separable: rows then columns, 16 iterations not 64\n- Matrix form: F = T·f·T^T, inverse: f = T^T·F·T\n- T^T = T^(-1) because basis functions are orthonormal\n- JPEG lossy step: quantize DCT coefficients (divide + round → zeros)\n- High compression = large quantization values = more zeros = more quality loss"
+      "type": "markdown",
+      "body": "## 2D DCT (for images)\n\n$$F(u,v) = \\frac{C(u)C(v)}{4} \\sum\\sum \\cos\\left(\\frac{(2i+1)u\\pi}{16}\\right) \\cos\\left(\\frac{(2j+1)v\\pi}{16}\\right) f(i,j)$$\n\nApplied to **8×8 blocks** → produces **64 coefficients**\n\n```\nTop-left  (0,0): DC — average brightness\nMoving right  →: higher horizontal frequency\nMoving down   ↓: higher vertical frequency\nBottom-right (7,7): highest frequency both directions\n```\n\n**Building signal step-by-step:** DC → + AC1 → + AC2 → ... → all 64 = perfect reconstruction\n\n---\n\n## Matrix Form of DCT\n\nInstead of the full 2D formula (64 iterations), do **two 1D DCTs** (rows then columns) — only 16 iterations.\n\n$$F = T \\times f \\times T^T \\qquad \\text{(DCT: pixels → frequency)}$$\n\n$$f = T^T \\times F \\times T \\qquad \\text{(IDCT: frequency → pixels)}$$\n\n$$T[i,j] = \\begin{cases} \\frac{1}{2\\sqrt{2}} & i=0 \\\\ \\frac{1}{2}\\cos\\left(\\frac{(2j+1)i\\pi}{16}\\right) & i>0 \\end{cases}$$\n\n**KEY PROPERTY:** $T^T = T^{-1}$ — transpose equals inverse (**orthogonal matrix**)\n\n→ Makes IDCT simple and efficient\n\n---\n\n## DCT vs DFT\n\n| | DFT | DCT |\n|--|-----|-----|\n| Uses | Cosine + Sine | Cosine only |\n| Output | Complex (real + imaginary) | Real only |\n| Compression | Energy spread out | Energy concentrated |\n\n**Why DCT is better for compression — ramp [0,1,2,3,4,5,6,7]:**\n\n```\nDCT: [9.90, -6.44,  0, -0.67, 0, -0.20, 0, -0.51]  → many zeros ✅\nDFT: [28.00, -4.00, 9.66, -4.00, 4.00, -4.00, 1.66, -4.00]  → spread ❌\n```\n\n**How DCT avoids imaginary numbers:** makes a symmetric copy of the signal → sine part cancels to zero → only cosine remains\n\n```\nOriginal:  [0, 1, 2, 3, 4, 5, 6, 7]\nSymmetric: [0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0]\n```\n\n---\n\n## Orthogonal Basis Functions\n\nTwo basis functions Bₚ and Bq are **orthogonal** if:\n\n$$\\sum B_p(i) \\times B_q(i) = 0 \\quad \\text{when } p \\ne q$$\n\n**Orthonormal** = orthogonal + each has length 1:\n\n$$\\sum B_p(i) \\times B_q(i) = \\begin{cases} 0 & p \\ne q \\\\ 1 & p = q \\end{cases}$$\n\n→ DCT basis functions are orthonormal → independent → adjust one coefficient without affecting others\n\n---\n\n## JPEG Pipeline\n\n**Encoding:**\n1. Split image into **8×8 blocks**\n2. **DCT** → 64 coefficients per block\n3. **Quantize** (divide by quantization matrix, round) → small coefficients become zero ← **loss happens here**\n4. **Huffman** encode non-zero coefficients\n\n**Decoding:**\n1. Huffman decode\n2. Dequantize (multiply back)\n3. **IDCT** → reconstruct pixels\n\n**Quality control:** larger quantization values → more zeros → more compression, worse quality. This is the **JPEG quality slider**."
     }
   ],
   "flashcards": [
@@ -76,15 +41,27 @@
   "problems": [
     {
       "type": "conceptual",
-      "q": "In JPEG, what happens to image quality when you increase the quantization values (e.g., use Q=90 vs Q=10 where higher Q = larger quantization divisors)?",
-      "a": "Larger quantization divisors → more DCT coefficients round to zero → fewer coefficients survive → smaller file but lower quality. More high-frequency detail is lost, causing visible blocking artifacts on edges. Q=10 (high quantization) produces a much smaller file than Q=90 (low quantization) but at the cost of visible quality degradation.",
-      "hint": "Think about what happens when you divide a small number by a large number and round."
+      "q": "In the 2D DCT coefficient grid (8×8), where is the DC component and where are the highest-frequency components?",
+      "a": "**DC component:** top-left corner (0,0) — represents the average brightness of the 8×8 block.\n\n**Highest frequency:** bottom-right corner (7,7) — represents the fastest variation in both horizontal and vertical directions.\n\nMoving right increases horizontal frequency; moving down increases vertical frequency.",
+      "hint": "DC = (0,0) = average. Frequency increases as you move right and down."
     },
     {
       "type": "conceptual",
-      "q": "Why does JPEG produce 'blocking artifacts' at high compression levels?",
-      "a": "JPEG processes independent 8×8 pixel blocks. At high compression, most DCT coefficients are zeroed, leaving only the DC (average brightness) and a few low-frequency terms per block. Each block reconstructs to a slightly different average with smoothed-out detail. The boundaries between blocks become visible as a grid of square patches — blocking artifacts. This is especially visible in smooth gradient areas.",
-      "hint": "Think about what happens at the edges of adjacent 8×8 blocks when only DC survives."
+      "q": "What does the property T^T = T^{-1} mean, and why is it useful for IDCT?",
+      "a": "T is an **orthogonal matrix** — its transpose is also its inverse.\n\nThis means:\n* **DCT:** F = T × f × T^T\n* **IDCT:** f = T^T × F × T\n\nThe inverse transform uses the same matrix T — just transposed. No need to invert T separately, which makes the IDCT computationally simple and efficient.",
+      "hint": "Orthogonal: T^T = T^{-1}. So the inverse transform is just swapping T and T^T."
+    },
+    {
+      "type": "conceptual",
+      "q": "In JPEG, where exactly does the lossy part happen? How does the quality slider work?",
+      "a": "Loss happens during **quantization** — DCT coefficients are divided by a quantization matrix and rounded to integers. Small coefficients round to **zero** and are discarded.\n\nThe **quality slider** scales the quantization matrix:\n* High quality → small divisors → fewer zeros → more data → larger file\n* Low quality → large divisors → many zeros → less data → smaller file\n\nDCT and Huffman coding are lossless — only quantization introduces error.",
+      "hint": "DCT is reversible. Huffman is reversible. Only quantization (round/discard) is irreversible."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why does DCT concentrate energy better than DFT for compression?",
+      "a": "DCT mirrors the signal symmetrically before transforming, which makes the signal appear **periodic without discontinuities** at the boundaries.\n\nDFT treats the signal as periodic, creating sharp edges at the boundaries → energy spreads into many high-frequency components.\n\nDCT avoids this → energy concentrates in fewer low-frequency coefficients → more zeros → better compression.\n\nIn the ramp example: DCT gives 5 near-zero values out of 8; DFT gives none.",
+      "hint": "Symmetric extension → no boundary discontinuity → no energy spread → concentrated coefficients."
     }
   ]
 }

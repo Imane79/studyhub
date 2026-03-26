@@ -7,6 +7,11 @@ import { MathRenderer } from './MathRenderer';
 import { CodeBlock } from './CodeBlock';
 import { Callout } from './Callout';
 import { Definition } from './Definition';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 interface ContentRendererProps {
   blocks: ContentBlock[];
@@ -148,6 +153,37 @@ export function ContentRenderer({ blocks, accentColor = '#5B8AF0' }: ContentRend
                   </li>
                 ))}
               </Tag>
+            );
+
+          case 'markdown':
+            return (
+              <div key={i} className="prose-md text-[var(--text-secondary)] leading-relaxed text-sm">
+                <ReactMarkdown
+                  remarkPlugins={[remarkMath, remarkGfm]}
+                  rehypePlugins={[rehypeKatex]}
+                  components={{
+                    h2: ({ children }) => <h2 className="text-base font-semibold text-[var(--text-primary)] mt-5 mb-2">{children}</h2>,
+                    h3: ({ children }) => <h3 className="text-sm font-semibold text-[var(--text-primary)] mt-4 mb-1">{children}</h3>,
+                    p: ({ children }) => <p className="mb-2 leading-relaxed">{children}</p>,
+                    ul: ({ children }) => <ul className="list-disc pl-5 space-y-1 mb-2">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1 mb-2">{children}</ol>,
+                    li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                    strong: ({ children }) => <strong className="text-[var(--text-primary)] font-semibold">{children}</strong>,
+                    code: ({ children, className }) => {
+                      const isBlock = className?.includes('language-');
+                      return isBlock
+                        ? <pre className="my-2 p-3 rounded-lg text-xs font-mono overflow-x-auto" style={{ background: 'rgba(255,255,255,0.05)', color: '#e8c97e' }}><code>{children}</code></pre>
+                        : <code className="text-xs font-mono px-1 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.08)', color: '#e8c97e' }}>{children}</code>;
+                    },
+                    hr: () => <hr className="border-[var(--border)] my-4" />,
+                    table: ({ children }) => <table className="w-full text-sm border-collapse my-3">{children}</table>,
+                    th: ({ children }) => <th className="px-3 py-2 text-left font-semibold text-[var(--text-primary)] border-b border-[var(--border)]">{children}</th>,
+                    td: ({ children }) => <td className="px-3 py-2 border-b border-[var(--border)]">{children}</td>,
+                  }}
+                >
+                  {block.body}
+                </ReactMarkdown>
+              </div>
             );
 
           default:

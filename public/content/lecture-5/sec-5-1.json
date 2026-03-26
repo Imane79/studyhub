@@ -4,47 +4,8 @@
   "title": "Compression Fundamentals & Entropy",
   "content": [
     {
-      "type": "definition",
-      "term": "Compression",
-      "body": "The process of reducing the total number of bits needed to represent information. You have original data → run through an **encoder** → smaller representation → later a **decoder** reconstructs it."
-    },
-    {
-      "type": "text",
-      "body": "**Lossless compression:** The decoder can perfectly reconstruct the original data — every single bit is identical.\n\n**Lossy compression:** Some information is permanently lost. The decoded data is only an approximation. Lecture 5 focuses entirely on **lossless** techniques."
-    },
-    {
-      "type": "math",
-      "label": "Compression Ratio",
-      "expression": "CR = \\frac{B_0}{B_1}"
-    },
-    {
-      "type": "text",
-      "body": "Where $B_0$ = bits **before** compression, $B_1$ = bits **after** compression.\n\n- Ratio of 2.0 → compressed file is half the original size\n- Ratio of 1.0 → no compression happened at all\n- Ratio < 1.0 → the \"compressed\" file is actually **bigger** (bad!)"
-    },
-    {
-      "type": "definition",
-      "term": "Self-Information",
-      "body": "If a symbol $s_i$ has probability $p_i$, the amount of information it carries is $I(s_i) = \\log_2(1/p_i)$.\n\n**Intuition:** A **rare** symbol is surprising — it carries **more** information. A **common** symbol is expected — it carries **less** information."
-    },
-    {
-      "type": "example",
-      "title": "Self-Information Values",
-      "body": "- $p = 0.5$ → $I = \\log_2(1/0.5) = \\log_2(2) = \\mathbf{1}$ bit\n- $p = 0.25$ → $I = \\log_2(1/0.25) = \\log_2(4) = \\mathbf{2}$ bits\n- $p = 0.125$ → $I = \\log_2(8) = \\mathbf{3}$ bits\n\nEvery time the probability **halves**, the information goes up by **1 bit**."
-    },
-    {
-      "type": "definition",
-      "term": "Entropy (H)",
-      "body": "The **average** information per symbol across the entire source:\n$$H(S) = \\sum_i p_i \\log_2(1/p_i) = -\\sum_i p_i \\log_2(p_i)$$\nEntropy is the **theoretical minimum** average bits per symbol. No lossless compression can ever do better."
-    },
-    {
-      "type": "example",
-      "title": "Entropy: Two Key Cases",
-      "body": "**Case 1 — Uniform (worst for compression):**\nAn image where all 256 gray levels are equally likely ($p = 1/256$):\n$$H = \\log_2(256) = \\mathbf{8 \\text{ bits/symbol}}$$\nYou need a full 8 bits per pixel — **cannot compress at all**. When everything is equally likely, there is no pattern to exploit.\n\n**Case 2 — Skewed (good for compression):**\nAn image with only two values where most pixels are one value → entropy ≈ **0.92 bits/symbol**. Far less than 8 bits — lots of compression potential."
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "**Key inequality:** $H \\leq \\bar{l} < H + 1$. Entropy is the lower bound. Huffman gets close but can never beat it. A memoryless source has each symbol independent of previous symbols."
+      "type": "markdown",
+      "body": "## What is compression?\n\n* Original data → **encoder** → smaller\n* Smaller → **decoder** → get back original\n\n---\n\n## Two types\n\n### Lossless\n* Get back **exact** original\n* Every bit identical\n* **← This lecture**\n\n### Lossy\n* Get back **approximation**\n* Some info lost forever\n* ← Next lecture\n\n---\n\n## Compression Ratio\n\n$$\\text{Compression Ratio} = \\frac{B_0}{B_1}$$\n\n* B₀ = bits BEFORE (original)\n* B₁ = bits AFTER (compressed)\n\n* Ratio = 2.0 → half the size ✅\n* Ratio = 1.0 → no compression\n* Ratio < 1.0 → got bigger ❌\n\n---\n\n## Self-Information\n\n$$I(s_i) = \\log_2\\left(\\frac{1}{p_i}\\right)$$\n\n* Rare symbol → surprising → **MORE** info\n* Common symbol → expected → **LESS** info\n\n| Probability | Information |\n|------------|-------------|\n| 0.5        | 1 bit       |\n| 0.25       | 2 bits      |\n| 0.125      | 3 bits      |\n\n👉 Probability halves → info goes up 1 bit\n\n---\n\n## Entropy (H)\n\n$$H(S) = \\sum p_i \\times \\log_2\\left(\\frac{1}{p_i}\\right)$$\n\n👉 **Meaning:** Average info per symbol\n\n**CRITICAL:**\n* Entropy = **theoretical minimum** bits needed\n* **No lossless compression can beat entropy**\n* Entropy is the floor\n\n---\n\n## Two key cases\n\n### Case 1: Uniform distribution\nAll 256 gray levels equally likely:\n\n$$H = \\log_2(256) = 8 \\text{ bits}$$\n\n❌ Cannot compress at all → No pattern to exploit\n\n### Case 2: Skewed distribution\nMostly one value:\n\n$$H \\approx 0.92 \\text{ bits}$$\n\n✅ HUGE compression potential → Pattern exists\n\n---\n\n## The fundamental rule\n\n$$H \\le \\bar{l}$$\n\n* H = entropy (minimum)\n* l̄ = average code length (what you achieve)\n\n👉 You can get close but **never beat** entropy"
     }
   ],
   "flashcards": [
@@ -89,20 +50,26 @@
     {
       "type": "calculation",
       "q": "Compute the self-information of symbols with probabilities: (a) 0.5, (b) 0.25, (c) 0.125.",
-      "a": "(a) $I = \\log_2(1/0.5) = \\log_2(2) = \\mathbf{1}$ bit\n\n(b) $I = \\log_2(1/0.25) = \\log_2(4) = \\mathbf{2}$ bits\n\n(c) $I = \\log_2(1/0.125) = \\log_2(8) = \\mathbf{3}$ bits",
-      "hint": "I = log₂(1/p). Every time p halves, I increases by 1 bit."
+      "a": "(a) $I = \\log_2(1/0.5) = 1$ bit\n\n(b) $I = \\log_2(1/0.25) = 2$ bits\n\n(c) $I = \\log_2(1/0.125) = 3$ bits\n\nEach time probability halves, information increases by 1 bit.",
+      "hint": "Use $I = \\log_2(1/p)$. Rare events carry more information."
     },
     {
       "type": "calculation",
-      "q": "Compute the entropy of a source with symbols A ($p=0.5$), B ($p=0.25$), C ($p=0.25$).",
-      "a": "$$H = -(0.5 \\times \\log_2 0.5) - (0.25 \\times \\log_2 0.25) - (0.25 \\times \\log_2 0.25)$$\n$$= -(0.5 \\times -1) - (0.25 \\times -2) - (0.25 \\times -2)$$\n$$= 0.5 + 0.5 + 0.5 = \\mathbf{1.5 \\text{ bits/symbol}}$$",
-      "hint": "log₂(0.5) = -1, log₂(0.25) = -2"
+      "q": "Compute the entropy of \"banana\". Frequencies: a=3, n=2, b=1 (total 6).",
+      "a": "$H = -(0.5 \\times \\log_2 0.5) - (0.333 \\times \\log_2 0.333) - (0.167 \\times \\log_2 0.167)$\n$= 0.5 + 0.528 + 0.431 = \\mathbf{1.459}$ bits/symbol",
+      "hint": "Convert counts to probabilities first: a=3/6=0.5, n=2/6=0.333, b=1/6=0.167."
     },
     {
       "type": "calculation",
-      "q": "Compute the entropy of 'banana'. Characters: a (3/6), n (2/6), b (1/6).",
-      "a": "$$H = -(0.5 \\times \\log_2 0.5) - (0.333 \\times \\log_2 0.333) - (0.167 \\times \\log_2 0.167)$$\n$$= 0.5 + 0.528 + 0.431 = \\mathbf{1.459 \\text{ bits/symbol}}$$",
-      "hint": "p(a)=3/6=0.5, p(n)=2/6≈0.333, p(b)=1/6≈0.167. Use log₂(0.333)≈-1.585, log₂(0.167)≈-2.585"
+      "q": "Compute the entropy of \"mississippi\". Frequencies: i=4, s=4, p=2, m=1 (total 11). Can this be compressed well?",
+      "a": "Probabilities: i=4/11≈0.364, s=4/11≈0.364, p=2/11≈0.182, m=1/11≈0.091\n\n$H = -(0.364\\log_2 0.364) - (0.364\\log_2 0.364) - (0.182\\log_2 0.182) - (0.091\\log_2 0.091)$\n$\\approx 0.530 + 0.530 + 0.473 + 0.312 = \\mathbf{1.845}$ bits/symbol\n\nYes — skewed distribution, well below 8 bits → good compression potential.",
+      "hint": "Lower entropy = more skewed = more compressible. Compare to uniform: $\\log_2(4) = 2$ bits."
+    },
+    {
+      "type": "conceptual",
+      "q": "An image has 256 equally likely gray levels. What is its entropy, and can it be compressed losslessly?",
+      "a": "$H = \\log_2(256) = 8$ bits/symbol\n\nThis equals the storage cost — **no lossless compression is possible**. Entropy = 8 bits means you already need 8 bits per pixel and cannot do better.",
+      "hint": "Uniform distribution = maximum entropy = minimum compressibility."
     }
   ]
 }

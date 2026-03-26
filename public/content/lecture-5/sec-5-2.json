@@ -4,33 +4,8 @@
   "title": "Run-Length & Huffman Coding",
   "content": [
     {
-      "type": "definition",
-      "term": "Run-Length Coding (RLC)",
-      "body": "Exploits **memory** (patterns) in the source — unlike Huffman and Arithmetic which assume memoryless sources.\n\nIf symbols form continuous groups (runs), store the symbol and **how many times it repeats** instead of every individual symbol.\n\n**Example:** `0000001111110000000000111` → `(0,6)(1,7)(0,10)(1,3)`\n\n**Best case:** Long runs of the same value (mostly-white scanned documents). **Worst case:** Alternating 010101 — RLC makes it bigger."
-    },
-    {
-      "type": "text",
-      "body": "**Huffman Coding** gives **short codes to common symbols** and **long codes to rare symbols**.\n\n**Algorithm:**\n1. Count frequencies. Sort from least to most frequent.\n2. Repeatedly pick the **two smallest**, combine into one node (sum frequencies). Repeat until one root remains.\n3. Read codes: trace root-to-leaf paths. **Left = 0, Right = 1**.\n4. Encode: replace each symbol with its code.\n5. Decode: walk the tree bit by bit — when you hit a leaf, output that symbol and restart from root."
-    },
-    {
-      "type": "example",
-      "title": "Huffman — 'banana' Full Walkthrough",
-      "body": "**Frequencies:** b=1, n=2, a=3\n\n**Build tree:**\n1. Pick two smallest: b(1) + n(2) → merge → node(3)\n2. List now: node(3), a(3)\n3. Merge node(3) + a(3) → root(6)\n\n**Tree:**\n```\n      (6)\n     /   \\\n   (3)    a\n  /   \\\n b     n\n```\n\n**Codes (left=0, right=1):**\n- **a** → right = **1** (1 bit) ← most common gets shortest!\n- **b** → left, left = **00** (2 bits)\n- **n** → left, right = **01** (2 bits)\n\n**Encode 'banana':** b(00) a(1) n(01) a(1) n(01) a(1) = **001011011** → **9 bits**\n\nOriginal: 6 × 8 = 48 bits → $CR = 48/9 = \\mathbf{5.33}$\n\n**Average code length:** $\\bar{l} = 0.5 \\times 1 + 0.333 \\times 2 + 0.167 \\times 2 = \\mathbf{1.5 \\text{ bits/symbol}}$\n\n**Entropy:** $H = 1.459$ bits. Check: $1.459 \\leq 1.5 < 2.459$ ✓\n\n**Decode '001011011':** Start at root: 0→left, 0→left→**b**; 1→right→**a**; 0→left, 1→right→**n**; 1→**a**; 0→left, 1→right→**n**; 1→**a** = **banana** ✓"
-    },
-    {
-      "type": "example",
-      "title": "Huffman — 'ABRACADABRA' Full Walkthrough",
-      "body": "**Frequencies:** C=1, D=1, B=2, R=2, A=5\n\n**Build tree:**\n1. Merge C(1)+D(1) → CD(2). List: B(2), R(2), CD(2), A(5)\n2. Merge B(2)+R(2) → BR(4). List: CD(2), BR(4), A(5)\n3. Merge CD(2)+BR(4) → CDBR(6). List: A(5), CDBR(6)\n4. Merge A(5)+CDBR(6) → root(11)\n\n**Codes:**\n- **A** → left = **0** (1 bit) — appears 5/11 times, nearly half!\n- **C** → right, left, left = **100** (3 bits)\n- **D** → right, left, right = **101** (3 bits)\n- **B** → right, right, left = **110** (3 bits)\n- **R** → right, right, right = **111** (3 bits)\n\n**Encode 'ABRACADABRA':** 0·110·111·0·100·0·101·0·110·111·0 = **01101110100010101101110** → **23 bits**\n\nOriginal: 11 × 8 = 88 bits → $CR = 88/23 = \\mathbf{3.83}$\n\n**Average code length:** $\\bar{l} = \\frac{5}{11}×1 + \\frac{2}{11}×3 + \\frac{2}{11}×3 + \\frac{1}{11}×3 + \\frac{1}{11}×3 = \\mathbf{2.09 \\text{ bits/symbol}}$"
-    },
-    {
-      "type": "definition",
-      "term": "Extended Huffman Coding",
-      "body": "The problem: all codewords have **integer** bit lengths. Wasteful when a symbol has high probability (ideal might be 0.3 bits, minimum is 1 bit).\n\nThe solution: group **k** symbols together and assign one codeword to the group. Average bits/symbol: $H \\leq \\bar{l} < H + 1/k$. The $1/k$ term shrinks as k grows — better compression. But alphabet size explodes to $n^k$."
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "**4 Huffman properties to know:**\n1. **Unique Prefix:** No code is a prefix of another — decoding is never ambiguous.\n2. **Optimality:** Minimum redundancy. Two least-frequent symbols always have the same code length.\n3. **Guarantee:** $H \\leq \\bar{l} < H + 1$. Always within 1 bit of entropy.\n4. **Tie-breaking:** When two nodes have equal frequency, picking order affects the tree shape but **NOT** the average code length."
+      "type": "markdown",
+      "body": "## Run-Length Coding (RLC)\n\n✅ Data has **long runs** (same value repeats)\n❌ Data alternates (010101...)\n\nInstead of storing each bit: store **symbol** + **count**\n\n**Example:**\n\n```\nOriginal:  0000001111110000000000111\nEncoded:   (0, 6), (1, 7), (0, 10), (1, 3)\n```\n\n\"Six 0s, then seven 1s, then ten 0s, then three 1s\"\n\nBest for: scanned documents, binary images with large uniform regions\n\n---\n\n## Huffman Coding\n\n✅ Short codes → common symbols\n✅ Long codes → rare symbols\n→ Fewer bits on average\n\n### Algorithm (6 steps)\n\n1. **Count** frequencies\n2. **Sort** (smallest first)\n3. **Build tree** (combine two smallest, repeat)\n4. **Read codes** (left=0, right=1)\n5. **Encode** (replace letters with codes)\n6. **Decode** (walk tree bit by bit)\n\n---\n\n## Worked Example: \"banana\"\n\n### Step 1 — Count\n```\nb → 1\nn → 2\na → 3\n```\n\n### Step 2 — Sort\n```\nb: 1,  n: 2,  a: 3\n```\n\n### Step 3 — Build tree\n\nPick two smallest (b=1, n=2):\n```\n    (3)\n   /   \\\n  b     n\n```\n\nPick (3) + a(3):\n```\n       (6)\n      /   \\\n    (3)    a\n   /   \\\n  b     n\n```\n\n### Step 4 — Read codes\n* **a:** right → **1**\n* **b:** left, left → **00**\n* **n:** left, right → **01**\n\n### Step 5 — Encode\n```\nb  a  n  a  n  a\n00  1 01  1 01  1\n```\nResult: **001011011** (9 bits) — Compare: 6 chars × 8 bits = 48 bits → saved 39 bits!\n\n### Step 6 — Decode \"001011011\"\n```\n0,0 → b\n1   → a\n0,1 → n\n1   → a\n0,1 → n\n1   → a\n```\nOutput: **banana** ✓\n\n---\n\n## Performance calculation\n\n```\na: 3/6 × 1 bit  = 0.5\nn: 2/6 × 2 bits = 0.66\nb: 1/6 × 2 bits = 0.34\n```\n\nl̄ = **1.5 bits/symbol**\n\n```\nH = -(0.5×log₂0.5) - (0.33×log₂0.33) - (0.17×log₂0.17)\nH ≈ 1.459 bits/symbol\n```\n\n**Check:** H ≤ l̄ < H+1 → 1.459 ≤ 1.5 < 2.459 ✓"
     }
   ],
   "flashcards": [
@@ -66,21 +41,33 @@
   "problems": [
     {
       "type": "calculation",
-      "q": "Build the full Huffman tree for 'banana' (a=3, n=2, b=1). List codes, compute $\\bar{l}$, entropy $H$, and verify $H \\leq \\bar{l} < H+1$.",
-      "a": "**Tree:** Merge b(1)+n(2)→(3), then (3)+a(3)→root(6).\n\n**Codes:** a=1 (1 bit), b=00 (2 bits), n=01 (2 bits)\n\n**$\\bar{l}$** = $0.5×1 + 0.333×2 + 0.167×2 = \\mathbf{1.5}$ bits/symbol\n\n**H** = $-(0.5 \\log_2 0.5) - (0.333 \\log_2 0.333) - (0.167 \\log_2 0.167) = 0.5 + 0.528 + 0.431 = \\mathbf{1.459}$\n\n**Check:** $1.459 \\leq 1.5 < 2.459$ ✓",
-      "hint": "Merge two smallest first. Left=0, Right=1 from root to leaf."
+      "q": "Build the full Huffman tree for \"banana\" (a=3, n=2, b=1). List codes, compute $\\bar{l}$, entropy $H$, and verify $H \\leq \\bar{l} < H+1$.",
+      "a": "**Tree:** Merge b(1)+n(2)→(3), then (3)+a(3)→root(6)\n\n**Codes:** a=**1**, b=**00**, n=**01**\n\n**$\\bar{l}$** = 0.5×1 + 0.333×2 + 0.167×2 = **1.5** bits/symbol\n\n**H** ≈ 1.459 bits/symbol\n\n**Check:** 1.459 ≤ 1.5 < 2.459 ✓",
+      "hint": "Always merge the two smallest nodes. Left=0, right=1 from root to leaf."
     },
     {
       "type": "calculation",
-      "q": "Build Huffman codes for 'ABRACADABRA' (A=5, B=2, R=2, C=1, D=1). What is the encoded bit string and compression ratio vs 8-bit ASCII?",
-      "a": "**Tree merges:** C(1)+D(1)→CD(2); B(2)+R(2)→BR(4); CD(2)+BR(4)→CDBR(6); A(5)+CDBR(6)→root(11)\n\n**Codes:** A=0, C=100, D=101, B=110, R=111\n\n**Encoded:** 0·110·111·0·100·0·101·0·110·111·0 = **01101110100010101101110** (23 bits)\n\n**CR** = (11×8)/23 = 88/23 = **3.83**",
-      "hint": "A is most frequent — it should get the shortest code (1 bit)."
+      "q": "Build the Huffman tree for \"mississippi\" (i=4, s=4, p=2, m=1). List all codes and compute $\\bar{l}$.",
+      "a": "**Merges:** m(1)+p(2)→(3), then (3)+s(4)→(7), then (7)+i(4)→root(11)\n\n**Codes:** i=**1**, s=**01**, p=**001**, m=**000**\n\n**$\\bar{l}$** = (4/11)×1 + (4/11)×2 + (2/11)×3 + (1/11)×3\n= 0.36 + 0.73 + 0.55 + 0.27 = **1.91** bits/symbol\n\nOriginal: 11×8=88 bits → Huffman: 21 bits",
+      "hint": "When frequencies tie (i=4, s=4), either order works. Most frequent gets shortest code."
     },
     {
       "type": "calculation",
-      "q": "Decode the bit string '001011011' using the 'banana' Huffman tree (a=1, b=00, n=01).",
-      "a": "Start at root each time:\n- **0**→left, **0**→left → leaf **b**. Restart.\n- **1**→right → leaf **a**. Restart.\n- **0**→left, **1**→right → leaf **n**. Restart.\n- **1**→right → leaf **a**. Restart.\n- **0**→left, **1**→right → leaf **n**. Restart.\n- **1**→right → leaf **a**.\n\nResult: **banana** ✓",
-      "hint": "Walk the tree bit by bit. When you hit a leaf, output that symbol and restart from root."
+      "q": "Build the Huffman tree for \"aaabbc\" (a=3, b=2, c=1). List codes and encode the string.",
+      "a": "**Merges:** c(1)+b(2)→(3), then (3)+a(3)→root(6)\n\n**Codes:** a=**1**, b=**01**, c=**00**\n\n**Encode \"aaabbc\":**\n```\na  a  a  b  b  c\n1  1  1  01 01 00\n```\nResult: **111010100** (9 bits)\n\nMost frequent symbol (a) gets shortest code (1 bit) ✓",
+      "hint": "Same structure as \"banana\" — most frequent always gets shortest code."
+    },
+    {
+      "type": "conceptual",
+      "q": "Build the Huffman tree for \"abcd\" where all 4 symbols appear exactly once. What is $\\bar{l}$, and why is there no real compression gain?",
+      "a": "**Merges:** a(1)+b(1)→(2), c(1)+d(1)→(2), then (2)+(2)→root(4)\n\n**Codes:** a=00, b=01, c=10, d=11 — all 2 bits\n\n**$\\bar{l}$** = 2 bits/symbol\n\nNo compression gain because $H = \\log_2(4) = 2$ bits — uniform distribution is already at the entropy floor. Huffman cannot compress further.",
+      "hint": "Uniform distribution = maximum entropy. Huffman still works, but $\\bar{l} = H$ — no gain over fixed-length coding."
+    },
+    {
+      "type": "calculation",
+      "q": "Decode the bit string \"001011011\" using the \"banana\" Huffman tree (a=1, b=00, n=01).",
+      "a": "Walk the tree bit by bit, restart at root after each symbol:\n\n0,0 → **b** | 1 → **a** | 0,1 → **n** | 1 → **a** | 0,1 → **n** | 1 → **a**\n\nResult: **banana** ✓",
+      "hint": "When you reach a leaf, output that symbol and immediately restart from the root."
     }
   ]
 }

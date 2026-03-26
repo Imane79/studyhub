@@ -4,48 +4,8 @@
   "title": "Color Spaces: RGB, CMY, HSL, YUV, YCbCr",
   "content": [
     {
-      "type": "text",
-      "body": "**Additive color (RGB):** Mixing light. Used in screens/projectors. Start from black — adding light adds color.\n- R+G = Yellow\n- R+B = Magenta\n- G+B = Cyan\n- R+G+B = White\n\n**Subtractive color (CMY):** Mixing ink/pigments. Used in printing. Start from white paper — adding ink removes color.\n- C+M = Blue, C+Y = Green, M+Y = Red\n- C+M+Y = Black (in theory — in practice printers add real Black ink = CMYK)"
-    },
-    {
-      "type": "definition",
-      "term": "CMY Color Model",
-      "body": "Cyan, Magenta, Yellow. The inverse of RGB:\n$$C = 1-R, \\quad M = 1-G, \\quad Y_c = 1-B \\quad (R,G,B \\in [0,1])$$\nCyan ink **absorbs red**, Magenta ink **absorbs green**, Yellow ink **absorbs blue**."
-    },
-    {
-      "type": "example",
-      "title": "CMY Worked Examples",
-      "body": "**Pure Red** (R=1, G=0, B=0): C=0, M=1, Y=1\nMagenta ink + Yellow ink = removes green and blue → only red shows. ✓\n\n**Teal** (R=0, G=0.5, B=1): C=1, M=0.5, Y=0\nFull cyan, half magenta, no yellow.\n\n**White** (R=1, G=1, B=1): C=0, M=0, Y=0\nNo ink at all → white paper shows through. ✓\n\n**Black** (R=0, G=0, B=0): C=1, M=1, Y=1\nMaximum all three inks → black. (Real printers add K=black ink for better quality = CMYK) ✓"
-    },
-    {
-      "type": "definition",
-      "term": "HSL / HSV / HSI",
-      "body": "More **intuitive** for humans than RGB:\n\n**H = Hue** (color type, angle 0°–360° on color wheel):\n- 0° = Red\n- 60° = Yellow\n- 120° = Green\n- 180° = Cyan\n- 240° = Blue\n- 300° = Magenta\n- 360° = Red again\n\n**S = Saturation:** Vividness. High = vivid color. Low = grayish. Zero = pure gray.\n\n**L/V/I = Lightness/Value/Intensity:** Brightness. Different names = slightly different formulas, same concept."
-    },
-    {
-      "type": "definition",
-      "term": "YUV Color Space",
-      "body": "Separates brightness from color. Why? **Backwards compatibility** (B&W TVs show Y only) and **compression** (eye is less sensitive to color than brightness).\n\n$$Y = 0.299R + 0.587G + 0.114B$$\n$$U = B - Y \\quad (\\text{blue difference})$$\n$$V = R - Y \\quad (\\text{red difference})$$\n\n- Green gets weight **0.587** (highest) — eye most sensitive to green\n- Blue gets weight **0.114** (lowest) — eye least sensitive to blue\n- Weights sum to 1.0 → for gray (R=G=B=k), Y=k exactly\n- For gray pixels: U=V=**0** (no color offset)"
-    },
-    {
-      "type": "example",
-      "title": "YUV — Four Worked Examples",
-      "body": "**Example 1 — Reddish color** R=200, G=100, B=50:\nY = 0.299×200 + 0.587×100 + 0.114×50 = 59.8 + 58.7 + 5.7 = **124.2**\nU = 50 − 124.2 = **−74.2** (less blue than average)\nV = 200 − 124.2 = **75.8** (more red than average) ✓\n\n**Example 2 — Gray** R=G=B=150:\nY = 150 × (0.299+0.587+0.114) = 150 × 1.0 = **150**\nU = 0, V = 0 (no color) ✓\n\n**Example 3 — Pure blue** R=0, G=0, B=255:\nY = 0.114×255 = **29.07** ← **very dark!** Blue looks dim to the eye\nU = 255 − 29.07 = **225.93** (lots of blue)\nV = 0 − 29.07 = **−29.07** (no red)\n\n**Example 4 — Pure green** R=0, G=255, B=0:\nY = 0.587×255 = **149.685** ← much brighter than blue!\nU = 0 − 149.685 = **−149.685**\nV = 0 − 149.685 = **−149.685**"
-    },
-    {
-      "type": "definition",
-      "term": "YCbCr (Rec. 601)",
-      "body": "Scaled version of YUV used in **JPEG** and **MPEG**. R,G,B in [0,1]:\n$$Y = 65.481R + 128.553G + 24.966B + 16$$\n$$C_b = -37.797R - 74.203G + 112.000B + 128$$\n$$C_r = 112.000R - 93.786G - 18.214B + 128$$\n\n**Ranges:**\n- Y: **16 (black) to 235 (white)** — NOT 0 and 255!\n- Cb, Cr: centered at **128** (=no color offset). Above 128 = more, below = less.\n- For gray (R=G=B): Cb=128, Cr=128 exactly."
-    },
-    {
-      "type": "example",
-      "title": "YCbCr — Four Worked Examples",
-      "body": "**Example 1 — Reddish-orange** (R=0.8, G=0.4, B=0.2):\nY = 65.481×0.8 + 128.553×0.4 + 24.966×0.2 + 16 = 52.4+51.4+5.0+16 = **124.8**\nCb = −37.797×0.8 − 74.203×0.4 + 112×0.2 + 128 = −30.2−29.7+22.4+128 = **90.5** (<128: less blue)\nCr = 112×0.8 − 93.786×0.4 − 18.214×0.2 + 128 = 89.6−37.5−3.6+128 = **176.4** (>128: more red) ✓\n\n**Example 2 — Pure white** (R=G=B=1):\nY = 65.481+128.553+24.966+16 = **235** ✓\nCb = −37.797−74.203+112+128 = **128** (neutral)\nCr = 112−93.786−18.214+128 = **128** (neutral) ✓\n\n**Example 3 — Pure black** (R=G=B=0):\nY = 0+0+0+16 = **16** ✓\nCb = 0+0+0+128 = **128**, Cr = 0+0+0+128 = **128** ✓\n\n**Example 4 — Pure red** (R=1, G=0, B=0):\nY = 65.481+0+0+16 = **81.5** (medium-dark)\nCb = −37.797+0+0+128 = **90.2** (<128: less blue)\nCr = 112+0+0+128 = **240.0** (maximum red!) ✓"
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "**Why JPEG converts to YCbCr first:** The eye is much more sensitive to brightness (Y) than color (Cb, Cr). JPEG can reduce Cb and Cr resolution by **half in each direction** (chroma subsampling) without people noticing. This is a major reason for JPEG's high compression ratios.\n\n**Color model summary:**\n- RGB: displays/cameras (additive)\n- CMY: printing (subtractive, C=1-R, M=1-G, Y=1-B)\n- HSL/HSV: intuitive editing (hue 0-360°, saturation, lightness)\n- XYZ: CIE standard, Y=luminance\n- YUV: analog TV\n- YCbCr: JPEG/MPEG (Y: 16-235, Cb/Cr: centered at 128)"
+      "type": "markdown",
+      "body": "## XYZ ↔ RGB Transform (SMPTE)\n\n$$X = 0.3935R + 0.3653G + 0.1916B$$\n$$Y = 0.2124R + 0.7011G + 0.0866B$$\n$$Z = 0.0187R + 0.1119G + 0.9582B$$\n\n**Reverse:** Invert the 3×3 matrix\n\n**Out of gamut test:** After XYZ → RGB, if any value is **negative** → out of gamut\n\n---\n\n## CMY (Printing — Subtractive)\n\n$$C = 1 - R \\qquad M = 1 - G \\qquad Y = 1 - B$$\n\n**Example:** Pure red (R=1, G=0, B=0)\n\n$$C = 0, \\quad M = 1, \\quad Y = 1$$\n\n→ Magenta + Yellow ink = Red on white paper\n\n---\n\n## HSL / HSV / HSI — More intuitive than RGB\n\n**H = Hue** (color type, 0°–360°)\n\n```\n0°   = red\n60°  = yellow\n120° = green\n180° = cyan\n240° = blue\n300° = magenta\n```\n\n**S = Saturation** (how vivid) — High = vivid, Low = grayish, 0 = pure gray\n\n**L/V/I = Lightness / Value / Intensity** (how bright)\n\n---\n\n## YUV Color Model\n\n**Two reasons for YUV:**\n1. Backwards compatibility (old B&W TVs read Y as brightness)\n2. Eye more sensitive to brightness than color → compress color more\n\n$$Y = 0.299R + 0.587G + 0.114B$$\n$$U = B - Y$$\n$$V = R - Y$$\n\n**Y** = Luminance (brightness) · **U, V** = Chrominance (color info)\n\n**Why these weights?**\n* Green highest (0.587) → eye most sensitive to green\n* Red next (0.299), Blue lowest (0.114)\n* Weights sum to **1.0**: 0.299 + 0.587 + 0.114 = 1.0\n\n---\n\n## YUV Examples\n\n**Example 1 — Reddish (200, 100, 50):**\n\n$$Y = 0.299(200) + 0.587(100) + 0.114(50) = 59.8 + 58.7 + 5.7 = 124.2$$\n$$U = 50 - 124.2 = -74.2 \\qquad V = 200 - 124.2 = 75.8$$\n\nMedium brightness, less blue (U negative), more red (V positive) ✓\n\n**Example 2 — Gray (150, 150, 150):**\n\n$$Y = 150(0.299 + 0.587 + 0.114) = 150 \\qquad U = 0 \\qquad V = 0$$\n\nNo color info → pure gray ✓\n\n**Example 3 — Pure blue (0, 0, 255):**\n\n$$Y = 0.114 \\times 255 = 29.07 \\qquad U = 225.93 \\qquad V = -29.07$$\n\n👉 Pure blue looks **very dark** (Y only 29)!\n\n**Example 4 — Pure green (0, 255, 0):**\n\n$$Y = 0.587 \\times 255 = 149.685 \\qquad U = -149.685 \\qquad V = -149.685$$\n\n👉 Pure green looks **much brighter** (Y ≈ 150)!\n\n---\n\n## YCbCr (Rec. 601) — Scaled YUV for JPEG/MPEG\n\nValues fit in 8-bit range. For R, G, B in [0, 1]:\n\n$$Y  =  65.481R + 128.553G +  24.966B + 16$$\n$$Cb = -37.797R -  74.203G + 112.000B + 128$$\n$$Cr = 112.000R -  93.786G -  18.214B + 128$$\n\n**Ranges:**\n* **Y:** 16 to 235 (not 0–255!)  →  Y=16 = black,  Y=235 = white\n* **Cb, Cr:** centered at **128**  →  128 = neutral,  >128 = more,  <128 = less\n\n**Examples:**\n\n| Color | Y | Cb | Cr |\n|-------|---|----|----|\n| White (1,1,1) | 235 | 128 | 128 |\n| Black (0,0,0) | 16 | 128 | 128 |\n| Reddish-orange (0.8, 0.4, 0.2) | 124.8 | 90.5 | 176.4 |\n\n**Why JPEG uses YCbCr:**\nEye more sensitive to Y than Cb/Cr → JPEG compresses Cb/Cr more aggressively (**chroma subsampling** — reduces Cb/Cr resolution by half) → high compression with little quality loss"
     }
   ],
   "flashcards": [
@@ -93,33 +53,45 @@
   "problems": [
     {
       "type": "calculation",
-      "q": "Convert R=200, G=100, B=50 to YUV. Interpret the sign of U and V.",
-      "a": "$Y = 0.299 \\times 200 + 0.587 \\times 100 + 0.114 \\times 50 = 59.8 + 58.7 + 5.7 = \\mathbf{124.2}$\n\n$U = 50 - 124.2 = \\mathbf{-74.2}$ (negative = less blue than neutral gray)\n\n$V = 200 - 124.2 = \\mathbf{75.8}$ (positive = more red than neutral gray)\n\nMakes sense: our pixel is reddish (R=200 >> B=50).",
-      "hint": "Y = 0.299R + 0.587G + 0.114B, then U=B-Y, V=R-Y"
+      "q": "Convert RGB (200, 100, 50) to YUV.",
+      "a": "$Y = 0.299(200) + 0.587(100) + 0.114(50)$\n$= 59.8 + 58.7 + 5.7 = \\mathbf{124.2}$\n\n$U = B - Y = 50 - 124.2 = \\mathbf{-74.2}$\n\n$V = R - Y = 200 - 124.2 = \\mathbf{75.8}$\n\nMedium brightness, less blue (U negative), more red (V positive) ✓",
+      "hint": "Y first, then U = B−Y, V = R−Y."
     },
     {
       "type": "calculation",
-      "q": "Convert R=0, G=0, B=255 (pure blue) to YUV. Why is Y surprisingly low?",
-      "a": "$Y = 0.299 \\times 0 + 0.587 \\times 0 + 0.114 \\times 255 = \\mathbf{29.07}$\n\n$U = 255 - 29.07 = \\mathbf{225.93}$\n\n$V = 0 - 29.07 = \\mathbf{-29.07}$\n\nY=29.07 is very low because **the eye is least sensitive to blue** (weight only 0.114). Pure blue appears nearly dark to the human visual system.",
-      "hint": "Blue weight in Y formula is 0.114 — the smallest"
+      "q": "Convert RGB (150, 150, 150) to YUV. What do U and V tell you?",
+      "a": "$Y = 0.299(150) + 0.587(150) + 0.114(150) = 150(1.0) = \\mathbf{150}$\n\n$U = 150 - 150 = \\mathbf{0}$\n\n$V = 150 - 150 = \\mathbf{0}$\n\nU=0 and V=0 means **no color information** — this is pure gray ✓",
+      "hint": "Equal R, G, B always gives U=0, V=0. Gray has no chrominance."
     },
     {
       "type": "calculation",
-      "q": "Convert R=0, G=255, B=0 (pure green) to YUV. Compare Y to pure blue.",
-      "a": "$Y = 0.587 \\times 255 = \\mathbf{149.685}$\n\n$U = 0 - 149.685 = \\mathbf{-149.685}$\n\n$V = 0 - 149.685 = \\mathbf{-149.685}$\n\nY=149.685 vs Y=29.07 for blue. **Green appears ~5× brighter than blue** to the eye — this is why green dominates the Y formula.",
-      "hint": "Green weight is 0.587, the largest"
+      "q": "Convert pure blue RGB (0, 0, 255) to YUV. What does the Y value tell you about how blue appears to the eye?",
+      "a": "$Y = 0.299(0) + 0.587(0) + 0.114(255) = \\mathbf{29.07}$\n\n$U = 255 - 29.07 = \\mathbf{225.93}$\n\n$V = 0 - 29.07 = \\mathbf{-29.07}$\n\nY = 29 (very low!) → **pure blue looks very dark** to the human eye. The eye is least sensitive to blue (weight only 0.114).",
+      "hint": "Blue has the smallest Y weight (0.114). Compare Y=29 for blue vs Y=150 for green."
     },
     {
       "type": "calculation",
-      "q": "Convert R=1.0, G=0.0, B=0.0 (pure red) to CMY. Explain which inks are used and why.",
-      "a": "$C = 1-1 = \\mathbf{0}$, $M = 1-0 = \\mathbf{1}$, $Y_c = 1-0 = \\mathbf{1}$\n\nMagenta ink + Yellow ink, no Cyan.\n- Magenta absorbs green → removes green\n- Yellow absorbs blue → removes blue\n- What's left = red ✓\n\nCyan would absorb red — exactly what we DON'T want.",
-      "hint": "C=1-R, M=1-G, Y=1-B. Think about what each ink absorbs."
+      "q": "Convert pure green RGB (0, 255, 0) to YUV and compare Y to pure blue.",
+      "a": "$Y = 0.587(255) = \\mathbf{149.685}$\n\n$U = 0 - 149.685 = \\mathbf{-149.685}$\n\n$V = 0 - 149.685 = \\mathbf{-149.685}$\n\nY ≈ 150 vs blue's Y ≈ 29 — **green looks ~5× brighter** to the human eye. This is why green gets the highest weight (0.587) in the Y formula.",
+      "hint": "Green weight is 0.587 — by far the largest. The eye is most sensitive to green."
     },
     {
       "type": "calculation",
-      "q": "Convert R=1, G=0, B=0 (pure red) to YCbCr (Rec. 601). What do the Cb and Cr values tell you?",
-      "a": "$Y = 65.481 \\times 1 + 0 + 0 + 16 = \\mathbf{81.5}$\n\n$C_b = -37.797 \\times 1 + 0 + 0 + 128 = \\mathbf{90.2}$ (<128: less blue than neutral)\n\n$C_r = 112 \\times 1 + 0 + 0 + 128 = \\mathbf{240}$ (maximum red!)\n\nY=81.5 is medium-dark (red isn't very bright to the eye). Cr=240 is near maximum (pure red).",
-      "hint": "Cb/Cr are centered at 128. Above 128 = more of that color."
+      "q": "Convert pure white RGB (1, 1, 1) and pure black RGB (0, 0, 0) to YCbCr. What do you notice about Cb and Cr?",
+      "a": "**White (1,1,1):**\n$Y = 65.481+128.553+24.966+16 = \\mathbf{235}$\n$Cb = -37.797-74.203+112+128 = \\mathbf{128}$\n$Cr = 112-93.786-18.214+128 = \\mathbf{128}$\n\n**Black (0,0,0):**\n$Y = 0+0+0+16 = \\mathbf{16}$\n$Cb = 0+0+0+128 = \\mathbf{128}$\n$Cr = 0+0+0+128 = \\mathbf{128}$\n\nFor both: Cb=128, Cr=128 → **neutral, no color info**. Y=16 is black (not 0!), Y=235 is white (not 255!).",
+      "hint": "In YCbCr, 128 = neutral for Cb/Cr. Y range is 16–235, not 0–255."
+    },
+    {
+      "type": "calculation",
+      "q": "Convert pure red RGB (1, 0, 0) to CMY.",
+      "a": "$C = 1 - R = 1 - 1 = \\mathbf{0}$\n\n$M = 1 - G = 1 - 0 = \\mathbf{1}$\n\n$Y = 1 - B = 1 - 0 = \\mathbf{1}$\n\nMagenta + Yellow ink on white paper = Red ✓\n\nCMY is subtractive — ink absorbs colors rather than emitting them.",
+      "hint": "CMY = 1 − RGB. Subtractive means ink absorbs the complementary color."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why does JPEG use YCbCr instead of RGB, and what is chroma subsampling?",
+      "a": "The eye is much more sensitive to **brightness (Y)** than to **color (Cb, Cr)**. By separating them, JPEG can:\n\n1. Store Y at full resolution\n2. **Subsample Cb and Cr** — reduce their resolution by half\n\nThis saves significant space with almost no visible quality loss. RGB doesn't allow this because brightness and color are mixed together.",
+      "hint": "Key insight: human vision is more sensitive to luma than chroma."
     }
   ]
 }

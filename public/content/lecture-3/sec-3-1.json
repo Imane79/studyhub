@@ -4,104 +4,8 @@
   "title": "Light, the Eye & Color Perception",
   "content": [
     {
-      "type": "text",
-      "body": "Light is an **electromagnetic wave**. What makes one color different from another is its **wavelength (λ)**.\n\nHumans can only see wavelengths from **~400 nm to ~700 nm** — the visible spectrum. Outside that range: below 400 nm = **ultraviolet** (invisible), above 700 nm = **infrared** (invisible)."
-    },
-    {
-      "type": "table",
-      "headers": [
-        "Color",
-        "Wavelength Range"
-      ],
-      "rows": [
-        [
-          "Violet",
-          "~400–450 nm"
-        ],
-        [
-          "Blue",
-          "~450–495 nm"
-        ],
-        [
-          "Green",
-          "~495–570 nm"
-        ],
-        [
-          "Yellow",
-          "~570–590 nm"
-        ],
-        [
-          "Orange",
-          "~590–620 nm"
-        ],
-        [
-          "Red",
-          "~620–700+ nm"
-        ]
-      ]
-    },
-    {
-      "type": "definition",
-      "term": "Spectral Power Distribution (SPD)",
-      "body": "$E(\\lambda)$ — a curve showing how much light (power) exists at each wavelength. Measured using a **spectrophotometer**.\n\n- **Laser:** single wavelength → one sharp spike\n- **Sunlight:** all wavelengths present → appears white\n- **Fluorescent lamp:** only specific wavelengths → colors look unnatural"
-    },
-    {
-      "type": "text",
-      "body": "The eye works like a camera — the lens focuses light onto the **retina**, which has two types of cells:\n\n**Rods (~120 million):** Work in **low light** (night). Grayscale only — no color. \"All cats are gray at night.\"\n\n**Cones (~6 million):** Work in **bright light** (day). Three types:\n- **R cones** — peak sensitivity ~560 nm (red/long)\n- **G cones** — peak sensitivity ~530 nm (green/medium)\n- **B cones** — peak sensitivity ~420 nm (blue/short)\n\nThis is why we use RGB — it matches the three cone types."
-    },
-    {
-      "type": "table",
-      "headers": [
-        "",
-        "Rods",
-        "Cones"
-      ],
-      "rows": [
-        [
-          "Count",
-          "~120 million",
-          "~6 million"
-        ],
-        [
-          "Works in",
-          "Low light (night)",
-          "Bright light (day)"
-        ],
-        [
-          "Color?",
-          "No (grayscale only)",
-          "Yes (3 types: R, G, B)"
-        ],
-        [
-          "Detail",
-          "Low",
-          "High"
-        ]
-      ]
-    },
-    {
-      "type": "definition",
-      "term": "Luminous-Efficiency Function V(λ)",
-      "body": "The overall sensitivity of the eye — the sum of all three cone response curves. Peaks at **~555 nm (yellow-green)**.\n\nThe eye is most sensitive to yellow-green. A green laser appears much brighter than a red or blue one of the same power. This is why green gets the highest weight (0.587) in the YUV luminance formula."
-    },
-    {
-      "type": "text",
-      "body": "**The response equation:** When light $E(\\lambda)$ enters your eye, each cone produces:\n$$R = \\int E(\\lambda) \\cdot q_R(\\lambda)\\, d\\lambda, \\quad G = \\int E(\\lambda) \\cdot q_G(\\lambda)\\, d\\lambda, \\quad B = \\int E(\\lambda) \\cdot q_B(\\lambda)\\, d\\lambda$$\nAt each wavelength: multiply light power by cone sensitivity, then sum across all wavelengths.\n\nYou won't compute integrals on the exam — just understand the concept: **light × eye sensitivity = perceived color.**"
-    },
-    {
-      "type": "definition",
-      "term": "Image Formation: C(λ) = E(λ) × S(λ)",
-      "body": "Three components form what you see:\n1. **Illuminant E(λ):** the light source (sun, lamp)\n2. **Surface reflectance S(λ):** how much each surface reflects at each wavelength (0=absorbs all, 1=reflects all)\n3. **Color signal C(λ) = E(λ) × S(λ):** the light that actually reaches your eye\n\nThen the eye processes C(λ) through its cones → three numbers R, G, B."
-    },
-    {
-      "type": "example",
-      "title": "Image Formation — Three Key Examples",
-      "body": "**Example 1 — Red apple under sunlight:**\n- E(λ): equal power at all wavelengths (white light)\n- S(λ): apple reflects 600–700 nm (red), absorbs 400–550 nm (blue/green)\n- C(λ): strong in red range, weak in blue/green\n- Result: R cones fire strongly, G and B weakly → **you see red** ✓\n\n**Example 2 — Same red apple under a blue lamp:**\n- E(λ): only has power around 400–480 nm (blue)\n- S(λ): apple absorbs blue wavelengths\n- C(λ) = E(λ)×S(λ): almost zero everywhere!\n- Result: almost no light reaches your eye → **apple looks nearly black** ✗\n\n**Example 3 — White paper under any light:**\n- S(λ) ≈ 1 everywhere (reflects all wavelengths)\n- C(λ) = E(λ)×1 ≈ E(λ)\n- Result: paper takes on the color of the light source — red light → red paper"
-    },
-    {
-      "type": "callout",
-      "style": "exam",
-      "body": "The same object can look completely different under different lighting — because E(λ) changes. The surface S(λ) doesn't change; only the illuminant does. This is why photographers care so much about lighting."
+      "type": "markdown",
+      "body": "## What is light?\n\n* Electromagnetic wave\n* Different wavelength = different color\n\n**Visible range:** 400 nm to 700 nm\n\n```\n~400 nm → violet/blue (short)\n~550 nm → green/yellow (middle)\n~700 nm → red (long)\n```\n\nBelow 400 nm = ultraviolet (invisible)\nAbove 700 nm = infrared (invisible)\n\n---\n\n## Spectral Power Distribution (SPD)\n\nWritten as **E(λ)** — graph showing power at each wavelength\n\n* Sunlight → even across all wavelengths (white)\n* Red LED → spike at 700 nm\n* Fluorescent → multiple spikes (gaps in between)\n\n---\n\n## Two types of cells\n\n### Rods\n* **~120 million**\n* Work in **low light**\n* **Grayscale only** (no color)\n* Low detail\n\n### Cones\n* **~6 million** (20× fewer)\n* Work in **bright light**\n* **Color vision**\n* **3 types:** R, G, B — matches three color channels!\n* High detail\n\n---\n\n## Sensitivity curves\n\nEach cone has **q(λ)** — how strongly it responds\n\n$$q(\\lambda) = (q_R(\\lambda), q_G(\\lambda), q_B(\\lambda))$$\n\n* Eye most sensitive to **middle** (~555 nm, green/yellow)\n* **Blue sensitivity much smaller** than R or G\n* R and G curves **overlap a lot**\n\n---\n\n## Luminous-Efficiency V(λ)\n\n$$V(\\lambda) = q_R + q_G + q_B$$\n\n* Combined sensitivity, peaks at **555 nm** (yellow-green)\n* Why green laser looks brighter than red or blue\n\n---\n\n## Response equation\n\n$$R = \\int E(\\lambda) \\times q_R(\\lambda) \\, d\\lambda$$\n$$G = \\int E(\\lambda) \\times q_G(\\lambda) \\, d\\lambda$$\n$$B = \\int E(\\lambda) \\times q_B(\\lambda) \\, d\\lambda$$\n\n👉 Light power × eye sensitivity = perceived color\n\n---\n\n## Image formation — three things involved\n\n1. **Light source** E(λ)\n2. **Object reflectance** S(λ)\n3. **Eye sensitivity** q(λ)\n\n$$R = \\int E(\\lambda) \\times S(\\lambda) \\times q_R(\\lambda) \\, d\\lambda$$\n\nSource × surface × eye = color we see\n\n**Example:** White light hits red apple:\n* Apple reflects only red wavelengths (S high at 700 nm)\n* R cones get lots of signal, G and B get little\n* We see **red**\n\n---\n\n## Camera sensors\n\n* **Bayer mosaic** pattern: RGGB (50% green, 25% red, 25% blue)\n\n```\nR  G\nG  B\n```\n\n👉 More green because eye is most sensitive to green!\n\n* **Demosaicing** — fill in missing colors using interpolation"
     }
   ],
   "flashcards": [
@@ -161,21 +65,27 @@
   "problems": [
     {
       "type": "conceptual",
-      "q": "Why does the human visual system use three cone types (R, G, B)? Why not just one?",
-      "a": "One cone type can only measure **intensity** — it cannot distinguish colors. A red light at low intensity and a green light at high intensity might produce the same response in a single cone.\n\nWith **three cone types** responding to different wavelength ranges, the brain computes color by comparing their relative outputs. This is **trichromacy** — the basis of all color display technology.",
-      "hint": "What info does one detector give vs three detectors?"
+      "q": "What is the visible wavelength range? What color corresponds to ~400 nm, ~550 nm, and ~700 nm?",
+      "a": "**Visible range:** 400 nm to 700 nm\n\n* ~400 nm → violet/blue\n* ~550 nm → green/yellow\n* ~700 nm → red\n\nBelow 400 nm = ultraviolet, above 700 nm = infrared — both invisible.",
+      "hint": "Short wavelength = blue end, long wavelength = red end."
     },
     {
       "type": "conceptual",
-      "q": "Why does a white piece of paper look white under sunlight but reddish under a red lamp? Use the image formation equation.",
-      "a": "White paper has $S(\\lambda) \\approx 1$ at all wavelengths — it reflects everything.\n\nUnder sunlight: $C(\\lambda) = E_{sun}(\\lambda) \\times 1 \\approx E_{sun}(\\lambda)$ — even across all wavelengths → looks white.\n\nUnder red lamp: $C(\\lambda) = E_{red}(\\lambda) \\times 1 \\approx E_{red}(\\lambda)$ — only has power at long wavelengths → looks red.\n\nThe paper takes on whatever color the illuminant is.",
-      "hint": "S(λ) = 1 everywhere for white paper"
+      "q": "Compare rods and cones: count, function, and type of vision each provides.",
+      "a": "**Rods:** ~120 million, work in low light, grayscale only, low detail.\n\n**Cones:** ~6 million (20× fewer), work in bright light, color vision, 3 types (R, G, B), high detail.\n\nRods dominate at night — that's why colors look washed out in the dark.",
+      "hint": "120M rods vs 6M cones. Rods = night/gray, Cones = day/color."
     },
     {
       "type": "conceptual",
-      "q": "Why do we say the eye is most sensitive to yellow-green? What are two practical consequences?",
-      "a": "$V(\\lambda)$ peaks at **555 nm** (yellow-green). Consequences:\n\n1. A yellow-green LED appears brighter than red or blue of the same wattage\n2. In YUV: green gets weight **0.587** (highest). Pure green has Y≈150 while pure blue has Y≈29 — green looks much brighter.",
-      "hint": "Look at the YUV formula weights"
+      "q": "A white light shines on a red apple. Walk through image formation (E, S, q) to explain why we see red.",
+      "a": "1. **E(λ):** white light — energy at all wavelengths\n2. **S(λ):** apple reflects mostly red (high S near 700 nm), absorbs other wavelengths\n3. **q(λ):** R cones respond strongly to 700 nm; G and B cones get little signal\n\nResult: R is large, G and B are small → we see **red**.",
+      "hint": "Color = source × surface × eye sensitivity, integrated over wavelengths."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why does the Bayer mosaic use 50% green but only 25% each for red and blue?",
+      "a": "The human eye is most sensitive to green (~555 nm peak of V(λ)). Using more green sensors captures the most perceptually important information, giving sharper-looking images with less noise.",
+      "hint": "Think about the luminous efficiency curve V(λ) and where it peaks."
     }
   ]
 }
