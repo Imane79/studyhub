@@ -60,6 +60,24 @@
       "q": "For the ramp [0,1,2,3,4,5,6,7], DCT gives F(0)≈9.90, F(1)≈−6.44, rest≈0. If you only keep F(0) and F(1) and set the rest to zero, what happens when you apply IDCT?",
       "a": "You get an **approximation** of the ramp — the IDCT reconstructs using only the DC (average) and the main slope component.\n\nThe reconstruction will look like a smooth ramp, very close to the original [0,1,2,3,4,5,6,7], because those two coefficients carry almost all the information. The small high-freq coefficients contribute only minor refinements.",
       "hint": "IDCT with zeros = approximate reconstruction. Less coefficients = more lossy but still recognizable."
+    },
+    {
+      "type": "calculation",
+      "q": "Calculate F(0) for the signal f = [0, 0, 0, 0, 255, 255, 255, 255] (a step function).",
+      "a": "$$F(0) = \\frac{1/\\sqrt{2}}{2} \\times \\sum_{i=0}^{7} f(i) \\times \\cos(0) = \\frac{1}{2\\sqrt{2}} \\times \\sum f(i)$$\n\n$\\sum f(i) = 0+0+0+0+255+255+255+255 = 1020$\n\n$F(0) = \\frac{1020}{2\\sqrt{2}} = \\frac{1020}{2.828} \\approx \\mathbf{360.6}$\n\nFor other coefficients: the step contains both low and mid frequencies (an edge = mix of frequencies).",
+      "hint": "F(0) = sum of all values × C(0)/2. C(0) = 1/√2. cos(0) = 1 for u=0."
+    },
+    {
+      "type": "conceptual",
+      "q": "Signal: [0, 255, 0, 255, 0, 255, 0, 255] (alternating). Which DCT coefficient will be largest — F(0), F(1), or F(7)? Why?",
+      "a": "**F(7) will be largest.**\n\nThis signal alternates every sample — that is the **highest possible frequency** in an 8-sample DCT (changes N/2=4 times = highest AC frequency).\n\nDCT maps fast-changing signals to high-frequency coefficients. The alternating pattern directly matches the u=7 basis function.\n\n**F(0) = 0** because the average is (0+255+0+255+...)/8 = 127.5 → actually non-zero, but the variation dominates at high frequency.\n\nPattern to remember: fast change → high u → large F(7).",
+      "hint": "Frequency of the signal determines which DCT coefficient captures it. Max alternation = max frequency = F(7)."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why does JPEG subtract 128 from each pixel value before applying DCT? What changes?",
+      "a": "Subtracting 128 **removes the DC offset** — it centers the values around zero.\n\nFor a constant block of all 128s:\n* Before: all values = 128 → F(0) ≈ 722, everything else = 0\n* After (subtract 128): all values = 0 → F(0) = 0, everything = 0\n\nBenefit: smaller F(0) values → quantized into fewer bits → better compression. Also makes the arithmetic symmetric and easier to quantize uniformly.",
+      "hint": "128 is the midpoint of 0–255. Subtracting it centers values, reducing the DC component."
     }
   ]
 }

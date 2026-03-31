@@ -1,0 +1,54 @@
+{
+  "id": "sec-dp3-1",
+  "number": "3.1",
+  "title": "Overview & Core Problem",
+  "content": [
+    {
+      "type": "callout",
+      "style": "info",
+      "body": "**Core idea:** When you need to create a *suite* of compatible objects, use Abstract Factory — it makes it architecturally impossible to accidentally mix products from different families."
+    },
+    {
+      "type": "text",
+      "body": "Abstract Factory is a direct evolution of Factory Method. Where Factory Method handles the creation of **one product type**, Abstract Factory manages **entire families of related objects** — guaranteeing that products from the same family are always used together and never mixed with incompatible variants."
+    },
+    { "type": "definition", "term": "Abstract Factory", "body": "A creational pattern that produces families of related objects without specifying their concrete classes." },
+    { "type": "definition", "term": "Product Family", "body": "A group of related products designed to work together (e.g., Chair + Sofa + CoffeeTable, or Button + Checkbox)." },
+    { "type": "definition", "term": "Product Variant", "body": "A specific style or platform of a product type (e.g., ModernChair is a variant of Chair; WinButton is a variant of Button)." },
+    { "type": "definition", "term": "Abstract Factory Interface", "body": "Declares creation methods for every product in the family (e.g., `createButton()`, `createCheckbox()`). Always returns Abstract Product types." },
+    { "type": "definition", "term": "Concrete Factory", "body": "Implements the Abstract Factory to produce one specific variant (e.g., `WinFactory` produces only Windows products)." },
+    { "type": "definition", "term": "Variant Mismatch", "body": "The bug Abstract Factory prevents: accidentally pairing a `WinButton` with a `MacCheckbox`, or an `EC2Instance` with a `GoogleCloudStorage`." },
+    { "type": "definition", "term": "Family Consistency", "body": "The guarantee that all products from one factory call are compatible with each other." },
+    { "type": "definition", "term": "Dependency Injection", "body": "Passing a concrete factory into the client at startup. The client never instantiates it — it just receives it." },
+    {
+      "type": "text",
+      "body": "### Why Factory Method Isn't Enough\n\nFactory Method solves single-product creation. But consider: your cross-platform app needs **both** a Button **and** a Checkbox. With Factory Method you'd have a `ButtonCreator` and a separate `CheckboxCreator`. Nothing stops a developer from accidentally using a `WinButtonCreator` alongside a `MacCheckboxCreator` — resulting in a mismatched, broken UI.\n\nThe fundamental new problem Abstract Factory solves is **consistency across a family of related products**."
+    },
+    {
+      "type": "example",
+      "title": "The Furniture Shop Problem",
+      "body": "A simulator has three styles (Modern, Victorian, ArtDeco) and three product types (Chair, Sofa, CoffeeTable). A Victorian Chair must be paired with a Victorian Sofa. Creating products independently with separate if/else checks per product risks mismatched furniture and 'simulation failure.'\n\nAdding an 'Industrial' style would require modifying every piece of creation logic scattered across the codebase."
+    },
+    {
+      "type": "table",
+      "headers": ["", "Variant: Modern", "Variant: Victorian", "Variant: ArtDeco"],
+      "rows": [
+        ["**Chair**", "ModernChair", "VictorianChair", "ArtDecoChair"],
+        ["**Sofa**", "ModernSofa", "VictorianSofa", "ArtDecoSofa"],
+        ["**Table**", "ModernTable", "VictorianTable", "ArtDecoTable"]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "body": "Each **column** = one Concrete Factory. Each **row** = one Abstract Product interface. Every cell must be filled — if a variant exists, it must implement every product type."
+    }
+  ],
+  "flashcards": [
+    { "q": "What is the Abstract Factory pattern's core intent?", "a": "Produce families of related objects without specifying their concrete classes. It provides a high-level interface that guarantees all created products are compatible with each other." },
+    { "q": "What is a 'product family' and what is a 'variant'?", "a": "A product family is a group of related products meant to work together (e.g., Chair + Sofa + CoffeeTable). A variant is a specific style or platform of those products (e.g., Modern, Victorian). Each concrete factory produces one variant's full family." },
+    { "q": "What is 'variant mismatch' and how does Abstract Factory prevent it?", "a": "Variant mismatch is accidentally pairing products from different families (e.g., WinButton with MacCheckbox). Abstract Factory prevents it by encapsulating all product creation inside a single factory object — WinFactory can only return Windows products, so mixing is structurally impossible." },
+    { "q": "What is the 'Combo Meal' mental model for Abstract Factory?", "a": "If you order a 'Vegan Combo' (the factory), you expect a Vegan Burger, Vegan Fries, and Vegan Drink. You never want the Vegan Burger served with Beef Tallow Fries. Abstract Factory guarantees all items in the combo always belong to the same family." }
+  ],
+  "problems": []
+}

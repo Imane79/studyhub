@@ -1,0 +1,48 @@
+{
+  "id": "sec-dp2-1",
+  "number": "2.1",
+  "title": "Overview & Pattern Classification",
+  "content": [
+    {
+      "type": "callout",
+      "style": "info",
+      "body": "**Core idea:** Instead of calling `new ConcreteClass()` directly, you call a factory method — and subclasses decide which concrete class to return."
+    },
+    {
+      "type": "table",
+      "headers": ["Category", "Focus", "Core Mechanism", "Analogy"],
+      "rows": [
+        ["**Creational**", "Object creation", "Abstraction over construction", "Fast-food franchise — you order a burger, you don't care how it's made"],
+        ["**Structural**", "Class/object assembly", "Composition", "Travel adapter — connects incompatible plug and socket without changing either"],
+        ["**Behavioral**", "Object communication", "Interaction rules", "Air traffic controller — pilots coordinate through the tower, not directly"]
+      ]
+    },
+    {
+      "type": "text",
+      "body": "**Key distinctions:**\n\n- **Creational** uses abstraction to hide the *how* and *when* of object creation.\n- **Structural** uses composition to define how classes are assembled.\n- **Behavioral** focuses on interaction flexibility — objects communicate without tight coupling."
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "**Creational:** Factory Method, Abstract Factory, Builder, Prototype, Singleton",
+        "**Structural:** Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy",
+        "**Behavioral:** Observer, Strategy, Command, State, Visitor, Mediator"
+      ]
+    },
+    { "type": "definition", "term": "Design Pattern", "body": "A reusable solution to a commonly occurring problem in software design. Not code — a blueprint." },
+    { "type": "definition", "term": "Factory Method", "body": "A creational pattern that defines an interface for creating an object but lets subclasses decide which class to instantiate." },
+    { "type": "definition", "term": "Product", "body": "The object returned by the factory method. Must implement a common interface." },
+    { "type": "definition", "term": "Creator", "body": "The base class that declares the factory method and contains core business logic." },
+    { "type": "definition", "term": "Concrete Creator", "body": "A subclass of Creator that overrides the factory method to return a specific concrete product." },
+    { "type": "definition", "term": "Tight Coupling", "body": "When code is directly bound to a specific class (e.g., `new Truck()`), making changes expensive and risky." },
+    { "type": "definition", "term": "Open/Closed Principle (OCP)", "body": "Classes should be open for extension but closed for modification." },
+    { "type": "definition", "term": "Single Responsibility Principle (SRP)", "body": "A class should have only one reason to change." }
+  ],
+  "flashcards": [
+    { "q": "What is the Factory Method pattern's core intent?", "a": "Define an interface for creating an object, but let subclasses decide which class to instantiate. It allows a superclass to defer instantiation to its subclasses." },
+    { "q": "What are the three categories of design patterns?", "a": "**Creational** (object creation), **Structural** (class/object assembly), **Behavioral** (object communication)." },
+    { "q": "Why must all products share a common interface?", "a": "Because the Creator's factory method declares its return type as the Product interface. The client code only knows about this interface — it must be able to call the same methods regardless of which concrete product was returned." }
+  ],
+  "problems": []
+}

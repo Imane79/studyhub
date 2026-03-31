@@ -121,6 +121,7 @@ export interface Lecture {
   chapter: string;
   color: string;
   icon: string;
+  courseId: string;
   sections: Section[];
 }
 

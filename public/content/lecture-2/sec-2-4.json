@@ -84,6 +84,18 @@
       "q": "A BMP color table entry is stored as B, G, R, A — not R, G, B. How many bytes does the full color table take for an 8-bit BMP?",
       "a": "256 entries × 4 bytes (B, G, R, A) = **1024 bytes**\n\nThe reversed byte order (BGRA) is a quirk of the Windows BMP format — just remember it is reversed from the usual RGB order.",
       "hint": "256 colors × 4 bytes each = 1024 bytes."
+    },
+    {
+      "type": "calculation",
+      "q": "A 101×80 24-bit BMP. BMP rows must be padded to a multiple of 4 bytes. Calculate the file size.",
+      "a": "**Row size without padding:** $101 \\times 3 = 303$ bytes\n\n**Padding:** $303 \\mod 4 = 3$ → padding = $4 - 3 = \\mathbf{1}$ byte per row\n\n**Padded row size:** $303 + 1 = 304$ bytes\n\n**Total:** $54 + (304 \\times 80) = 54 + 24{,}320 = \\mathbf{24{,}374}$ bytes\n\nVs. no-padding would be $54 + (100 \\times 80 \\times 3) = 24{,}054$ bytes — 320 bytes extra for padding.",
+      "hint": "Padding = (4 - (width×3 mod 4)) mod 4. Each row must be divisible by 4."
+    },
+    {
+      "type": "calculation",
+      "q": "A 24-bit BMP file is 30,054 bytes. The height is 100 pixels. What is the width?",
+      "a": "**Formula:** $\\text{size} = 54 + (W \\times H \\times 3)$\n\n$30{,}054 = 54 + (W \\times 100 \\times 3)$\n\n$30{,}000 = W \\times 300$\n\n$W = \\mathbf{100 \\text{ pixels}}$",
+      "hint": "Rearrange: W = (file_size − 54) ÷ (height × 3)."
     }
   ]
 }

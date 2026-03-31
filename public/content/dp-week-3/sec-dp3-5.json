@@ -1,0 +1,52 @@
+{
+  "id": "sec-dp3-5",
+  "number": "3.5",
+  "title": "AF vs FM, Relations & Implementation Checklist",
+  "content": [
+    {
+      "type": "text",
+      "body": "### Abstract Factory vs. Factory Method\n\nThe most common point of confusion in this course:"
+    },
+    {
+      "type": "table",
+      "headers": ["Dimension", "Factory Method", "Abstract Factory"],
+      "rows": [
+        ["**Creates**", "One product type", "A family of related products"],
+        ["**Mechanism**", "Inheritance — override one `create()` method", "Composition — an object with multiple `createA()`, `createB()` methods"],
+        ["**Consistency guarantee**", "None (single product)", "Yes — all products from one factory match"],
+        ["**Relationship**", "Simpler, entry-level", "Evolution of Factory Method"],
+        ["**When to use**", "\"I need one product, subclass decides which\"", "\"I need a full matching suite of products\""]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "body": "**Interview cheat sheet:**\n- Factory Method → \"I need one product, but I'll let subclasses decide which one.\"\n- Abstract Factory → \"I need an entire family of matching products.\"\n\n**Trigger words for Abstract Factory:** *suites, themes, cross-platform, variants, families, compatible, regional, provider-agnostic.*"
+    },
+    {
+      "type": "callout",
+      "style": "info",
+      "body": "Abstract Factories are *implemented using* a set of Factory Methods. They are not competing patterns — Abstract Factory is Factory Method scaled up to a family of products."
+    },
+    {
+      "type": "table",
+      "headers": ["Related Pattern", "Relationship"],
+      "rows": [
+        ["**Factory Method**", "Abstract Factory is typically built from a set of Factory Methods"],
+        ["**Builder**", "Both are Creational. Abstract Factory returns the product immediately. Builder constructs step-by-step and lets you fetch it later."],
+        ["**Prototype**", "Can be used inside Abstract Factory to implement creation methods (clone instead of construct)"],
+        ["**Singleton**", "Concrete Factories are often Singletons — you only ever need one instance of WinFactory"]
+      ]
+    },
+    {
+      "type": "text",
+      "body": "### Implementation Checklist\n\n1. **Map the matrix.** List product types (rows) vs. variants (columns). Every cell must be filled.\n2. **Define abstract product interfaces.** One interface per product type.\n3. **Implement concrete products.** All variants for every product type.\n4. **Declare the abstract factory interface.** One creation method per product type. Return types are always abstract.\n5. **Implement concrete factories.** One per variant. Each factory only instantiates its own variant's products.\n6. **Add initialization code.** One central location reads config/environment and instantiates the correct concrete factory.\n7. **Inject the factory.** Pass it to the client via constructor. Client only stores the abstract type.\n8. **Scan and clean up.** Replace any remaining `new ConcreteProduct()` calls in business logic with `factory.createProduct()`."
+    }
+  ],
+  "flashcards": [
+    { "q": "How does Abstract Factory differ from Factory Method?", "a": "Factory Method creates one product type and uses inheritance (subclasses override one method). Abstract Factory creates a family of products and uses composition (a factory object with multiple creation methods). Abstract Factory is typically built from a set of Factory Methods." },
+    { "q": "What trigger words in an exam problem should make you think of Abstract Factory?", "a": "'Suites,' 'themes,' 'cross-platform,' 'variants,' 'families,' 'compatible,' 'regional,' 'provider-agnostic,' or any scenario where multiple related objects must always be created together and never mixed." },
+    { "q": "Why are Concrete Factories often implemented as Singletons?", "a": "You only ever need one instance of a WinFactory or MacFactory — they hold no state, just creation logic. Making them Singletons saves memory and ensures a single consistent source of product creation throughout the app." }
+  ],
+  "problems": []
+}

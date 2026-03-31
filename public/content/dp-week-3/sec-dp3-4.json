@@ -1,0 +1,55 @@
+{
+  "id": "sec-dp3-4",
+  "number": "3.4",
+  "title": "Applicability & Pros/Cons",
+  "content": [
+    {
+      "type": "text",
+      "body": "### When to Use Abstract Factory\n\n**1. Code must be independent of product creation.** You don't know ahead of time which family of products you'll need — the factory is selected at runtime from config or environment.\n\n**2. You need to enforce consistency across a product family.** Abstract Factory makes it *architecturally impossible* to mix incompatible products. This is stronger than a runtime check — the wrong pairing cannot even compile.\n\n**3. A class has too many Factory Methods.** Extract them into a dedicated Abstract Factory class to keep business logic clean and creation logic centralized (SRP).\n\n**4. You want to swap entire product suites at runtime.** Swapping the factory instance at initialization is enough to completely change the product family the app uses."
+    },
+    {
+      "type": "callout",
+      "style": "warning",
+      "body": "**When NOT to use it:**\n- You only have **one variant** — Factory Method is simpler.\n- Adding new **product types** is frequent — every new type requires updating the Abstract Factory interface AND every Concrete Factory.\n- The app is small and the overhead of multiple interfaces is not justified."
+    },
+    {
+      "type": "table",
+      "headers": ["Benefit", "Why"],
+      "rows": [
+        ["**Guaranteed compatibility**", "Products from the same factory are always designed to work together"],
+        ["**Eliminates variant mismatch**", "Mixing WinButton with MacCheckbox is structurally impossible"],
+        ["**Open/Closed Principle**", "Add new variants (e.g., LinuxFactory) without touching existing client code"],
+        ["**Single Responsibility**", "Creation logic is isolated in factory classes, not scattered in business logic"],
+        ["**Runtime swapping**", "Change the entire product suite by swapping the factory object at startup"]
+      ]
+    },
+    {
+      "type": "table",
+      "headers": ["Cost", "Why"],
+      "rows": [
+        ["**Class explosion**", "Every new product type needs a new interface + N concrete implementations (one per variant)"],
+        ["**Hard to add product types**", "Adding a new product requires modifying the Abstract Factory interface AND every single Concrete Factory"],
+        ["**Boilerplate**", "Many interfaces and classes for simple applications"],
+        ["**Overkill for small apps**", "If you have one or two products and one variant, Factory Method is simpler"]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "**The key asymmetry:** Adding a new **variant** (column) is easy — just one new Concrete Factory. Adding a new **product type** (row) is expensive — requires updating the Abstract Factory interface and every existing Concrete Factory."
+    }
+  ],
+  "flashcards": [
+    { "q": "What is the main trade-off of the Abstract Factory pattern?", "a": "Adding a new **variant** (e.g., a new OS) is easy — just add a new factory. But adding a new **product type** (e.g., a Scrollbar) is expensive — you must update the Abstract Factory interface and every single Concrete Factory implementation." },
+    { "q": "What SOLID principles does Abstract Factory satisfy?", "a": "Single Responsibility (creation logic is isolated in factories, not in business logic) and Open/Closed (new variants can be added by creating new factory/product classes, without modifying existing code)." },
+    { "q": "Where is the only place concrete factory class names appear in the entire application?", "a": "In the initialization/configuration code at application startup. Everywhere else in the program uses only abstract factory and abstract product interfaces." }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "**Spot the Violation:** A `UIRenderer` class has a `String platform` field and uses if/else inside `renderUI()` to create `WinButton`/`WinCheckbox` or `MacButton`/`MacCheckbox`. Which SOLID principles does this violate, and how does Abstract Factory fix it?",
+      "a": "**Violations:**\n1. **Open/Closed** — adding Linux support requires modifying `renderUI()`.\n2. **Single Responsibility** — `UIRenderer` handles both UI logic AND object creation.\n3. **Dependency Inversion** — high-level `UIRenderer` depends directly on low-level concrete classes.\n\n**Fix:** Create a `GUIFactory` interface with `createButton()` and `createCheckbox()`. Inject it into `UIRenderer` via constructor. `renderUI()` becomes `factory.createButton().paint(); factory.createCheckbox().paint();` — never changes again.",
+      "hint": "Count how many reasons UIRenderer has to change: (1) UI logic changes, (2) adding a new platform. That's two reasons — SRP violation."
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "sec-dp4-4",
+  "number": "4.4",
+  "title": "Applicability & Pros/Cons",
+  "content": [
+    {
+      "type": "text",
+      "body": "### When to Use Builder\n\n**1. A class has too many optional parameters (4+).** The moment you find yourself passing `null`, `false`, or `0` for features the object doesn't need, reach for Builder.\n\n**2. You need different representations of the same object.** Same steps, different materials (WoodHouse vs. StoneHouse), or same steps, different formats (HTML report vs. Markdown report).\n\n**3. You need to construct Composite trees or complex hierarchies.** Builder can call steps recursively. The client sees a clean, flat API while the Builder manages parent-child references internally.\n\n**4. You want to defer or interrupt construction.** Builder can 'live' across multiple user interactions (e.g., a wizard-style UI), accumulating configuration before the final object is created. A standard constructor can't do this.\n\n**5. You want an immutable product.** The builder accumulates mutable state; `build()` creates the final immutable object with `final` fields."
+    },
+    {
+      "type": "callout",
+      "style": "warning",
+      "body": "**When NOT to use it:** Object has only 2–3 params. There's only one representation — a single constructor is cleaner. You don't need step-by-step control or deferred construction."
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "body": "**Rule of thumb:** Reach for Builder when optional parameters exceed 3 or 4."
+    },
+    {
+      "type": "table",
+      "headers": ["Feature", "Telescoping Constructor", "Builder Pattern"],
+      "rows": [
+        ["Readability", "Poor — string of positional values", "High — method names explain each step"],
+        ["Optional parameters", "Must pass defaults/nulls", "Just skip the method"],
+        ["Immutability", "Hard", "Achieved via `build()`"],
+        ["Conditional construction", "Impossible", "Natural — add `if` blocks between steps"],
+        ["Object integrity", "Object exposed mid-construction", "Product only available after `build()`"],
+        ["New optional field", "Breaks every call site", "Add one new setter — no existing code changes"]
+      ]
+    },
+    {
+      "type": "table",
+      "headers": ["Benefit", "Why"],
+      "rows": [
+        ["**Step-by-step control**", "Skip, defer, or reorder steps freely"],
+        ["**Code reuse**", "Same Director recipe works with any compatible builder"],
+        ["**Single Responsibility**", "Product handles behavior; Builder handles assembly; Director handles ordering"],
+        ["**Immutability**", "Product is fully formed before it is returned"],
+        ["**Conditional building**", "Add `if` logic between steps — impossible with constructors"],
+        ["**No null pollution**", "Skip optional steps entirely instead of passing null/0/false"]
+      ]
+    },
+    {
+      "type": "table",
+      "headers": ["Cost", "Why"],
+      "rows": [
+        ["**Class count increases**", "Need Builder interface, Concrete Builders, Director, and Product"],
+        ["**Boilerplate**", "More code to maintain compared to a simple constructor"],
+        ["**Overkill for simple objects**", "If an object has 2–3 params, a constructor is simpler"]
+      ]
+    }
+  ],
+  "flashcards": [
+    { "q": "How does Builder handle immutability?", "a": "The Builder itself is mutable (you keep calling setters). When `build()` is called, it creates a new Product with `final` fields initialized from the Builder's current state. From that point, the Product cannot be modified." },
+    { "q": "When should you use Builder over a standard constructor?", "a": "When the object has more than 3–4 optional parameters; when you need different representations using the same construction process; when constructing a Composite tree; when you want deferred/conditional construction; when you want an immutable product." },
+    { "q": "Can products built by different Concrete Builders share a common interface?", "a": "Not necessarily. A Car and a Manual don't share a base class — they are completely different types. This is a key difference from Abstract Factory, where all products in a family share abstract interfaces." }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "**Add a Director (Medium):** Using the `HttpRequest.Builder` from the previous section, create an `HttpRequestDirector` with two methods: `buildGetRequest(builder)` — sets 30s timeout, adds `Accept: application/json` header; and `buildAuthenticatedPost(builder, token, body)` — sets 60s timeout, `Content-Type: application/json`, and `Authorization: Bearer {token}`. Write the Director class and show client usage.",
+      "a": "```java\nclass HttpRequestDirector {\n    public void buildGetRequest(HttpRequest.Builder builder) {\n        builder\n            .timeout(30)\n            .header(\"Accept\", \"application/json\");\n    }\n\n    public void buildAuthenticatedPost(HttpRequest.Builder builder,\n                                        String token, String body) {\n        builder\n            .body(body)\n            .timeout(60)\n            .header(\"Content-Type\", \"application/json\")\n            .header(\"Authorization\", \"Bearer \" + token);\n    }\n}\n\n// Client\nHttpRequestDirector director = new HttpRequestDirector();\n\nHttpRequest.Builder getBuilder = new HttpRequest.Builder(\"https://api.example.com/users\", \"GET\");\ndirector.buildGetRequest(getBuilder);\nHttpRequest getReq = getBuilder.build();\n\nHttpRequest.Builder postBuilder = new HttpRequest.Builder(\"https://api.example.com/users\", \"POST\");\ndirector.buildAuthenticatedPost(postBuilder, \"token123\", \"{\\\"name\\\": \\\"Alice\\\"}\");\nHttpRequest postReq = postBuilder.build();\n```",
+      "hint": "The Director doesn't call build() — it just configures the builder. The client calls build() to get the final product."
+    }
+  ]
+}

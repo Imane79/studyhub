@@ -92,6 +92,30 @@
       "q": "Why does JPEG use YCbCr instead of RGB, and what is chroma subsampling?",
       "a": "The eye is much more sensitive to **brightness (Y)** than to **color (Cb, Cr)**. By separating them, JPEG can:\n\n1. Store Y at full resolution\n2. **Subsample Cb and Cr** — reduce their resolution by half\n\nThis saves significant space with almost no visible quality loss. RGB doesn't allow this because brightness and color are mixed together.",
       "hint": "Key insight: human vision is more sensitive to luma than chroma."
+    },
+    {
+      "type": "calculation",
+      "q": "Convert pure red RGB (1, 0, 0) to YCbCr (Rec. 601). What does the Cr value tell you?",
+      "a": "$Y = 65.481(1) + 128.553(0) + 24.966(0) + 16 = \\mathbf{81.5}$\n\n$Cb = -37.797(1) - 74.203(0) + 112(0) + 128 = \\mathbf{90.2}$\n\n$Cr = 112(1) - 93.786(0) - 18.214(0) + 128 = \\mathbf{240}$\n\n**Cr = 240** (well above 128) → strong red component ✓\n\nCb = 90 (below 128) → less blue. Y = 81 → moderately dark (red has medium brightness weight).",
+      "hint": "Plug R=1, G=0, B=0 into each formula. Cr > 128 signals red presence."
+    },
+    {
+      "type": "calculation",
+      "q": "Convert pure green RGB (0, 1, 0) to YCbCr. Why is Y so high compared to pure red?",
+      "a": "$Y = 65.481(0) + 128.553(1) + 24.966(0) + 16 = \\mathbf{144.6}$\n\n$Cb = -37.797(0) - 74.203(1) + 112(0) + 128 = \\mathbf{53.8}$\n\n$Cr = 112(0) - 93.786(1) - 18.214(0) + 128 = \\mathbf{34.2}$\n\n**Y = 145** (much higher than red's Y = 81) because green has the **largest weight** (128.553) in the Y formula — the eye is most sensitive to green.",
+      "hint": "Green coefficient in Y is 128.553 — by far the largest. Compare with red's 65.481."
+    },
+    {
+      "type": "calculation",
+      "q": "Convert RGB (0.6, 0.3, 0.8) to CMY. Then convert back to verify.",
+      "a": "**RGB → CMY:**\n\n$C = 1 - 0.6 = \\mathbf{0.4}$\n\n$M = 1 - 0.3 = \\mathbf{0.7}$\n\n$Y = 1 - 0.8 = \\mathbf{0.2}$\n\n**CMY → RGB (reverse):**\n\n$R = 1 - 0.4 = 0.6$ ✓, $G = 1 - 0.7 = 0.3$ ✓, $B = 1 - 0.2 = 0.8$ ✓",
+      "hint": "C = 1−R, M = 1−G, Y = 1−B. Reverse: R = 1−C, etc."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why does CMY ink printing add a K (black) channel to make CMYK?",
+      "a": "Theoretically, C+M+Y = black. In practice:\n\n1. **Ink is impure** — mixing C+M+Y produces muddy brown, not true black\n2. **Cost** — black ink is cheaper than using equal parts C, M, Y\n3. **Text quality** — sharp black text needs a single ink, not a 3-ink mix that can misalign\n\nSo K (Key/black) is added. The CMY components are reduced by the black amount:\n$K = \\min(C, M, Y)$, then subtract K from each.",
+      "hint": "Practical reasons: ink purity, cost, and print quality for text."
     }
   ]
 }

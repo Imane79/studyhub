@@ -1,0 +1,63 @@
+{
+  "id": "sec-dp3-3",
+  "number": "3.3",
+  "title": "Code Examples",
+  "content": [
+    {
+      "type": "example",
+      "title": "Example 1 — Cross-Platform UI (Java)",
+      "body": "A desktop app renders native UI components on Windows and macOS. The `Application` client is injected with a `GUIFactory` and never calls `new` on any concrete product."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Cross-Platform UI",
+      "body": "// ABSTRACT PRODUCTS\ninterface Button   { void paint(); }\ninterface Checkbox { void paint(); }\n\n// WINDOWS FAMILY\nclass WinButton   implements Button   { public void paint() { System.out.println(\"Windows Button\"); } }\nclass WinCheckbox implements Checkbox { public void paint() { System.out.println(\"Windows Checkbox\"); } }\n\n// MACOS FAMILY\nclass MacButton   implements Button   { public void paint() { System.out.println(\"macOS Button\"); } }\nclass MacCheckbox implements Checkbox { public void paint() { System.out.println(\"macOS Checkbox\"); } }\n\n// ABSTRACT FACTORY\ninterface GUIFactory {\n    Button   createButton();\n    Checkbox createCheckbox();\n}\n\n// CONCRETE FACTORIES\nclass WinFactory implements GUIFactory {\n    public Button   createButton()   { return new WinButton(); }\n    public Checkbox createCheckbox() { return new WinCheckbox(); }\n}\nclass MacFactory implements GUIFactory {\n    public Button   createButton()   { return new MacButton(); }\n    public Checkbox createCheckbox() { return new MacCheckbox(); }\n}\n\n// CLIENT — never sees concrete class names\nclass Application {\n    private Button button;\n    private Checkbox checkbox;\n\n    public Application(GUIFactory factory) {\n        button   = factory.createButton();\n        checkbox = factory.createCheckbox();\n    }\n    public void paint() { button.paint(); checkbox.paint(); }\n}\n\n// INITIALIZATION — the only impure place\npublic class Demo {\n    public static void main(String[] args) {\n        String os = System.getProperty(\"os.name\").toLowerCase();\n        GUIFactory factory = os.contains(\"mac\") ? new MacFactory() : new WinFactory();\n        new Application(factory).paint();\n    }\n}"
+    },
+    {
+      "type": "example",
+      "title": "Example 2 — Multi-Cloud Provisioning (Java)",
+      "body": "A `DeploymentManager` client provisions infrastructure on AWS or GCP. `EC2Instance` must never be paired with `GoogleCloudStorage` — the factory structure makes this impossible."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Multi-Cloud Provisioning",
+      "body": "// ABSTRACT PRODUCTS\ninterface ComputeInstance { void bootUp(); void shutDown(); }\ninterface CloudStorage    { void uploadData(String data); }\n\n// AWS FAMILY\nclass EC2Instance implements ComputeInstance {\n    public void bootUp()   { System.out.println(\"[AWS] Booting EC2...\"); }\n    public void shutDown() { System.out.println(\"[AWS] Stopping EC2.\"); }\n}\nclass S3Storage implements CloudStorage {\n    public void uploadData(String d) { System.out.println(\"[AWS] Uploading to S3: \" + d); }\n}\n\n// GCP FAMILY\nclass GoogleComputeEngine implements ComputeInstance {\n    public void bootUp()   { System.out.println(\"[GCP] Booting GCE...\"); }\n    public void shutDown() { System.out.println(\"[GCP] Stopping GCE.\"); }\n}\nclass GoogleCloudStorage implements CloudStorage {\n    public void uploadData(String d) { System.out.println(\"[GCP] Uploading to GCS: \" + d); }\n}\n\n// ABSTRACT FACTORY\ninterface CloudInfrastructureFactory {\n    ComputeInstance createComputeInstance();\n    CloudStorage    createCloudStorage();\n}\n\n// CONCRETE FACTORIES\nclass AwsFactory implements CloudInfrastructureFactory {\n    public ComputeInstance createComputeInstance() { return new EC2Instance(); }\n    public CloudStorage    createCloudStorage()    { return new S3Storage(); }\n}\nclass GcpFactory implements CloudInfrastructureFactory {\n    public ComputeInstance createComputeInstance() { return new GoogleComputeEngine(); }\n    public CloudStorage    createCloudStorage()    { return new GoogleCloudStorage(); }\n}\n\n// CLIENT\nclass DeploymentManager {\n    private ComputeInstance compute;\n    private CloudStorage    storage;\n\n    public DeploymentManager(CloudInfrastructureFactory factory) {\n        this.compute = factory.createComputeInstance();\n        this.storage = factory.createCloudStorage();\n    }\n    public void deploy(String data) {\n        compute.bootUp();\n        storage.uploadData(data);\n    }\n}"
+    },
+    {
+      "type": "example",
+      "title": "Example 3 — Global E-Commerce Compliance (Java)",
+      "body": "Three products per family with real business logic. EU uses VAT (20%) + SEPA + GDPR logging. NA uses Sales Tax (7%) + Stripe + SOX auditing. Mixing them produces legally invalid transactions."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "E-Commerce Compliance",
+      "body": "// ABSTRACT PRODUCTS\ninterface TaxCalculator    { double calculateTax(double amount); }\ninterface PaymentProcessor { boolean processPayment(double total); }\ninterface ComplianceLogger { void logTransaction(String userId, double amount); }\n\n// EU FAMILY\nclass VATCalculator implements TaxCalculator {\n    public double calculateTax(double a) { return a * 0.20; }  // 20% VAT\n}\nclass SEPAPaymentProcessor implements PaymentProcessor {\n    public boolean processPayment(double a) { System.out.println(\"[EU] SEPA payment\"); return true; }\n}\nclass GDPRLogger implements ComplianceLogger {\n    public void logTransaction(String id, double a) { System.out.println(\"[EU] GDPR anonymized log for \" + id); }\n}\n\n// NA FAMILY\nclass StateSalesTax implements TaxCalculator {\n    public double calculateTax(double a) { return a * 0.07; }  // 7% sales tax\n}\nclass StripeProcessor implements PaymentProcessor {\n    public boolean processPayment(double a) { System.out.println(\"[NA] Stripe USD payment\"); return true; }\n}\nclass SOXAuditor implements ComplianceLogger {\n    public void logTransaction(String id, double a) { System.out.println(\"[NA] SOX plain-text log for \" + id); }\n}\n\n// ABSTRACT FACTORY\ninterface IRegionalCheckoutFactory {\n    TaxCalculator    createTaxCalculator();\n    PaymentProcessor createPaymentProcessor();\n    ComplianceLogger createComplianceLogger();\n}\n\n// CONCRETE FACTORIES\nclass EUCheckoutFactory implements IRegionalCheckoutFactory {\n    public TaxCalculator    createTaxCalculator()    { return new VATCalculator(); }\n    public PaymentProcessor createPaymentProcessor() { return new SEPAPaymentProcessor(); }\n    public ComplianceLogger createComplianceLogger() { return new GDPRLogger(); }\n}\nclass NACheckoutFactory implements IRegionalCheckoutFactory {\n    public TaxCalculator    createTaxCalculator()    { return new StateSalesTax(); }\n    public PaymentProcessor createPaymentProcessor() { return new StripeProcessor(); }\n    public ComplianceLogger createComplianceLogger() { return new SOXAuditor(); }\n}\n\n// CLIENT\nclass CheckoutEngine {\n    private TaxCalculator tax; private PaymentProcessor pay; private ComplianceLogger log;\n    public CheckoutEngine(IRegionalCheckoutFactory f) {\n        tax = f.createTaxCalculator(); pay = f.createPaymentProcessor(); log = f.createComplianceLogger();\n    }\n    public void checkout(String userId, double cart) {\n        double total = cart + tax.calculateTax(cart);\n        if (pay.processPayment(total)) log.logTransaction(userId, total);\n    }\n}"
+    },
+    {
+      "type": "example",
+      "title": "Example 4 — Graphics API (Java)",
+      "body": "A 3D game engine prevents DirectX/Vulkan crashes. A DirectX shader must never be paired with a Vulkan texture."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Graphics API",
+      "body": "interface IShader  { void bind(); }\ninterface ITexture { void apply(); }\n\nclass DirectXShader  implements IShader  { public void bind()  { System.out.println(\"[DX] HLSL Shader\"); } }\nclass DirectXTexture implements ITexture { public void apply() { System.out.println(\"[DX] DDS Texture\"); } }\nclass VulkanShader   implements IShader  { public void bind()  { System.out.println(\"[VK] SPIR-V Shader\"); } }\nclass VulkanTexture  implements ITexture { public void apply() { System.out.println(\"[VK] KTX Texture\"); } }\n\ninterface IRendererFactory {\n    IShader  compileShader();\n    ITexture loadTexture();\n}\nclass DirectXFactory implements IRendererFactory {\n    public IShader compileShader() { return new DirectXShader(); }\n    public ITexture loadTexture()  { return new DirectXTexture(); }\n}\nclass VulkanFactory implements IRendererFactory {\n    public IShader compileShader() { return new VulkanShader(); }\n    public ITexture loadTexture()  { return new VulkanTexture(); }\n}\n\nclass RenderPipeline {\n    private IShader shader; private ITexture texture;\n    public RenderPipeline(IRendererFactory f) {\n        shader = f.compileShader(); texture = f.loadTexture();\n    }\n    public void drawFrame() { shader.bind(); texture.apply(); }\n}"
+    }
+  ],
+  "flashcards": [
+    { "q": "In the E-Commerce example, why is mixing EU and NA products a 'catastrophic legal failure'?", "a": "EU uses VAT (20%), SEPA payments, and GDPR logging; NA uses Sales Tax (7%), Stripe payments, and SOX auditing. Pairing an EU tax calculator with NA compliance logging produces legally invalid transactions." },
+    { "q": "Can a Concrete Factory return existing (cached) objects instead of creating new ones?", "a": "Yes. The factory method can return objects from a cache or object pool. The client doesn't know or care whether it received a new or recycled instance — it interacts via the abstract interface." }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "**Theme System (Medium):** A mobile app supports Light and Dark themes. Each theme provides a `Background` (with `render()`) and a `TextLabel` (with `display(String text)`). Implement the full Abstract Factory pattern. The `Screen` client takes a factory via constructor and has a `draw()` method. Switching themes requires changing exactly one line.",
+      "a": "```java\n// Abstract Products\ninterface Background { void render(); }\ninterface TextLabel  { void display(String text); }\n\n// Light Family\nclass LightBackground implements Background { public void render() { System.out.println(\"White background\"); } }\nclass LightTextLabel  implements TextLabel  { public void display(String t) { System.out.println(\"Black text: \" + t); } }\n\n// Dark Family\nclass DarkBackground implements Background { public void render() { System.out.println(\"Dark background\"); } }\nclass DarkTextLabel  implements TextLabel  { public void display(String t) { System.out.println(\"White text: \" + t); } }\n\n// Abstract Factory\ninterface ThemeFactory { Background createBackground(); TextLabel createTextLabel(); }\n\n// Concrete Factories\nclass LightThemeFactory implements ThemeFactory {\n    public Background createBackground() { return new LightBackground(); }\n    public TextLabel  createTextLabel()  { return new LightTextLabel(); }\n}\nclass DarkThemeFactory implements ThemeFactory {\n    public Background createBackground() { return new DarkBackground(); }\n    public TextLabel  createTextLabel()  { return new DarkTextLabel(); }\n}\n\n// Client\nclass Screen {\n    private Background bg; private TextLabel label;\n    public Screen(ThemeFactory f) { bg = f.createBackground(); label = f.createTextLabel(); }\n    public void draw() { bg.render(); label.display(\"Hello World\"); }\n}\n\n// Change this one line to switch themes:\nThemeFactory factory = new DarkThemeFactory(); // ← swap to LightThemeFactory\n```",
+      "hint": "The Screen constructor takes a ThemeFactory. draw() calls render() and display(). The only change needed to switch themes is which factory you pass in at initialization."
+    }
+  ]
+}

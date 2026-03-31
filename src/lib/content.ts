@@ -10,11 +10,22 @@ export interface LectureMeta {
 }
 
 export interface ContentIndex {
-  lectures: Array<{ id: string; sections: string[] }>;
+  lectures: Array<{ id: string; courseId: string; sections: string[] }>;
+}
+
+export interface CourseInfo {
+  id: string;
+  name: string;
+  code: string;
+  semester: string;
+  instructor: string;
+  color: string;
+  icon: string;
 }
 
 // ── Caches ────────────────────────────────────────────────────────────────────
 
+let cachedCourses: CourseInfo[] | null = null;
 let cachedIndex: ContentIndex | null = null;
 let cachedCourse: Course | null = null;
 const cachedMetas: Record<string, LectureMeta> = {};
@@ -22,6 +33,14 @@ const cachedSections: Record<string, Section> = {};
 const cachedLectures: Record<string, Lecture> = {};
 
 // ── Primitives ────────────────────────────────────────────────────────────────
+
+export async function getCourses(): Promise<CourseInfo[]> {
+  if (cachedCourses) return cachedCourses;
+  const res = await fetch('/content/courses.json');
+  if (!res.ok) throw new Error('Failed to load /content/courses.json');
+  cachedCourses = (await res.json()) as CourseInfo[];
+  return cachedCourses;
+}
 
 export async function getCourseIndex(): Promise<ContentIndex> {
   if (cachedIndex) return cachedIndex;
@@ -73,7 +92,7 @@ export async function getFullLecture(lectureId: string): Promise<Lecture> {
     ...entry.sections.map((sid) => getSection(lectureId, sid)),
   ]);
 
-  const lecture: Lecture = { ...meta, sections };
+  const lecture: Lecture = { ...meta, courseId: entry.courseId, sections };
   cachedLectures[lectureId] = lecture;
   return lecture;
 }

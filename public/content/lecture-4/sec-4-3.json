@@ -64,6 +64,30 @@
       "q": "What is companding and why does it produce better audio quality than linear quantization for the same number of bits?",
       "a": "**Companding** (compress + expand) uses non-linear quantization:\n* **Quiet sounds** get finer quantization steps → lower noise when it matters most\n* **Loud sounds** get coarser steps → ear less sensitive to noise there\n\nLinear quantization wastes the same precision on loud sounds that the ear barely distinguishes. Companding matches Weber's Law — humans perceive ratios, not absolute differences.",
       "hint": "Human hearing is logarithmic. Companding allocates bits where perception is most sensitive."
+    },
+    {
+      "type": "calculation",
+      "q": "Signal power = 100 W, noise power = 10 W. Calculate SNR in dB.",
+      "a": "This is a **power ratio**, so use 10:\n\n$SNR = 10 \\log_{10}\\left(\\frac{100}{10}\\right) = 10 \\log_{10}(10) = 10 \\times 1 = \\mathbf{10 \\text{ dB}}$",
+      "hint": "Power ratio → use 10 × log₁₀."
+    },
+    {
+      "type": "calculation",
+      "q": "Noise voltage is greater than signal voltage — ratio is 2:1 (noise:signal). What is the SNR in dB?",
+      "a": "Signal:Noise voltage ratio = 1:2 = 0.5\n\n$SNR = 20 \\log_{10}(0.5) = 20 \\times (-0.301) = \\mathbf{-6.02 \\text{ dB}}$\n\nNegative dB means noise > signal — very poor quality!",
+      "hint": "If noise > signal, the ratio < 1 → log is negative → negative dB."
+    },
+    {
+      "type": "calculation",
+      "q": "A system uses 12-bit quantization. You upgrade to 13-bit. How much does SQNR improve?",
+      "a": "Each bit adds ~6 dB. Adding 1 bit:\n\n$\\Delta SQNR = 6.02 \\times 1 = \\mathbf{6.02 \\text{ dB improvement}}$\n\n12-bit SQNR: $6.02 \\times 12 = 72.24$ dB\n\n13-bit SQNR: $6.02 \\times 13 = 78.26$ dB",
+      "hint": "+1 bit always adds ~6 dB, regardless of starting depth."
+    },
+    {
+      "type": "calculation",
+      "q": "Compare a 10-bit system vs a 12-bit system. What is the SQNR of each, and what is the difference?",
+      "a": "**10-bit:** $6.02 \\times 10 = 60.2$ dB\n\n**12-bit:** $6.02 \\times 12 = 72.24$ dB\n\n**Difference:** $72.24 - 60.2 = \\mathbf{12.04 \\text{ dB}}$\n\nThe 12-bit system has 12 dB better SQNR (2 extra bits × 6 dB each).",
+      "hint": "Difference = 6.02 × (difference in bits)."
     }
   ]
 }

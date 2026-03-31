@@ -74,6 +74,18 @@
       "q": "What is a display's gamut, and why can some colors not be shown on any display?",
       "a": "A display's **gamut** is the triangle formed by its three primaries on the chromaticity diagram. Colors inside the triangle can be displayed; colors outside cannot.\n\nColors outside the gamut would require a **negative** amount of one primary — physically impossible. No display can show every visible color because no real primaries span the entire horseshoe.",
       "hint": "Gamut = triangle of primaries. Outside = need negative light = impossible."
+    },
+    {
+      "type": "conceptual",
+      "q": "Order these from largest to smallest gamut: sRGB monitor, CMYK printer, LAB color space. Explain why.",
+      "a": "**Largest → Smallest:**\n\n1. **LAB** — encompasses all colors visible to the human eye (device-independent)\n2. **sRGB monitor** — subset of LAB, covers typical display colors\n3. **CMYK printer** — smallest, limited by ink capabilities\n\nRGB and CMYK are both subsets of LAB. Converting RGB → CMYK → RGB is NOT lossless because some bright RGB colors (e.g. vivid green) fall outside the CMYK gamut and get clipped.",
+      "hint": "LAB = perceptual (all visible). RGB/CMYK = device-dependent subsets."
+    },
+    {
+      "type": "conceptual",
+      "q": "You mix two chromaticity coordinates: A=(0.2, 0.3) and B=(0.5, 0.4) in equal parts. What is the resulting chromaticity?",
+      "a": "By **Grassmann's Law**, color mixing is linear — equal mix = midpoint:\n\n$x = (0.2 + 0.5) \\div 2 = \\mathbf{0.35}$\n\n$y = (0.3 + 0.4) \\div 2 = \\mathbf{0.35}$\n\nResult: **(0.35, 0.35)** — lies exactly on the line between A and B, near the white point (0.333, 0.333).",
+      "hint": "Equal mix = average of both coordinates. Grassmann's Law makes this linear."
     }
   ]
 }

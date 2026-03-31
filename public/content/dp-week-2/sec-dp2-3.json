@@ -1,0 +1,34 @@
+{
+  "id": "sec-dp2-3",
+  "number": "2.3",
+  "title": "Pattern Structure & Participants",
+  "content": [
+    {
+      "type": "table",
+      "headers": ["Participant", "Role"],
+      "rows": [
+        ["**Product**", "Interface that all concrete products must implement"],
+        ["**Concrete Product**", "Actual implementation (e.g., Truck, Ship, WindowsButton)"],
+        ["**Creator**", "Base class; declares the factory method and contains business logic. Never directly creates concrete products."],
+        ["**Concrete Creator**", "Subclass that overrides the factory method to return a specific product"]
+      ]
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "title": "UML Structure",
+      "body": "<<interface>>\n  Product\n  + operation()\n      ▲           ▲\n      │           │\nConcreteProductA  ConcreteProductB\n\n  Creator\n  + factoryMethod(): Product   ← THE factory method\n  + someOperation()            ← uses factoryMethod() internally\n      ▲                ▲\n      │                │\nConcreteCreatorA    ConcreteCreatorB\n+ factoryMethod()   + factoryMethod()\n  → new ProductA      → new ProductB"
+    },
+    {
+      "type": "callout",
+      "style": "info",
+      "body": "The factory method does **not** have to create a new instance every time. It can return an object from a **cache**, an **object pool**, or any other existing source — the client never knows the difference."
+    }
+  ],
+  "flashcards": [
+    { "q": "What are the four participants in the Factory Method pattern?", "a": "**Product** (the interface), **Concrete Product** (the implementation), **Creator** (declares factory method + business logic), **Concrete Creator** (overrides factory method to return a specific product)." },
+    { "q": "What is the only place in the Factory Method pattern where concrete class names appear?", "a": "In the application's initialization/configuration code — the single location that reads config and instantiates the correct Concrete Creator. Everywhere else uses only abstract types." },
+    { "q": "Can the factory method return an existing object instead of creating a new one?", "a": "Yes. The factory method can return objects from a cache, an object pool, or any other source. The client doesn't know or care if it received a brand-new or recycled instance." }
+  ],
+  "problems": []
+}

@@ -1,0 +1,64 @@
+{
+  "id": "sec-dp4-2",
+  "number": "4.2",
+  "title": "The Solution & Pattern Structure",
+  "content": [
+    {
+      "type": "text",
+      "body": "### Core Mechanics\n\n1. **Extract construction code** out of the Product class into a dedicated Builder class.\n2. **Organize construction** into discrete steps (`buildWalls()`, `buildDoor()`, `buildRoof()`).\n3. **Only call the steps you need.** No requirement to call every step.\n4. **Retrieve the product** directly from the builder once construction is complete."
+    },
+    {
+      "type": "example",
+      "title": "Multiple Builders, One Process",
+      "body": "The same step sequence can produce completely different objects depending on the builder used."
+    },
+    {
+      "type": "table",
+      "headers": ["Step called", "WoodBuilder result", "StoneBuilder result"],
+      "rows": [
+        ["`buildWalls()`", "Lumber walls", "Masonry walls"],
+        ["`buildRoof()`", "Shingle roof", "Slate roof"],
+        ["**Final product**", "Wooden cabin", "Stone castle"]
+      ]
+    },
+    {
+      "type": "text",
+      "body": "### The Director Class\n\nThe Director is **optional** but valuable:\n- Defines the *order* of construction steps\n- Encapsulates reusable 'recipes' (e.g., `constructSportsCar()`, `constructSUV()`)\n- Completely hides construction details from the client\n\nWithout a Director, the client calls steps manually. With one, the client just says 'build me an SUV' and retrieves the result."
+    },
+    {
+      "type": "table",
+      "headers": ["Participant", "Role"],
+      "rows": [
+        ["**Builder Interface**", "Declares all construction steps. Does not include getProduct() unless all products share a type."],
+        ["**Concrete Builder**", "Implements steps with a specific strategy. Holds the product being assembled. Exposes getProduct()."],
+        ["**Product**", "The complex object. Different builders can produce incompatible types — no shared interface required."],
+        ["**Director**", "Optional. Knows the recipe (step order). Never returns the product — retrieval is always from the Builder."]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "**The Director never returns the product.** Products are always retrieved from the Concrete Builder directly. This is because different builders may produce incompatible types (Car vs. Manual) — if the Director had a `getResult()`, it would be coupled to a specific type."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "title": "UML Structure",
+      "body": "<<interface>> Builder\n  + reset()\n  + buildStepA()\n  + buildStepB()\n         ▲              ▲\n         │              │\nConcreteBuilder1   ConcreteBuilder2\n + buildStepA()    + buildStepA()\n + getProduct()    + getProduct()\n   → ProductA        → ProductB\n\nDirector\n  - builder: Builder\n  + constructTypeA(builder)  ← calls steps in specific order\n\nClient:\n  builder = new ConcreteBuilder1()\n  director.constructTypeA(builder)\n  product = builder.getProduct()  ← always from builder, never director"
+    },
+    {
+      "type": "table",
+      "headers": ["Method", "How", "Best for"],
+      "rows": [
+        ["**Constructor injection**", "`new Director(builder)` — builder set once", "Long-term associations, single-purpose directors"],
+        ["**Method injection**", "`director.construct(new HTMLBuilder())` — set per call", "Flexible directors that swap builders on demand"]
+      ]
+    }
+  ],
+  "flashcards": [
+    { "q": "Why is `getProduct()` on the Concrete Builder rather than the Director?", "a": "Because different Concrete Builders may produce incompatible types (e.g., Car vs. Manual). If the Director had `getResult()`, it would be coupled to a specific product type. Putting retrieval on the Concrete Builder keeps the Director generic and reusable." },
+    { "q": "Is the Director class mandatory?", "a": "No. The Director is optional. The client can call builder steps manually in any order. The Director is useful when you want to encapsulate reusable 'recipes' and hide construction details from the client." },
+    { "q": "What is the difference between Constructor Injection and Method Injection for a Director?", "a": "Constructor Injection: builder passed once to the Director's constructor — remembered for all calls. Best for single-purpose Directors. Method Injection: builder passed to each construction method call — same Director can use different builders per call. Best for flexible, multi-purpose Directors." }
+  ],
+  "problems": []
+}

@@ -1,0 +1,52 @@
+{
+  "id": "sec-dp4-1",
+  "number": "4.1",
+  "title": "Overview & The Problem",
+  "content": [
+    {
+      "type": "callout",
+      "style": "info",
+      "body": "**Core idea:** Extract step-by-step construction logic out of a complex object and into a dedicated Builder class, calling only the steps you need."
+    },
+    {
+      "type": "text",
+      "body": "Builder solves a different problem than Factory Method or Abstract Factory. Instead of *which* object to create, it addresses *how* to construct complex objects that require many optional configuration steps."
+    },
+    { "type": "definition", "term": "Builder Pattern", "body": "A creational pattern that constructs complex objects step by step, allowing different types and representations using the same construction code." },
+    { "type": "definition", "term": "Telescoping Constructor", "body": "An anti-pattern where a class has many overloaded constructors, each adding one more optional parameter — results in unreadable, fragile code." },
+    { "type": "definition", "term": "Builder Interface", "body": "Declares all possible construction steps common to every builder. Does not define the product type." },
+    { "type": "definition", "term": "Concrete Builder", "body": "Implements the builder interface with a specific construction strategy. Holds the product being assembled and exposes `getResult()` / `getProduct()`." },
+    { "type": "definition", "term": "Product", "body": "The complex object being built. Products built by different Concrete Builders do not have to share a common interface." },
+    { "type": "definition", "term": "Director", "body": "An optional class that defines the order and sequence of construction steps. Encapsulates reusable 'recipes.'" },
+    { "type": "definition", "term": "Fluent Interface / Method Chaining", "body": "Each setter method returns `this`, allowing calls to be chained: `builder.setA().setB().build()`." },
+    { "type": "definition", "term": "Static Inner Builder", "body": "A Java idiom where the Builder class is a static nested class inside the Product class. The Product's constructor is private — only the Builder can call it." },
+    {
+      "type": "text",
+      "body": "### The House Problem\n\nA `House` can be simple (4 walls, a floor, a roof) or complex (heating, plumbing, electrical, garage, pool). How do you handle every configuration?\n\n**Flawed Solution 1 — Subclass explosion:** Create `HouseWithGarage`, `HouseWithPool`, `HouseWithGarageAndPool`… Every new parameter multiplies the hierarchy.\n\n**Flawed Solution 2 — Giant constructor:** Put every possible parameter in one massive constructor."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Anti-Pattern: Telescoping Constructor",
+      "body": "// BAD — which boolean is for the pool? Which for the garage?\nHouse h = new House(4, 2, 1, true, false, true, false, null, 0, true, ...);\n\n// Also bad — Pizza with 10 params\nPizza p = new Pizza(\"Large\", \"Thin\", true, false, true, false, false, true, \"Tomato\", 0);"
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "body": "**The Builder Solution:** Only call the steps you actually need.\n\n```java\nHouse h = new HouseBuilder()\n    .buildWalls(4)\n    .buildRoof()\n    .addGarage()\n    .build();\n```\nSelf-documenting, no null pollution, no fragile parameter ordering."
+    }
+  ],
+  "flashcards": [
+    { "q": "What is the Builder pattern's core intent?", "a": "Construct complex objects step by step. It allows different types and representations of an object using the same construction code, while isolating the construction logic from the final representation." },
+    { "q": "What is the 'Telescoping Constructor' anti-pattern and why is it bad?", "a": "A class has multiple overloaded constructors, each adding one more parameter. Results in unreadable code, forces passing defaults/nulls for unused features, and breaks every call site when a new parameter is added." },
+    { "q": "What are the four participants in the Builder pattern?", "a": "Builder Interface (declares all construction steps), Concrete Builder (implements steps + holds the product), Product (the complex object), Director (optional; defines step order and encapsulates reusable recipes)." }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "**Identify the Anti-Pattern:** A `Pizza` class has a constructor with 10 parameters: `size`, `crust`, `hasCheese`, `hasPepperoni`, `hasMushrooms`, `hasOlives`, `hasOnions`, `hasPeppers`, `sauce`, `extraCheeseLayers`. Name three specific problems with this and sketch how Builder would fix it.",
+      "a": "**Anti-pattern:** Telescoping Constructor.\n\n**Three problems:**\n1. **Unreadability:** `false, true, false, false` means nothing without looking up the signature.\n2. **Null/default pollution:** Must pass `false` or `0` for every topping the pizza doesn't have.\n3. **Fragility:** Adding a new topping requires modifying the constructor and every call site.\n\n**Builder fix:**\n- `Pizza` gets a private constructor taking a `Builder` parameter\n- `Pizza.Builder(String size, String crust)` for required fields, optional setters for each topping\n- Client: `new Pizza.Builder(\"Large\", \"Thin\").addCheese().addMushrooms().addSauce(\"Tomato\").build()`",
+      "hint": "Count how many call sites break when you add a new topping parameter to the constructor."
+    }
+  ]
+}

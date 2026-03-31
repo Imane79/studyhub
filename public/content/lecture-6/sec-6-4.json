@@ -62,6 +62,30 @@
       "q": "Why does DCT concentrate energy better than DFT for compression?",
       "a": "DCT mirrors the signal symmetrically before transforming, which makes the signal appear **periodic without discontinuities** at the boundaries.\n\nDFT treats the signal as periodic, creating sharp edges at the boundaries → energy spreads into many high-frequency components.\n\nDCT avoids this → energy concentrates in fewer low-frequency coefficients → more zeros → better compression.\n\nIn the ramp example: DCT gives 5 near-zero values out of 8; DFT gives none.",
       "hint": "Symmetric extension → no boundary discontinuity → no energy spread → concentrated coefficients."
+    },
+    {
+      "type": "calculation",
+      "q": "A DCT coefficient F(7,7) = 3 with quantization value Q(7,7) = 88. What is the quantized value? What gets decoded?",
+      "a": "**Quantize:**\n\n$F_q(7,7) = \\text{round}(3 \\div 88) = \\text{round}(0.034) = \\mathbf{0}$\n\n**Dequantize:**\n\n$F_{reconstructed}(7,7) = 0 \\times 88 = \\mathbf{0}$\n\nThe coefficient is **zeroed out** — this small high-frequency component is permanently lost.\n\nThis is exactly how JPEG removes fine detail: small high-freq coefficients ÷ large Q values → round to 0 → compressed to nothing.",
+      "hint": "Small coefficient ÷ large Q → rounds to 0. That information is gone after quantization."
+    },
+    {
+      "type": "calculation",
+      "q": "Three consecutive JPEG blocks have DC coefficients: 800, 795, 790. What values are actually stored using DPCM?",
+      "a": "JPEG uses **DPCM (differential encoding)** for DC coefficients — store differences, not absolute values:\n\n**Block 1:** store **800** (first block, no previous)\n\n**Block 2:** $795 - 800 = \\mathbf{-5}$\n\n**Block 3:** $790 - 795 = \\mathbf{-5}$\n\n**Stored:** [800, −5, −5]\n\nSmall differences compress better than large absolute values. Adjacent blocks in smooth images have similar averages → differences are tiny.",
+      "hint": "DPCM = store (current − previous). First block is stored as-is."
+    },
+    {
+      "type": "calculation",
+      "q": "AC coefficients after zig-zag scan: [5, 4, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, ..., 0]. Encode using run-length.",
+      "a": "Format: (zeros_before, value)\n\n| Encoded | Meaning |\n|---------|---------|\n| (0, 5) | 0 zeros before 5 |\n| (0, 4) | 0 zeros before 4 |\n| (2, 3) | 2 zeros before 3 |\n| (4, 1) | 4 zeros before 1 |\n| EOB | all remaining are 0 |\n\n**Result:** 5 symbols instead of 64 values — massive compression!\n\nEOB (End Of Block) tells the decoder to stop early.",
+      "hint": "Count consecutive zeros before each non-zero value. End with EOB when rest are all zero."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why do highly compressed JPEG images show \"blocky\" artifacts?",
+      "a": "**Cause:** JPEG compresses each 8×8 block **independently**.\n\nAt high compression:\n1. Many coefficients quantized to zero\n2. Each block reconstructed independently with little data\n3. Adjacent blocks may reconstruct to **very different average values**\n4. **Visible discontinuities at block boundaries** — the 8×8 grid becomes visible\n\n**Example:**\n```\nBlock 1 ends:   [..., 100, 105, 110]\nBlock 2 starts: [50,  55,  60, ...]\n```\n\nThe sudden jump creates a visible edge.\n\n**Fix:** Use a higher quality setting (smaller quantization values → more coefficients preserved → smoother block boundaries).",
+      "hint": "Independent block compression + high quantization = each block looks different at boundaries."
     }
   ]
 }

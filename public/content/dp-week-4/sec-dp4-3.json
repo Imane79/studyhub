@@ -1,0 +1,64 @@
+{
+  "id": "sec-dp4-3",
+  "number": "4.3",
+  "title": "Code Examples",
+  "content": [
+    {
+      "type": "example",
+      "title": "Example 1 — Computer Assembly (Static Inner Builder)",
+      "body": "The most common Java idiom. Builder is a static nested class; the Product's constructor is private. The product is immutable — all fields are `final`."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Computer — Static Inner Builder",
+      "body": "public class Computer {\n    private final String hdd;\n    private final String ram;\n    private final boolean hasGraphics;\n    private final boolean hasBluetooth;\n\n    private Computer(Builder builder) {   // private — only Builder can call this\n        this.hdd          = builder.hdd;\n        this.ram          = builder.ram;\n        this.hasGraphics  = builder.hasGraphics;\n        this.hasBluetooth = builder.hasBluetooth;\n    }\n\n    public static class Builder {\n        private final String hdd;   // required\n        private final String ram;   // required\n        private boolean hasGraphics  = false;   // optional\n        private boolean hasBluetooth = false;   // optional\n\n        public Builder(String hdd, String ram) {\n            this.hdd = hdd;\n            this.ram = ram;\n        }\n\n        public Builder setGraphics(boolean val)  { this.hasGraphics  = val; return this; }\n        public Builder setBluetooth(boolean val) { this.hasBluetooth = val; return this; }\n\n        public Computer build() {\n            // Validation can go here\n            return new Computer(this);\n        }\n    }\n}\n\n// CLIENT — fluent and self-documenting\nComputer myComp = new Computer.Builder(\"1TB\", \"32GB\")\n    .setGraphics(true)\n    .setBluetooth(true)\n    .build();\n// myComp is fully formed and immutable — no setters exposed"
+    },
+    {
+      "type": "example",
+      "title": "Example 2 — SQL Query Builder",
+      "body": "Demonstrates Builder for objects with collections and conditional logic. `where()` can be called multiple times. Conditional construction is impossible with standard constructors."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "SQL Query Builder",
+      "body": "public class SqlQuery {\n    private final String table;\n    private final List<String> columns;\n    private final List<String> whereClauses;\n    private final String orderBy;\n    private final int limit;\n\n    private SqlQuery(Builder b) {\n        this.table        = b.table;\n        this.columns      = b.columns;\n        this.whereClauses = b.whereClauses;\n        this.orderBy      = b.orderBy;\n        this.limit        = b.limit;\n    }\n\n    public static class Builder {\n        private String table;\n        private List<String> columns      = new ArrayList<>();\n        private List<String> whereClauses = new ArrayList<>();\n        private String orderBy;\n        private int limit;\n\n        public Builder(String table) { this.table = table; }\n\n        public Builder select(String col)   { columns.add(col);      return this; }\n        public Builder where(String cond)   { whereClauses.add(cond); return this; }  // called multiple times\n        public Builder orderBy(String col)  { this.orderBy = col;     return this; }\n        public Builder limit(int n)         { this.limit = n;          return this; }\n\n        public SqlQuery build() {\n            if (columns.isEmpty()) columns.add(\"*\");\n            return new SqlQuery(this);\n        }\n    }\n}\n\n// CLIENT — reads like a DSL\nSqlQuery.Builder builder = new SqlQuery.Builder(\"users\")\n    .select(\"id\").select(\"username\").select(\"email\")\n    .where(\"status = 'active'\")\n    .orderBy(\"created_at DESC\")\n    .limit(10);\n\n// Conditional construction — impossible with standard constructors\nboolean filterByAdmin = true;\nif (filterByAdmin) builder.where(\"role = 'ADMIN'\");\n\nSqlQuery query = builder.build();\n// SELECT id, username, email FROM users\n// WHERE status = 'active' AND role = 'ADMIN'\n// ORDER BY created_at DESC LIMIT 10"
+    },
+    {
+      "type": "example",
+      "title": "Example 3 — Car vs. Manual Builder (Director Pattern)",
+      "body": "One Director, two completely different products. `CarBuilder` produces a physical Car; `CarManualBuilder` produces a documentation Manual. They share no common interface — yet the Director uses both identically."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Car vs. Manual — Director Pattern",
+      "body": "// BUILDER INTERFACE\ninterface Builder {\n    void reset();\n    void setSeats(int n);\n    void setEngine(String engine);\n    void setTripComputer(boolean hasTC);\n    void setGPS(boolean hasGPS);\n}\n\n// CONCRETE BUILDER 1 — assembles a physical Car\nclass CarBuilder implements Builder {\n    private Car car;\n    public CarBuilder() { reset(); }\n    public void reset()                        { this.car = new Car(); }\n    public void setSeats(int n)                { car.seats = n; }\n    public void setEngine(String e)            { car.engine = e; }\n    public void setTripComputer(boolean hasTC) { car.hasTripComputer = hasTC; }\n    public void setGPS(boolean hasGPS)         { car.hasGPS = hasGPS; }\n    public Car getProduct() { Car r = car; reset(); return r; }\n}\n\n// CONCRETE BUILDER 2 — writes a documentation Manual\nclass CarManualBuilder implements Builder {\n    private Manual manual;\n    public CarManualBuilder() { reset(); }\n    public void reset()                        { this.manual = new Manual(); }\n    public void setSeats(int n)                { manual.addSection(\"Safety: \" + n + \" seats.\"); }\n    public void setEngine(String e)            { manual.addSection(\"Engine: \" + e + \" specs.\"); }\n    public void setTripComputer(boolean hasTC) { if (hasTC) manual.addSection(\"Trip Computer: see section 4.\"); }\n    public void setGPS(boolean hasGPS)         { if (hasGPS) manual.addSection(\"GPS: Navigation guide.\"); }\n    public Manual getProduct() { Manual r = manual; reset(); return r; }\n}\n\n// DIRECTOR — knows the recipe, not the materials\nclass Director {\n    public void constructSportsCar(Builder builder) {\n        builder.reset();\n        builder.setSeats(2);\n        builder.setEngine(\"SportEngine\");\n        builder.setTripComputer(true);\n        builder.setGPS(true);\n    }\n    public void constructSUV(Builder builder) {\n        builder.reset();\n        builder.setSeats(7);\n        builder.setEngine(\"DieselEngine\");\n        builder.setTripComputer(false);\n        builder.setGPS(true);\n    }\n}\n\n// CLIENT\nDirector director = new Director();\nCarBuilder carBuilder = new CarBuilder();\ndirector.constructSportsCar(carBuilder);\nCar car = carBuilder.getProduct();\n\nCarManualBuilder manualBuilder = new CarManualBuilder();\ndirector.constructSportsCar(manualBuilder);   // same method!\nManual manual = manualBuilder.getProduct();\n// Manual is GUARANTEED to describe a sports car — cannot drift out of sync"
+    },
+    {
+      "type": "example",
+      "title": "Example 4 — Document Generator (HTML/Markdown with Director)",
+      "body": "Same Director method produces an HTML report or a Markdown report depending on which builder is passed. The Director's `constructStandardReport()` never changes."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Document Generator",
+      "body": "interface DocumentBuilder {\n    void reset();\n    void buildTitle(String text);\n    void buildSection(String header, String body);\n    void buildFooter(String text);\n    Document getResult();\n}\n\nclass HtmlBuilder implements DocumentBuilder {\n    private Document doc;\n    public void reset()                              { doc = new Document(); }\n    public void buildTitle(String t)                 { doc.add(\"<h1>\" + t + \"</h1>\\n\"); }\n    public void buildSection(String h, String b)     { doc.add(\"<h2>\" + h + \"</h2><p>\" + b + \"</p>\\n\"); }\n    public void buildFooter(String t)                { doc.add(\"<footer>\" + t + \"</footer>\"); }\n    public Document getResult()                      { return doc; }\n}\n\nclass MarkdownBuilder implements DocumentBuilder {\n    private Document doc;\n    public void reset()                              { doc = new Document(); }\n    public void buildTitle(String t)                 { doc.add(\"# \" + t + \"\\n\"); }\n    public void buildSection(String h, String b)     { doc.add(\"## \" + h + \"\\n\" + b + \"\\n\"); }\n    public void buildFooter(String t)                { doc.add(\"---\\n*\" + t + \"*\"); }\n    public Document getResult()                      { return doc; }\n}\n\nclass DocumentDirector {\n    public void constructStandardReport(DocumentBuilder builder) {\n        builder.reset();\n        builder.buildTitle(\"Annual Financial Report\");\n        builder.buildSection(\"Executive Summary\", \"The company grew by 20%...\");\n        builder.buildSection(\"Analysis\", \"Detailed metrics show...\");\n        builder.buildFooter(\"Confidential - 2026\");\n    }\n}\n\n// CLIENT — same director, two formats\nDocumentDirector director = new DocumentDirector();\nHtmlBuilder htmlBuilder = new HtmlBuilder();\nMarkdownBuilder mdBuilder = new MarkdownBuilder();\n\ndirector.constructStandardReport(htmlBuilder);\ndirector.constructStandardReport(mdBuilder);\n// Both outputs describe the same report — just in different formats"
+    }
+  ],
+  "flashcards": [
+    { "q": "In the Car/Manual example, how does Builder guarantee the Manual matches the Car?", "a": "Both CarBuilder and CarManualBuilder implement the same Builder interface with the same steps. The Director calls constructSportsCar() using both. Since the step sequence is identical, the Manual is structurally guaranteed to describe a sports car — they cannot drift out of sync." },
+    { "q": "What is the Static Inner Builder idiom in Java and what problem does it solve?", "a": "The Builder is a static nested class inside the Product class. The Product's constructor is private — only the inner Builder can call it. This prevents illegal construction outside the Builder and ensures the product is fully formed before exposure." },
+    { "q": "What does method chaining (Fluent Interface) mean in the context of Builder?", "a": "Each setter method returns `this` (the Builder instance), allowing calls to be chained: `builder.setA(x).setB(y).build()`. This makes the construction code read like a sentence and eliminates intermediate variable assignments." }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "**Implement HttpRequest Builder (Medium):** Build an immutable `HttpRequest` class. Required fields: `url`, `method`. Optional: `body` (default null), `timeout` (default 30), `headers` (default empty). Use the Static Inner Builder idiom. The `build()` method should throw `IllegalArgumentException` if `url` is empty.",
+      "a": "```java\npublic class HttpRequest {\n    private final String url;\n    private final String method;\n    private final String body;\n    private final int timeout;\n    private final Map<String,String> headers;\n\n    private HttpRequest(Builder b) {\n        this.url = b.url; this.method = b.method;\n        this.body = b.body; this.timeout = b.timeout;\n        this.headers = Collections.unmodifiableMap(new HashMap<>(b.headers));\n    }\n\n    public static class Builder {\n        private final String url, method;\n        private String body = null;\n        private int timeout = 30;\n        private Map<String,String> headers = new HashMap<>();\n\n        public Builder(String url, String method) { this.url = url; this.method = method; }\n        public Builder body(String b)              { this.body = b; return this; }\n        public Builder timeout(int s)              { this.timeout = s; return this; }\n        public Builder header(String k, String v)  { headers.put(k, v); return this; }\n\n        public HttpRequest build() {\n            if (url == null || url.isEmpty())\n                throw new IllegalArgumentException(\"URL cannot be empty.\");\n            return new HttpRequest(this);\n        }\n    }\n}\n\n// Client\nHttpRequest req = new HttpRequest.Builder(\"https://api.example.com/users\", \"POST\")\n    .body(\"{\\\"name\\\": \\\"Alice\\\"}\")\n    .timeout(60)\n    .header(\"Content-Type\", \"application/json\")\n    .build();\n```",
+      "hint": "Required fields go in the Builder constructor. Optional fields get setters that return `this`. Validation logic belongs in `build()`, not in setters."
+    }
+  ]
+}

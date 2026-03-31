@@ -66,6 +66,18 @@
       "q": "A signal at 12 kHz is sampled at 10 kHz. What alias frequency appears?",
       "a": "$f_{Nyquist} = 10{,}000 \\div 2 = 5{,}000$ Hz\n\n12 kHz > 5 kHz → aliasing occurs\n\n$f_{alias} = 10{,}000 - 12{,}000 = -2{,}000$ Hz\n\nTake absolute value: **2 kHz** appears.",
       "hint": "If alias = fs − f is negative, take the absolute value."
+    },
+    {
+      "type": "calculation",
+      "q": "A signal contains three frequencies: 2 kHz, 5 kHz, and 9 kHz. What is the minimum sampling rate needed?",
+      "a": "Nyquist applies to the **highest frequency** component.\n\n$f_{max} = 9 \\text{ kHz}$\n\n$f_s \\ge 2 \\times 9{,}000 = \\mathbf{18{,}000 \\text{ Hz}}$\n\nNeed at least 18 kHz — must cover all frequencies present.",
+      "hint": "Nyquist uses fmax — the highest frequency in the signal."
+    },
+    {
+      "type": "calculation",
+      "q": "A 20 kHz signal is sampled at 18 kHz. Does aliasing occur? If so, what alias frequency appears?",
+      "a": "$f_{Nyquist} = 18{,}000 \\div 2 = 9{,}000$ Hz\n\n20 kHz > 9 kHz → **Yes, aliasing occurs!**\n\n$f_{alias} = 18{,}000 - 20{,}000 = -2{,}000$ Hz → absolute value: **2 kHz**\n\nThe 20 kHz signal appears as 2 kHz.",
+      "hint": "fNyquist = fs/2. If signal > fNyquist, alias = |fs − f|."
     }
   ]
 }

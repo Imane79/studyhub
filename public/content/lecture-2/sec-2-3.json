@@ -52,6 +52,34 @@
     {
       "q": "Do 3-3-2 and Median-Cut produce different file sizes?",
       "a": "No — same file size. Both produce 8-bit indexed images with a 256-entry LUT. Only visual quality differs."
+    },
+    {
+      "q": "An image is all grayscale (R=G=B). Which method wastes more palette slots: 3-3-2 or Median-Cut?",
+      "a": "3-3-2 wastes more. Its 256 colors are fixed across all possible RGB combos, but a grayscale image only needs colors where R=G=B — so 200+ slots go unused. Median-Cut looks at the image first and creates a palette of just grays, using all 256 slots efficiently."
+    },
+    {
+      "q": "You quantize (200, 100, 50) with 3-3-2 and reconstruct it as (208, 144, 32). Why doesn't reconstruction return the original?",
+      "a": "Quantization loses information. Dividing and rounding down discards the fractional part (200÷32=6.25 → lose .25). Multiplying back gives the center of the range (6×32+16=208), not the original 200. The file is smaller because you lost precision — that's the trade-off."
+    },
+    {
+      "q": "Why does 3-3-2 quantization divide by 32, 32, 64 — not some other numbers?",
+      "a": "Step size = 256 ÷ 2^bits. Red/Green use 3 bits → 2³=8 levels → 256÷8=32. Blue uses 2 bits → 2²=4 levels → 256÷4=64. The step size is derived from how many bits are allocated to each channel."
+    },
+    {
+      "q": "In Median-Cut, why is each box represented by the average color rather than one pixel from the box?",
+      "a": "The average minimizes total error across all pixels in the box. If you pick one pixel, other pixels in the box are farther away. The average is equidistant from all members, minimizing the sum of quantization errors."
+    },
+    {
+      "q": "Median-Cut is applied to Image A (all red pixels) and Image B (rainbow — all colors). Which has better quality?",
+      "a": "Image A. It has few distinct colors, so Median-Cut creates a palette that perfectly represents them. Image B has 10,000+ colors spread across the spectrum; fitting them into 256 forces more compromise. Fewer original colors = better Median-Cut quality."
+    },
+    {
+      "q": "Why does 3-3-2 give Blue only 2 bits while Red and Green each get 3 bits?",
+      "a": "Human eyes are least sensitive to blue (fewer blue cones; blue is rare in nature). Losing blue detail is less noticeable than losing red or green. 3-3-2 exploits human perception to save bits where they matter least."
+    },
+    {
+      "q": "A 32-bit image is 10,000 bytes (2,500 pixels). Why is the 8-bit version ~3,268 bytes instead of exactly 2,500 bytes?",
+      "a": "The palette is part of the file. Total = pixel data + palette. Pixel data: 2,500×1 = 2,500 bytes. Palette: 256 colors × 3 bytes = 768 bytes. Total = 3,268 bytes. You can't ignore palette cost — for small images the palette overhead can make 8-bit not worth it."
     }
   ],
   "problems": [
@@ -78,6 +106,18 @@
       "q": "Median Cut produces better quality than 3-3-2 but the file size is the same. Why?",
       "a": "Both methods produce an **8-bit indexed image** — 1 byte per pixel + a 256-entry LUT. The file size depends on image dimensions, not which 256 colors are in the LUT.\n\nMedian Cut looks better because its palette is **adaptive** — it concentrates entries on colors actually present in the image rather than spreading them uniformly across all hues.",
       "hint": "File size = pixels + LUT. LUT is always 256×3 bytes regardless of which colors are in it."
+    },
+    {
+      "type": "calculation",
+      "q": "Apply 3-3-2 quantization to RGB (200, 150, 100). Find Rq, Gq, Bq, the index, and the reconstructed LUT color.",
+      "a": "$R_q = \\lfloor 200 \\div 32 \\rfloor = \\mathbf{6}$ → 110\n\n$G_q = \\lfloor 150 \\div 32 \\rfloor = \\mathbf{4}$ → 100\n\n$B_q = \\lfloor 100 \\div 64 \\rfloor = \\mathbf{1}$ → 01\n\n**Index** = 11010001 = **209**\n\n**Reconstruct:** R = 6×32+16 = **208**, G = 4×32+16 = **144**, B = 1×64+32 = **96**\n\nLUT[209] = (208, 144, 96) — original was (200, 150, 100), error is small.",
+      "hint": "R, G: divide by 32. B: divide by 64. Pack RRRGGGBB."
+    },
+    {
+      "type": "conceptual",
+      "q": "Median Cut: given 4 colors — Red(255,0,0), Orange(255,128,0), Green(0,255,0), Blue(0,0,255) — reduce to 2 colors. Show the first split and final palette.",
+      "a": "**Step 1: Find ranges**\n\nR: 0–255 = 255, G: 0–255 = 255, B: 0–255 = 255 (all equal — pick R)\n\n**Step 2: Sort by R**\n\nBlue(0,0,255), Green(0,255,0), Orange(255,128,0), Red(255,0,0)\n\n**Step 3: Split at median**\n\nGroup 1: Blue, Green (low R)\n\nGroup 2: Orange, Red (high R)\n\n**Step 4: Average each group**\n\nPalette 1: avg(Blue+Green) = **(0, 127, 127)**\n\nPalette 2: avg(Orange+Red) = **(255, 64, 0)**\n\nResult: 4 colors → 2 palette entries!",
+      "hint": "Sort by channel with largest range, split at median, average each group."
     }
   ]
 }

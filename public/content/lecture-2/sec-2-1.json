@@ -62,6 +62,24 @@
       "q": "What is the difference between image resolution and display resolution? Why does a 1600×1200 image look larger on a small screen?",
       "a": "**Image resolution** = total number of pixels in the image (e.g., 1600×1200).\n\n**Display resolution** = number of pixels on the screen.\n\nA 1600×1200 image on a 800×600 screen needs to be scaled down to fit. On a small but high-res screen it may appear sharper — more pixels per inch.",
       "hint": "Resolution is about pixel count, not physical size."
+    },
+    {
+      "type": "calculation",
+      "q": "Calculate the storage size of a Full HD 1920×1080 24-bit color image. Give answer in bytes and MB.",
+      "a": "$1920 \\times 1080 = 2{,}073{,}600$ pixels\n\n$\\times 3$ bytes per pixel = $\\mathbf{6{,}220{,}800}$ bytes\n\n$\\div 1{,}048{,}576 \\approx \\mathbf{5.93 \\text{ MB}}$\n\nAbout 6 MB uncompressed.",
+      "hint": "24-bit = 3 bytes per pixel (8R + 8G + 8B)."
+    },
+    {
+      "type": "calculation",
+      "q": "An 800×600 1-bit image — how many bytes? How does it compare to an 8-bit grayscale of the same size?",
+      "a": "$800 \\times 600 = 480{,}000$ pixels\n\n$480{,}000 \\times 1 \\text{ bit} = 480{,}000 \\text{ bits}$\n\n$\\div 8 = \\mathbf{60{,}000 \\text{ bytes}} \\approx 59 \\text{ KB}$\n\n**8-bit version:** $800 \\times 600 = 480{,}000$ bytes = 469 KB\n\n1-bit is **8× smaller** than 8-bit grayscale.",
+      "hint": "1-bit: divide total pixels by 8 to get bytes. 8-bit: pixels = bytes."
+    },
+    {
+      "type": "calculation",
+      "q": "A 4000×3000 (12 megapixel) 32-bit image. How large is it uncompressed?",
+      "a": "$4000 \\times 3000 = 12{,}000{,}000$ pixels\n\n$\\times 4$ bytes per pixel (R, G, B, Alpha) = $48{,}000{,}000$ bytes\n\n$\\div 1{,}048{,}576 \\approx \\mathbf{45.78 \\text{ MB}}$\n\nThis is why cameras save as JPEG — raw would be ~46 MB per shot!",
+      "hint": "32-bit = 4 bytes per pixel (adds alpha channel to 24-bit)."
     }
   ]
 }

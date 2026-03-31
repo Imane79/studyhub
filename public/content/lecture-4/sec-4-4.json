@@ -64,6 +64,24 @@
       "q": "Why is the anti-aliasing filter applied before sampling, and the low-pass filter applied after playback?",
       "a": "**Anti-aliasing filter (before sampling):** removes frequencies above fNyquist *before* the ADC sees them. Once aliasing happens during sampling, the alias frequency is indistinguishable from a real signal — it cannot be removed afterwards.\n\n**Low-pass filter (after playback):** the DAC output is a staircase waveform. The filter smooths it, removing high-frequency steps that were introduced by the discrete sampling process.",
       "hint": "Aliasing is irreversible — must prevent before it happens. DAC staircase is an artifact of reconstruction."
+    },
+    {
+      "type": "calculation",
+      "q": "A CD holds 650 MB. How many minutes of CD-quality stereo audio does it store? (CD rate = 176,400 bytes/sec)",
+      "a": "$\\text{Total bytes} = 650 \\times 1{,}048{,}576 = 681{,}574{,}400$ bytes\n\n$\\text{Duration} = \\frac{681{,}574{,}400}{176{,}400} \\approx 3{,}863 \\text{ seconds}$\n\n$\\div 60 \\approx \\mathbf{64.4 \\text{ minutes}}$\n\nA standard CD holds about 74 minutes (700 MB) using this calculation.",
+      "hint": "Convert MB to bytes first (× 1,048,576), then divide by data rate."
+    },
+    {
+      "type": "calculation",
+      "q": "You need to transmit 16-bit stereo audio over a 512 kbps bandwidth link. What is the maximum sampling rate you can use?",
+      "a": "Data Rate = $f_s \\times B \\times C$\n\n$512{,}000 = f_s \\times 16 \\times 2$\n\n$f_s = \\frac{512{,}000}{32} = \\mathbf{16{,}000 \\text{ Hz}}$\n\nMaximum sampling rate = **16 kHz** → can capture up to 8 kHz audio.",
+      "hint": "Rearrange formula: fs = Data Rate ÷ (B × C)."
+    },
+    {
+      "type": "conceptual",
+      "q": "Compare CD audio vs telephone quality. List their parameters and explain why each choice was made.",
+      "a": "| Parameter | CD Audio | Telephone |\n|-----------|----------|-----------|\n| fs | 44,100 Hz | 8,000 Hz |\n| Bits | 16 | 8 |\n| Channels | Stereo | Mono |\n| Data Rate | 1.41 Mbps | 64 kbps |\n| SQNR | 96 dB | 48 dB |\n\n**CD:** High fidelity music — needs full 20 kHz range, high dynamic range.\n\n**Telephone:** Voice only — human speech is 300–3,400 Hz, 8 kHz is sufficient. 8-bit with companding gives acceptable voice quality at low bandwidth cost.",
+      "hint": "Think about the use case: music needs much higher quality than voice."
     }
   ]
 }

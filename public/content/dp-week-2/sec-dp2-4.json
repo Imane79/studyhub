@@ -1,0 +1,68 @@
+{
+  "id": "sec-dp2-4",
+  "number": "2.4",
+  "title": "Code Examples",
+  "content": [
+    {
+      "type": "example",
+      "title": "Example 1 — Logistics (Pseudocode)",
+      "body": "The simplest version: `RoadLogistics` and `SeaLogistics` each override `createTransport()`. The `planDelivery()` method in the base class never changes."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Logistics — Pseudocode",
+      "body": "interface Transport { void deliver(); }\n\nclass Truck implements Transport {\n    void deliver() { /* deliver by land */ }\n}\nclass Ship implements Transport {\n    void deliver() { /* deliver by sea */ }\n}\n\nabstract class Logistics {           // CREATOR\n    abstract Transport createTransport();\n    void planDelivery() {\n        Transport t = createTransport();  // factory method call\n        t.deliver();\n    }\n}\n\nclass RoadLogistics extends Logistics {  // CONCRETE CREATOR\n    Transport createTransport() { return new Truck(); }\n}\nclass SeaLogistics extends Logistics {\n    Transport createTransport() { return new Ship(); }\n}"
+    },
+    {
+      "type": "example",
+      "title": "Example 2 — Cross-Platform Dialog (Java)",
+      "body": "`Dialog.render()` is written once and never changes. Adding `LinuxDialog` requires only creating `LinuxButton` and `LinuxDialog` — nothing else is touched."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Cross-Platform Dialog",
+      "body": "interface Button {\n    void render();\n    void onClick(Runnable f);\n}\n\nclass WindowsButton implements Button {\n    public void render() { System.out.println(\"Windows button\"); }\n    public void onClick(Runnable f) { f.run(); }\n}\nclass HTMLButton implements Button {\n    public void render() { System.out.println(\"<button>HTML</button>\"); }\n    public void onClick(Runnable f) { f.run(); }\n}\n\nabstract class Dialog {                         // CREATOR\n    public abstract Button createButton();       // FACTORY METHOD\n    public void render() {\n        Button btn = createButton();\n        btn.onClick(() -> System.out.println(\"Closing...\"));\n        btn.render();\n    }\n}\n\nclass WindowsDialog extends Dialog {\n    public Button createButton() { return new WindowsButton(); }\n}\nclass WebDialog extends Dialog {\n    public Button createButton() { return new HTMLButton(); }\n}"
+    },
+    {
+      "type": "example",
+      "title": "Example 3 — Document Converter (Java)",
+      "body": "Adding `MarkdownExporter` requires exactly two new classes (`MarkdownDocument` + `MarkdownExporter`). The `exportDocument()` business method is never modified."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Document Converter",
+      "body": "interface Document {\n    void open();\n    void save();\n}\n\nclass PDFDocument implements Document {\n    public void open() { System.out.println(\"PDF: Rendering fonts...\"); }\n    public void save() { System.out.println(\"PDF: Exporting file...\"); }\n}\nclass WordDocument implements Document {\n    public void open() { System.out.println(\"Word: Loading XML...\"); }\n    public void save() { System.out.println(\"Word: Updating docx...\"); }\n}\n\nabstract class DocumentCreator {\n    public abstract Document createDocument();  // FACTORY METHOD\n    public void exportDocument() {\n        Document doc = createDocument();\n        doc.open();\n        doc.save();\n    }\n}\n\nclass PDFExporter extends DocumentCreator {\n    public Document createDocument() { return new PDFDocument(); }\n}\nclass WordExporter extends DocumentCreator {\n    public Document createDocument() { return new WordDocument(); }\n}"
+    },
+    {
+      "type": "example",
+      "title": "Example 4 — Cross-Platform GUI (C++)",
+      "body": "`GUIFramework::renderUI()` delegates button creation to the factory method. `WindowsUI` and `MacUI` each return their platform-specific button."
+    },
+    {
+      "type": "code",
+      "language": "cpp",
+      "title": "Cross-Platform GUI — C++",
+      "body": "#include <iostream>\n#include <memory>\n\nclass Button {\npublic:\n    virtual ~Button() = default;\n    virtual void paint() = 0;\n    virtual void onClick() = 0;\n};\n\nclass WinButton : public Button {\npublic:\n    void paint() override { std::cout << \"Drawing Windows button\\n\"; }\n    void onClick() override { std::cout << \"Windows click!\\n\"; }\n};\nclass MacButton : public Button {\npublic:\n    void paint() override { std::cout << \"Drawing macOS button\\n\"; }\n    void onClick() override { std::cout << \"macOS click!\\n\"; }\n};\n\nclass GUIFramework {\npublic:\n    virtual std::unique_ptr<Button> createButton() = 0;  // FACTORY METHOD\n    void renderUI() {\n        auto btn = createButton();\n        btn->paint();\n        btn->onClick();\n    }\n};\n\nclass WindowsUI : public GUIFramework {\npublic:\n    std::unique_ptr<Button> createButton() override {\n        return std::make_unique<WinButton>();\n    }\n};\nclass MacUI : public GUIFramework {\npublic:\n    std::unique_ptr<Button> createButton() override {\n        return std::make_unique<MacButton>();\n    }\n};"
+    }
+  ],
+  "flashcards": [
+    { "q": "In the cross-platform GUI example, how can a subclass change the behavior of `render()` without overriding `render()` itself?", "a": "By overriding `createButton()`. The `render()` method calls `createButton()` internally — by changing what `createButton()` returns, the subclass changes the ingredient that `render()` works with, without touching `render()` itself." }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "**Notification System:** Design a system using Factory Method that supports Email, SMS, and Push notifications. Define all four pattern participants.",
+      "a": "**Product:** `Notification` interface with `send(String message)`.\n**Concrete Products:** `EmailNotification`, `SMSNotification`, `PushNotification`.\n**Creator:** abstract `NotificationCreator` with `createNotification()` factory method and `notify(String message)` that calls it.\n**Concrete Creators:** `EmailCreator`, `SMSCreator`, `PushCreator`.\n\nClient only changes which Creator it instantiates. `notify()` never changes.",
+      "hint": "The notify() method in Creator calls createNotification() then send(). Client only picks which Creator to instantiate."
+    },
+    {
+      "type": "conceptual",
+      "q": "**Extend the Document Converter:** Add a `MarkdownDocument` format. Write only the new code needed — do not modify any existing classes. How many new classes do you need?",
+      "a": "Exactly **two** new classes:\n\n```java\nclass MarkdownDocument implements Document {\n    public void open() { System.out.println(\"Markdown: Parsing headers...\"); }\n    public void save() { System.out.println(\"Markdown: Writing .md file...\"); }\n}\n\nclass MarkdownExporter extends DocumentCreator {\n    public Document createDocument() { return new MarkdownDocument(); }\n}\n```\n\nThe entire existing codebase is untouched. This is OCP in action.",
+      "hint": "You need one Concrete Product and one Concrete Creator. Nothing else changes."
+    }
+  ]
+}

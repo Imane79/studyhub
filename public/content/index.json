@@ -1,9 +1,12 @@
 {
   "lectures": [
-    { "id": "lecture-2", "sections": ["sec-2-1", "sec-2-2", "sec-2-3", "sec-2-4"] },
-    { "id": "lecture-3", "sections": ["sec-3-1", "sec-3-2", "sec-3-3"] },
-    { "id": "lecture-4", "sections": ["sec-4-1", "sec-4-2", "sec-4-3", "sec-4-4"] },
-    { "id": "lecture-5", "sections": ["sec-5-1", "sec-5-2", "sec-5-3", "sec-5-4"] },
-    { "id": "lecture-6", "sections": ["sec-6-1", "sec-6-2", "sec-6-3", "sec-6-4"] }
+    { "id": "lecture-2", "courseId": "multimedia", "sections": ["sec-2-1", "sec-2-2", "sec-2-3", "sec-2-4"] },
+    { "id": "lecture-3", "courseId": "multimedia", "sections": ["sec-3-1", "sec-3-2", "sec-3-3"] },
+    { "id": "lecture-4", "courseId": "multimedia", "sections": ["sec-4-1", "sec-4-2", "sec-4-3", "sec-4-4"] },
+    { "id": "lecture-5", "courseId": "multimedia", "sections": ["sec-5-1", "sec-5-2", "sec-5-3", "sec-5-4"] },
+    { "id": "lecture-6", "courseId": "multimedia", "sections": ["sec-6-1", "sec-6-2", "sec-6-3", "sec-6-4"] },
+    { "id": "dp-week-2", "courseId": "design-patterns", "sections": ["sec-dp2-1", "sec-dp2-2", "sec-dp2-3", "sec-dp2-4", "sec-dp2-5"] },
+    { "id": "dp-week-3", "courseId": "design-patterns", "sections": ["sec-dp3-1", "sec-dp3-2", "sec-dp3-3", "sec-dp3-4", "sec-dp3-5"] },
+    { "id": "dp-week-4", "courseId": "design-patterns", "sections": ["sec-dp4-1", "sec-dp4-2", "sec-dp4-3", "sec-dp4-4", "sec-dp4-5"] }
   ]
 }

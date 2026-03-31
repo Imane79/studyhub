@@ -1,0 +1,46 @@
+{
+  "id": "sec-dp3-2",
+  "number": "3.2",
+  "title": "The Solution & Pattern Structure",
+  "content": [
+    {
+      "type": "text",
+      "body": "### Step-by-Step Implementation\n\n**Step 1 — Define Abstract Product Interfaces.** One interface per product type. Every variant must implement it.\n\n**Step 2 — Implement Concrete Products per Variant.** If a style exists, it must have a concrete product for *every* product type. You can't have `ModernChair` without `ModernSofa` and `ModernTable`.\n\n**Step 3 — Declare the Abstract Factory Interface.** One creation method per product type. Methods return Abstract Product types — never concrete types.\n\n**Step 4 — Implement Concrete Factories per Variant.** Each factory is a 'closed ecosystem.' A `VictorianFurnitureFactory` **cannot** return a `ModernChair` — enforced by the class structure itself, not by runtime checks.\n\n**Step 5 — Centralized Initialization.** The concrete factory is instantiated **exactly once** at application startup based on config/environment, then injected into the client."
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "**The only place concrete names appear:** The initialization/configuration code at startup. Everywhere else in the program uses only abstract factory and abstract product interfaces."
+    },
+    {
+      "type": "table",
+      "headers": ["Participant", "Role"],
+      "rows": [
+        ["**AbstractFactory**", "Interface declaring creation methods for every product in the family"],
+        ["**ConcreteFactory**", "Implements AbstractFactory; creates one specific variant's full product suite"],
+        ["**AbstractProduct**", "Interface for one product type (e.g., Button, Chair)"],
+        ["**ConcreteProduct**", "A specific variant implementation (e.g., WinButton, ModernChair)"],
+        ["**Client**", "Uses only AbstractFactory and AbstractProduct interfaces; receives factory via injection"]
+      ]
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "title": "UML Structure",
+      "body": "<<interface>> AbstractFactory\n  + createProductA(): AbstractProductA\n  + createProductB(): AbstractProductB\n         ▲                    ▲\n         │                    │\n ConcreteFactory1       ConcreteFactory2\n + createProductA()     + createProductA()\n   → new ProductA1        → new ProductA2\n + createProductB()     + createProductB()\n   → new ProductB1        → new ProductB2\n\nProductA1, ProductB1     ProductA2, ProductB2\n       │                          │\n       └──────────┬───────────────┘\n                  ▼\n       <<interface>> AbstractProductA"
+    }
+  ],
+  "flashcards": [
+    { "q": "What are the five participants in the Abstract Factory pattern?", "a": "Abstract Factory (the interface), Concrete Factory (one per variant), Abstract Product (interface per product type), Concrete Product (specific variant implementation), Client (uses only abstract types)." },
+    { "q": "Why must factory methods return Abstract Product types instead of Concrete Product types?", "a": "So the client remains unaware of which specific variant it is using. If `createButton()` returned `WinButton` instead of `Button`, the client would be coupled to Windows — defeating the pattern's purpose." },
+    { "q": "What does Dependency Injection mean in the context of Abstract Factory?", "a": "The concrete factory is instantiated at startup and passed into the client via the constructor. The client never creates the factory itself — it just receives it. This keeps the client decoupled from knowing which concrete factory it's working with." }
+  ],
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "**Identify the Pattern:** A system creates database connections for MySQL and PostgreSQL. Each requires a `Connection` object and a `QueryBuilder` object. The client must never know which database it's using, and a MySQL `Connection` must never be paired with a PostgreSQL `QueryBuilder`. Name all five participants with concrete names for this scenario.",
+      "a": "**Pattern:** Abstract Factory (not Factory Method — two products must always match).\n\n- **Abstract Factory:** `IDatabaseFactory` with `createConnection()` and `createQueryBuilder()`\n- **Concrete Factories:** `MySQLFactory`, `PostgreSQLFactory`\n- **Abstract Products:** `Connection`, `QueryBuilder`\n- **Concrete Products:** `MySQLConnection`, `MySQLQueryBuilder`, `PostgreSQLConnection`, `PostgreSQLQueryBuilder`\n- **Client:** A `DataAccessLayer` that receives the factory via constructor injection\n\nThe DB type decision is made once at startup via config (e.g., `DB_TYPE=MySQL`).",
+      "hint": "Why can't Factory Method work here? Think about what happens if you use two separate Factory Methods independently."
+    }
+  ]
+}

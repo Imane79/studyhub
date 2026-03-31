@@ -1,0 +1,54 @@
+{
+  "id": "sec-dp4-5",
+  "number": "4.5",
+  "title": "Builder vs. Other Patterns & Relations",
+  "content": [
+    {
+      "type": "table",
+      "headers": ["Comparison", "Builder", "Factory Method", "Abstract Factory"],
+      "rows": [
+        ["**Problem solved**", "How to construct a complex object step-by-step", "Which class to instantiate", "Which family of objects to create"],
+        ["**Product count**", "One complex product", "One product", "A family of products"],
+        ["**Timing**", "Build over multiple steps; fetch when ready", "Instant creation", "Instant creation"],
+        ["**Optional params**", "Designed for many optional params", "Not applicable", "Not applicable"]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "tip",
+      "body": "**Evolution path:** Most designs start with **Factory Method**, grow to **Abstract Factory** when families are needed, and reach for **Builder** when individual objects become too complex to construct in one call."
+    },
+    {
+      "type": "table",
+      "headers": ["Related Pattern", "Relationship"],
+      "rows": [
+        ["**Composite**", "Builder is ideal for constructing Composite trees — `startSubGroup()` / `endSubGroup()` steps build the hierarchy recursively using an internal Stack"],
+        ["**Abstract Factory**", "Both are Creational. Abstract Factory returns product immediately. Builder allows deferred, step-by-step construction"],
+        ["**Singleton**", "Builders, Abstract Factories, and Prototypes are often Singletons when a single globally consistent construction utility is needed"],
+        ["**Bridge**", "Combine by making the Director the abstraction and the various Builders the implementations"]
+      ]
+    },
+    {
+      "type": "example",
+      "title": "Recursive Tree Builder (Financial Portfolio)",
+      "body": "Builder maintains a Stack tracking the current nesting depth. `startSubPortfolio()` creates a child, adds it to the current node, and pushes it onto the stack. `endSubPortfolio()` pops the stack, returning to the parent."
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "title": "Portfolio Tree Builder",
+      "body": "class PortfolioBuilder {\n    private Stack<PortfolioGroup> stack = new Stack<>();\n    private PortfolioGroup root;\n\n    public PortfolioBuilder(String rootName) {\n        root = new PortfolioGroup(rootName);\n        stack.push(root);\n    }\n\n    public PortfolioBuilder startSubPortfolio(String name) {\n        PortfolioGroup sub = new PortfolioGroup(name);\n        stack.peek().add(sub);\n        stack.push(sub);   // dive deeper\n        return this;\n    }\n\n    public PortfolioBuilder addStock(String symbol, double price) {\n        stack.peek().add(new Stock(symbol, price));\n        return this;\n    }\n\n    public PortfolioBuilder endSubPortfolio() {\n        if (stack.size() > 1) stack.pop();   // return to parent\n        return this;\n    }\n\n    public PortfolioGroup build() { return root; }\n}\n\n// CLIENT — reads like an outline\nPortfolioGroup portfolio = new PortfolioBuilder(\"Main Account\")\n    .addStock(\"CASH\", 5000)\n    .startSubPortfolio(\"Tech Growth Fund\")\n        .addStock(\"AAPL\", 1500)\n        .addStock(\"NVDA\", 2000)\n        .startSubPortfolio(\"Crypto\")\n            .addStock(\"BTC\", 50000)\n        .endSubPortfolio()\n    .endSubPortfolio()\n    .addStock(\"Gold ETF\", 3000)\n    .build();"
+    },
+    {
+      "type": "callout",
+      "style": "exam",
+      "body": "**Quick Reference:**\n- **4 participants:** Builder Interface, Concrete Builder, Product, Director (optional)\n- **Key rule:** Director never returns the product — always get it from the builder\n- **Trigger:** Too many optional params, multiple representations, tree construction, deferred build\n- **Immutability:** Mutable builder → immutable product via `build()`"
+    }
+  ],
+  "flashcards": [
+    { "q": "How is Builder used to construct Composite trees?", "a": "The Builder maintains a Stack tracking the current nesting depth. `startSubGroup()` creates a child, adds it to the current node, and pushes it onto the stack. `endSubGroup()` pops the stack, returning to the parent. The client sees clean flat calls while the Builder handles complex parent-child linking." },
+    { "q": "What is the evolution path across all three Creational patterns covered so far?", "a": "Start with **Factory Method** (one product, subclass decides which). Grow to **Abstract Factory** when you need a family of compatible products. Reach for **Builder** when an individual object becomes too complex to construct in one call." },
+    { "q": "What is a Director's primary responsibility?", "a": "Defining the exact order and sequence in which construction steps are called. It encapsulates 'recipes' for building specific product configurations. It does not know the implementation details of those steps — that's the Builder's job." }
+  ],
+  "problems": []
+}
