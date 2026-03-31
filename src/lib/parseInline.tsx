@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 let keyCounter = 0;
 function nextKey() {
@@ -10,7 +12,37 @@ function nextKey() {
 
 export function parseInline(text: string): React.ReactNode[] {
   if (!text) return [];
-  return parseBlockMath(text);
+  return parseFencedCode(text);
+}
+
+function parseFencedCode(text: string): React.ReactNode[] {
+  const parts = text.split(/(```[\w]*\n[\s\S]*?```)/g);
+  const result: React.ReactNode[] = [];
+  for (const part of parts) {
+    if (part.startsWith('```')) {
+      const firstNewline = part.indexOf('\n');
+      const lang = part.slice(3, firstNewline).trim() || 'text';
+      const code = part.slice(firstNewline + 1, -3);
+      result.push(
+        <div key={nextKey()} className="rounded-[10px] overflow-hidden border border-[var(--border)] my-3">
+          <div style={{ background: 'var(--bg-elevated)', padding: '4px 12px', borderBottom: '1px solid var(--border)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-dim)' }}>{lang}</span>
+          </div>
+          <SyntaxHighlighter
+            language={lang}
+            style={oneDark}
+            customStyle={{ margin: 0, background: '#0d1117', fontSize: '0.82rem', lineHeight: '1.6', padding: '12px 16px', fontFamily: 'var(--font-mono)' }}
+            PreTag="div"
+          >
+            {code}
+          </SyntaxHighlighter>
+        </div>
+      );
+    } else {
+      result.push(...parseBlockMath(part));
+    }
+  }
+  return result;
 }
 
 function parseBlockMath(text: string): React.ReactNode[] {

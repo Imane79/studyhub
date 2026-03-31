@@ -5,7 +5,7 @@
   "content": [
     {
       "type": "text",
-      "body": "### When to Use Factory Method\n\n**Scenario 1 — You don't know the exact type at compile time.** Use Factory Method when the object type is determined at runtime (from config, user input, environment).\n\n**Scenario 2 — You want users to extend your framework.** Expose factory methods as extension points. Users subclass your Creator and override the factory method without touching your source code.\n\n**Scenario 3 — You want to reuse existing objects.** The factory method can return cached or pooled instances — useful for expensive objects like DB connections.\n\n**When NOT to use it:** Don't reach for Factory Method for simple, one-off object creation that won't change. It adds indirection and subclasses. Start simple; refactor to the pattern when tight coupling becomes painful."
+      "body": "### When to Use Factory Method\n\n**Scenario 1 — You don't know the exact type at compile time.** Use Factory Method when the object type is determined at runtime (from config, user input, environment).\n\n**Scenario 2 — You want users to extend your framework.** Expose factory methods as extension points. Users subclass your Creator and override the factory method without touching your source code.\n\n**Scenario 3 — You want to reuse existing objects.** The factory method can return cached or pooled instances — useful for expensive objects like DB connections.\n\n**When NOT to use it:** Don't reach for Factory Method for simple, one-off object creation that won't change. Start simple; refactor to the pattern when tight coupling becomes painful."
     },
     {
       "type": "callout",
@@ -18,18 +18,13 @@
       "rows": [
         ["**Single Responsibility**", "Object creation logic lives in one place (the concrete creator), not scattered throughout business logic"],
         ["**Open/Closed**", "Add a new product type by creating a new subclass — existing code is never modified"],
-        ["**Loose Coupling**", "Client code depends only on the abstract Product interface, not on any concrete class"]
+        ["**Liskov Substitution**", "All products implement the same interface, so they can be used interchangeably"],
+        ["**Dependency Inversion**", "Client code depends on abstractions (Product interface), not concrete classes"]
       ]
     },
     {
       "type": "text",
       "body": "### Relations to Other Patterns\n\n**Factory Method → Abstract Factory:** Abstract Factory is a *collection* of Factory Methods. A single Factory Method creates one product. An Abstract Factory groups multiple Factory Methods to create a *family* of related products (e.g., Button + Checkbox + Scrollbar — all Windows-style).\n\n**Factory Method → Template Method:** Factory Method is a *specialization* of Template Method. A Template Method defines an algorithm skeleton with customizable steps. A Factory Method is a Template Method whose only customizable step is object creation.\n\n**Factory Method → Iterator:** Collection classes use Factory Method to return the correct Iterator. A `TreeCollection` returns a `TreeIterator`; a `ListCollection` returns a `ListIterator`. The client just calls `getIterator()`."
-    },
-    {
-      "type": "code",
-      "language": "text",
-      "title": "Template Method vs Factory Method",
-      "body": "Template Method:  Step1 → Step2 → createProduct() → Step4\nFactory Method:   createProduct()   ← the only step"
     },
     {
       "type": "callout",
@@ -38,16 +33,31 @@
     }
   ],
   "flashcards": [
-    { "q": "How does the Factory Method satisfy the Open/Closed Principle?", "a": "New product types are added by creating new Concrete Creator and Concrete Product subclasses. Existing code — especially the Creator's business logic — is never modified." },
-    { "q": "What is the difference between Factory Method and Abstract Factory?", "a": "Factory Method creates one product type via a single method. Abstract Factory creates a *family* of related products and is essentially a group of Factory Methods bundled together." },
-    { "q": "How does Factory Method relate to Template Method?", "a": "Factory Method is a specialization of Template Method. A Template Method defines an algorithm skeleton with customizable steps; a Factory Method is a Template Method whose only customizable step is object creation." }
+    {
+      "q": "How does the Factory Method satisfy the Open/Closed Principle?",
+      "a": "New product types are added by creating new Concrete Creator and Concrete Product subclasses. Existing code — especially the Creator's business logic — is never modified."
+    },
+    {
+      "q": "What is the difference between Factory Method and Abstract Factory?",
+      "a": "Factory Method creates one product type via a single method. Abstract Factory creates a *family* of related products and is essentially a group of Factory Methods bundled together."
+    },
+    {
+      "q": "What are the three scenarios where you should use Factory Method?",
+      "a": "1) When you don't know the exact type at compile time. 2) When you want users to extend your framework. 3) When you want to reuse existing objects (caching/pooling)."
+    }
   ],
   "problems": [
     {
       "type": "conceptual",
-      "q": "**Game Engine (Hard):** Build a game engine with Story Mode (spawns `Goblin`), Hard Mode (spawns `Dragon`), and Endless Mode (spawns `ZombieHorde`). Each enemy has `attack()`, `dropLoot()`, and `displayHealth()`. Write a `GameSession` class that runs a `startWave()` — it must never change when a new mode is added.",
-      "a": "**Product:** `Enemy` interface with `attack()`, `dropLoot()`, `displayHealth()`.\n**Concrete Products:** `Goblin`, `Dragon`, `ZombieHorde`.\n**Creator:** abstract `EnemyCreator` with `createEnemy()` factory method.\n**Concrete Creators:** `StoryModeCreator`, `HardModeCreator`, `EndlessModeCreator`.\n\n```java\nclass GameSession {\n    private EnemyCreator creator;\n    GameSession(EnemyCreator creator) { this.creator = creator; }\n    void startWave() {\n        Enemy e = creator.createEnemy(); // never changes\n        e.displayHealth();\n        e.attack();\n        e.dropLoot();\n    }\n}\n```\n\nAdding `BossMode`: create `BossEnemy` + `BossModeCreator`. `GameSession.startWave()` is never touched.",
-      "hint": "GameSession takes a Creator in its constructor. startWave() calls the factory method to get an enemy, then uses it. Factory method belongs in the Creator, not in GameSession."
+      "q": "**Game Engine:** Build a game engine with Story Mode (spawns `Goblin`), Hard Mode (spawns `Dragon`), and Endless Mode (spawns `ZombieHorde`). Each enemy has `attack()` and `dropLoot()`. Design the Factory Method structure. What are the 4 participants?",
+      "a": "- **Product:** `Enemy` interface with `attack()` and `dropLoot()`\n- **Concrete Products:** `Goblin`, `Dragon`, `ZombieHorde`\n- **Creator:** `GameMode` with `create_enemy()` factory method and `start_wave()` business logic\n- **Concrete Creators:** `StoryMode`, `HardMode`, `EndlessMode`\n\nThe `start_wave()` method calls `create_enemy()` and then calls `attack()` and `dropLoot()` — never knowing which enemy it got.",
+      "hint": "GameMode.start_wave() should be written once and never change. It calls the factory method to get an enemy, then uses it."
+    },
+    {
+      "type": "conceptual",
+      "q": "**Framework Design:** You're building a logging library. Users should be able to add their own log destinations (file, database, cloud) without modifying your library code. How does Factory Method enable this?",
+      "a": "Your library provides an abstract `Logger` interface and an abstract `LoggerFactory` with a `create_logger()` factory method. Users create their own concrete loggers (e.g., `CloudLogger`) and concrete factories (e.g., `CloudLoggerFactory`) that override `create_logger()`. Your library's core code calls the factory method and works with the `Logger` interface — it never knows about user's concrete classes.",
+      "hint": "The library should depend on abstractions, not on user's concrete classes."
     }
   ]
 }

@@ -6,7 +6,11 @@
     {
       "type": "callout",
       "style": "info",
-      "body": "**Core idea:** Instead of calling `new ConcreteClass()` directly, you call a factory method — and subclasses decide which concrete class to return."
+      "body": "**Core idea:** Instead of calling `new ConcreteClass()` directly, you call a factory method — and subclasses decide which concrete class to return. This breaks **tight coupling**."
+    },
+    {
+      "type": "text",
+      "body": "Design patterns are grouped into three categories by their purpose:"
     },
     {
       "type": "table",
@@ -19,30 +23,39 @@
     },
     {
       "type": "text",
-      "body": "**Key distinctions:**\n\n- **Creational** uses abstraction to hide the *how* and *when* of object creation.\n- **Structural** uses composition to define how classes are assembled.\n- **Behavioral** focuses on interaction flexibility — objects communicate without tight coupling."
+      "body": "**Why Factory Method is Creational:**\n\nIt hides the *how* and *when* of object creation. Your code works with abstractions, not concrete classes. This solves **tight coupling** — the problem of being locked into specific classes like `Truck`."
     },
     {
-      "type": "list",
-      "ordered": false,
-      "items": [
-        "**Creational:** Factory Method, Abstract Factory, Builder, Prototype, Singleton",
-        "**Structural:** Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy",
-        "**Behavioral:** Observer, Strategy, Command, State, Visitor, Mediator"
-      ]
+      "type": "definition",
+      "term": "Tight Coupling",
+      "body": "When code directly depends on concrete classes (e.g., `new Truck()`). Adding a new class means changing existing code everywhere — rigid and fragile."
     },
-    { "type": "definition", "term": "Design Pattern", "body": "A reusable solution to a commonly occurring problem in software design. Not code — a blueprint." },
-    { "type": "definition", "term": "Factory Method", "body": "A creational pattern that defines an interface for creating an object but lets subclasses decide which class to instantiate." },
-    { "type": "definition", "term": "Product", "body": "The object returned by the factory method. Must implement a common interface." },
-    { "type": "definition", "term": "Creator", "body": "The base class that declares the factory method and contains core business logic." },
-    { "type": "definition", "term": "Concrete Creator", "body": "A subclass of Creator that overrides the factory method to return a specific concrete product." },
-    { "type": "definition", "term": "Tight Coupling", "body": "When code is directly bound to a specific class (e.g., `new Truck()`), making changes expensive and risky." },
-    { "type": "definition", "term": "Open/Closed Principle (OCP)", "body": "Classes should be open for extension but closed for modification." },
-    { "type": "definition", "term": "Single Responsibility Principle (SRP)", "body": "A class should have only one reason to change." }
+    {
+      "type": "definition",
+      "term": "Open/Closed Principle (OCP)",
+      "body": "Classes should be open for extension (add new types) but closed for modification (existing code untouched). Factory Method enables this."
+    }
   ],
   "flashcards": [
-    { "q": "What is the Factory Method pattern's core intent?", "a": "Define an interface for creating an object, but let subclasses decide which class to instantiate. It allows a superclass to defer instantiation to its subclasses." },
-    { "q": "What are the three categories of design patterns?", "a": "**Creational** (object creation), **Structural** (class/object assembly), **Behavioral** (object communication)." },
-    { "q": "Why must all products share a common interface?", "a": "Because the Creator's factory method declares its return type as the Product interface. The client code only knows about this interface — it must be able to call the same methods regardless of which concrete product was returned." }
+    {
+      "q": "Why do we use Factory Method?",
+      "a": "To break tight coupling. Without it, code depends directly on concrete classes like `new Truck()`. Adding new types forces changes everywhere. Factory Method moves creation to subclasses so existing code never changes."
+    },
+    {
+      "q": "What category does Factory Method belong to and why?",
+      "a": "Creational — because it focuses on object creation and uses abstraction to hide how and when objects are made."
+    },
+    {
+      "q": "What is tight coupling?",
+      "a": "When code directly depends on concrete classes (e.g., `new Truck()`). Adding a new class means changing existing code everywhere — rigid and fragile."
+    }
   ],
-  "problems": []
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "Look at this Python code and answer: (1) Where is the tight coupling? (2) If you add HTMLExporter, how many places change? (3) What extra responsibility does DocumentApp have?\n\n```python\nclass DocumentApp:\n    def save_document(self, format_type):\n        if format_type == 'pdf':\n            exporter = PDFExporter()\n        else:\n            exporter = WordExporter()\n        exporter.export()\n```",
+      "a": "1. **Tight coupling:** The if/else block creates concrete classes directly — DocumentApp knows about every exporter type.\n2. **Adding HTMLExporter:** At least 2 places change: add an `elif` condition and possibly update the `else` logic. If this pattern repeats elsewhere, many more.\n3. **Extra responsibility:** DocumentApp is both deciding *which* exporter to create (creation logic) AND using the exporter (business logic). This violates Single Responsibility Principle.",
+      "hint": "Look at the if/else block and what DocumentApp is doing besides calling export()."
+    }
+  ]
 }

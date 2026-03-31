@@ -60,6 +60,11 @@ body {
   background: var(--text-dim);
 }
 
+/* Remove Prism token background highlights */
+.token {
+  background: transparent !important;
+}
+
 /* Focus outlines */
 button:focus-visible,
 [role='button']:focus-visible,

@@ -1,34 +1,60 @@
 {
   "id": "sec-dp2-3",
   "number": "2.3",
-  "title": "Pattern Structure & Participants",
+  "title": "Structure & Participants",
   "content": [
     {
       "type": "table",
-      "headers": ["Participant", "Role"],
+      "headers": ["Participant", "Role", "In Logistics Example"],
       "rows": [
-        ["**Product**", "Interface that all concrete products must implement"],
-        ["**Concrete Product**", "Actual implementation (e.g., Truck, Ship, WindowsButton)"],
-        ["**Creator**", "Base class; declares the factory method and contains business logic. Never directly creates concrete products."],
-        ["**Concrete Creator**", "Subclass that overrides the factory method to return a specific product"]
+        ["**Product**", "Interface that all concrete products must implement", "`Transport` with `deliver()`"],
+        ["**Concrete Product**", "Actual implementation", "`Truck`, `Ship`"],
+        ["**Creator**", "Base class; declares the factory method and contains business logic", "`Logistics` with `createTransport()` and `deliverOrder()`"],
+        ["**Concrete Creator**", "Subclass that overrides the factory method to return a specific product", "`RoadLogistics`, `SeaLogistics`"]
       ]
     },
     {
-      "type": "code",
-      "language": "text",
-      "title": "UML Structure",
-      "body": "<<interface>>\n  Product\n  + operation()\n      ▲           ▲\n      │           │\nConcreteProductA  ConcreteProductB\n\n  Creator\n  + factoryMethod(): Product   ← THE factory method\n  + someOperation()            ← uses factoryMethod() internally\n      ▲                ▲\n      │                │\nConcreteCreatorA    ConcreteCreatorB\n+ factoryMethod()   + factoryMethod()\n  → new ProductA      → new ProductB"
+      "type": "text",
+      "body": "### The 4 Roles Visualized\n\n```\n┌─────────────────┐         ┌─────────────────┐\n│    Product      │         │    Creator      │\n│  (interface)    │         │  (abstract)     │\n├─────────────────┤         ├─────────────────┤\n│ + operation()   │         │ + factoryMethod()│\n└────────▲────────┘         │ + someOperation()│\n         │                  └────────▲────────┘\n         │                           │\n┌────────┴────────┐         ┌────────┴────────┐\n│ ConcreteProductA│         │ ConcreteCreatorA│\n├─────────────────┤         ├─────────────────┤\n│ + operation()   │         │ + factoryMethod()│\n└─────────────────┘         └─────────────────┘\n```"
     },
     {
       "type": "callout",
       "style": "info",
       "body": "The factory method does **not** have to create a new instance every time. It can return an object from a **cache**, an **object pool**, or any other existing source — the client never knows the difference."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "title": "The 4 Roles in Code",
+      "body": "# PRODUCT\nclass Transport:\n    def deliver(self): pass\n\n# CONCRETE PRODUCTS\nclass Truck(Transport):\n    def deliver(self): print(\"Truck delivery\")\n\nclass Ship(Transport):\n    def deliver(self): print(\"Ship delivery\")\n\n# CREATOR\nclass Logistics:\n    def create_transport(self) -> Transport: pass\n    def deliver_order(self):\n        transport = self.create_transport()\n        transport.deliver()\n\n# CONCRETE CREATORS\nclass RoadLogistics(Logistics):\n    def create_transport(self): return Truck()\n\nclass SeaLogistics(Logistics):\n    def create_transport(self): return Ship()"
     }
   ],
   "flashcards": [
-    { "q": "What are the four participants in the Factory Method pattern?", "a": "**Product** (the interface), **Concrete Product** (the implementation), **Creator** (declares factory method + business logic), **Concrete Creator** (overrides factory method to return a specific product)." },
-    { "q": "What is the only place in the Factory Method pattern where concrete class names appear?", "a": "In the application's initialization/configuration code — the single location that reads config and instantiates the correct Concrete Creator. Everywhere else uses only abstract types." },
-    { "q": "Can the factory method return an existing object instead of creating a new one?", "a": "Yes. The factory method can return objects from a cache, an object pool, or any other source. The client doesn't know or care if it received a brand-new or recycled instance." }
+    {
+      "q": "What are the four participants in the Factory Method pattern?",
+      "a": "**Product** (interface), **Concrete Product** (implementation), **Creator** (declares factory method + business logic), **Concrete Creator** (overrides factory method to return specific product)."
+    },
+    {
+      "q": "What is the only place in the Factory Method pattern where concrete class names appear?",
+      "a": "In the application's initialization/configuration code — the single location that reads config and instantiates the correct Concrete Creator. Everywhere else uses only abstract types."
+    },
+    {
+      "q": "Can the factory method return an existing object instead of creating a new one?",
+      "a": "Yes. The factory method can return objects from a cache, an object pool, or any other source. The client doesn't know or care if it received a brand-new or recycled instance."
+    }
   ],
-  "problems": []
+  "problems": [
+    {
+      "type": "conceptual",
+      "q": "Match each class to its role (Product, Concrete Product, Creator, Concrete Creator):\n\n```python\nclass Notification:\n    def send(self): pass\n\nclass EmailNotification(Notification):\n    def send(self): print(\"Email\")\n\nclass Notifier:\n    def create_notification(self): pass\n    def notify(self):\n        n = self.create_notification()\n        n.send()\n\nclass EmailNotifier(Notifier):\n    def create_notification(self): return EmailNotification()\n```",
+      "a": "- `Notification` = Product\n- `EmailNotification` = Concrete Product\n- `Notifier` = Creator\n- `EmailNotifier` = Concrete Creator",
+      "hint": "Look at what each class inherits from and what methods it defines."
+    },
+    {
+      "type": "conceptual",
+      "q": "Why must the Creator's factory method return the Product interface type?",
+      "a": "So that the business logic in Creator can work with any Concrete Product without knowing which one it is. The client code also only knows the Product interface, keeping everything loosely coupled.",
+      "hint": "What would happen if the factory method returned a Concrete Product type directly?"
+    }
+  ]
 }

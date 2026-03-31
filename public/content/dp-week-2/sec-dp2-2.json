@@ -9,18 +9,20 @@
     },
     {
       "type": "code",
-      "language": "java",
-      "title": "Anti-Pattern: Tight Coupling",
-      "body": "// BAD: every new type means editing this everywhere\nif (type.equals(\"truck\")) transport = new Truck();\nelse if (type.equals(\"ship\")) transport = new Ship();\nelse if (type.equals(\"drone\")) transport = new Drone(); // added 6 months later..."
-    },
-    {
-      "type": "text",
-      "body": "### The Solution — Three Moves\n\n**Move 1:** Replace `new ConcreteClass()` with a method call — `createTransport()`. Objects are still created with `new`, just inside that method, hidden away.\n\n**Move 2:** Let subclasses override the method. `RoadLogistics` returns `Truck`. `SeaLogistics` returns `Ship`. The base class never changes.\n\n**Move 3:** All products share a common interface (`Transport`). The client calls `deliver()` on whatever comes back — it never knows which subtype it received."
+      "language": "python",
+      "title": "Anti-Pattern: Tight Coupling with if/else",
+      "body": "class LogisticsApp:\n    def deliver_order(self, transport_type):\n        if transport_type == \"truck\":\n            vehicle = Truck()\n        elif transport_type == \"ship\":\n            vehicle = Ship()\n        else:\n            vehicle = Truck()\n        \n        vehicle.deliver()\n        print(\"Order delivered\")"
     },
     {
       "type": "callout",
       "style": "tip",
       "body": "**Key insight:** At first, 'moving the constructor call somewhere else' looks pointless. The power comes from the fact that once it's in an overridable method, *subclasses can change what gets created without touching any other code.*"
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "title": "Solution: Factory Method",
+      "body": "class Transport:  # PRODUCT\n    def deliver(self): pass\n\nclass Logistics:  # CREATOR\n    def create_transport(self): pass  # FACTORY METHOD\n    \n    def deliver_order(self):  # BUSINESS LOGIC (never changes)\n        vehicle = self.create_transport()\n        vehicle.deliver()\n        print(\"Order delivered\")\n\nclass RoadLogistics(Logistics):  # CONCRETE CREATOR\n    def create_transport(self): return Truck()\n\nclass SeaLogistics(Logistics):  # CONCRETE CREATOR\n    def create_transport(self): return Ship()\n\n# CLIENT (only place concrete names appear)\nconfig = \"road\"\nlogistics = RoadLogistics() if config == \"road\" else SeaLogistics()\nlogistics.deliver_order()"
     },
     {
       "type": "callout",
@@ -29,16 +31,31 @@
     }
   ],
   "flashcards": [
-    { "q": "What is the difference between tight coupling and loose coupling?", "a": "**Tight coupling:** code directly depends on specific concrete classes (`new Truck()`), making changes expensive. **Loose coupling:** code depends on abstractions/interfaces, so concrete classes can be swapped without touching client code." },
-    { "q": "What problem does the Factory Method solve in the Logistics example?", "a": "The codebase was tightly coupled to `Truck`. Adding `Ship` required modifying code everywhere. Factory Method moves creation into subclasses, so adding a new transport type only requires a new subclass — existing code is untouched." },
-    { "q": "What is 'type agnosticism' in the context of this pattern?", "a": "The client code doesn't know — and doesn't need to know — which concrete product type it received. It interacts only through the Product interface (calls `deliver()` without caring if it's a Truck or Ship)." }
+    {
+      "q": "What problem does the Factory Method solve in the Logistics example?",
+      "a": "The codebase was tightly coupled to `Truck`. Adding `Ship` required modifying code everywhere. Factory Method moves creation into subclasses, so adding a new transport type only requires a new subclass — existing code is untouched."
+    },
+    {
+      "q": "What is the 'if/else trap'?",
+      "a": "When you add conditionals to handle new types, those conditionals appear everywhere. Each new type means hunting down and modifying every conditional across the codebase."
+    },
+    {
+      "q": "What is the essential rule for Factory Method to work?",
+      "a": "All products must share a common interface. The Creator's factory method returns that interface type, so the client never needs to know which concrete product it received."
+    }
   ],
   "problems": [
     {
       "type": "conceptual",
-      "q": "A `ReportGenerator.generate(String format)` method uses if/else to instantiate PDFReport, ExcelReport, or HTMLReport. Which SOLID principles does this violate, and how would Factory Method fix it?",
-      "a": "**Violations:** (1) Open/Closed — every new format requires modifying `generate()`. (2) Single Responsibility — the class handles both instantiation AND generation logic.\n\n**Fix:** Create a `Report` interface. Abstract `ReportCreator` has factory method `createReport()` + a `generate()` method that calls it. Concrete creators (`PDFReportCreator`, etc.) override `createReport()`. Adding CSV requires only two new classes — `generate()` never changes.",
-      "hint": "Think about what changes every time a new format is added, and who is responsible for that change."
+      "q": "A `PaymentProcessor.process(String method)` method uses if/else to instantiate CreditCardPayment, PayPalPayment, or CryptoPayment. Which SOLID principles does this violate, and how would Factory Method fix it?",
+      "a": "**Violations:** (1) Open/Closed — every new payment type requires modifying process(). (2) Single Responsibility — the class handles both instantiation AND processing logic.\n\n**Fix:** Create a `Payment` interface. Abstract `PaymentCreator` has factory method `createPayment()` + a `process()` method that calls it. Concrete creators (`CreditCardCreator`, etc.) override `createPayment()`. Adding a new payment type requires only two new classes — `process()` never changes.",
+      "hint": "Think about what changes every time a new payment type is added, and who is responsible for that change."
+    },
+    {
+      "type": "conceptual",
+      "q": "What is the difference between tight coupling and loose coupling in this context?",
+      "a": "**Tight coupling:** code directly depends on specific concrete classes (`new Truck()`), making changes expensive. **Loose coupling:** code depends on abstractions/interfaces, so concrete classes can be swapped without touching client code.",
+      "hint": "Compare code that uses `new` vs code that uses an interface."
     }
   ]
 }
