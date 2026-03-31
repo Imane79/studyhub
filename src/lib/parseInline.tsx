@@ -3,7 +3,7 @@
 import React from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { codeTheme } from '@/lib/codeTheme';
 
 let keyCounter = 0;
 function nextKey() {
@@ -30,7 +30,7 @@ function parseFencedCode(text: string): React.ReactNode[] {
           </div>
           <SyntaxHighlighter
             language={lang}
-            style={oneDark}
+            style={codeTheme}
             customStyle={{ margin: 0, background: '#0d1117', fontSize: '0.82rem', lineHeight: '1.6', padding: '12px 16px', fontFamily: 'var(--font-mono)' }}
             PreTag="div"
           >

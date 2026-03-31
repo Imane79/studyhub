@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { codeTheme } from '@/lib/codeTheme';
 
 interface CodeBlockProps {
   language: string;
@@ -21,7 +21,7 @@ export function CodeBlock({ language, body, title }: CodeBlockProps) {
       )}
       <SyntaxHighlighter
         language={language}
-        style={oneDark}
+        style={codeTheme}
         customStyle={{
           margin: 0,
           background: '#0d1117',
